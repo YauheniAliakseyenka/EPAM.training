@@ -1,0 +1,17 @@
+﻿@model IEnumerable<BusinessLogic.BusinessModels.OrderModel>
+
+@foreach(var order in Model)
+{
+    <div>
+        order: @order.Order.Id, Date: @order.Order.Date
+        <div>
+            @foreach(var seat in order.PurchasedSeats)
+            {
+                <div>
+                    Seat: Row-@seat.Seat.Row+" number-"@seat.Seat.Number. Event: "@seat.Event.Title" at @seat.Event.Date.ToShortDateString(). Venue: @seat.Venue.Name
+                </div>
+            }
+        </div>
+    </div>
+    <br />
+}

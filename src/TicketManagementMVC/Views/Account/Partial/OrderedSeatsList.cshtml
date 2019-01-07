@@ -1,0 +1,53 @@
+﻿@using System.Globalization;
+@model IEnumerable<BusinessLogic.BusinessModels.SeatModel>
+<div id="errorMessagesOrder" class="errors-login text-danger"></div>
+
+<div id="orderedList">
+    <table class="table table-striped text-center">
+        <thead>
+            <tr>
+                <th scope="col">@Resource.OrderedSeatRowNumLabel</th>
+                <th scope="col">@Resource.OrderedSeatAreaLabel</th>
+                <th scope="col">@Resource.OrderedSeatEventLabel</th>
+                <th scope="col">@Resource.OrderedSeatDateLabel</th>
+                <th scope="col">@Resource.OrderedSeatVenueLabel</th>
+                <th scope="col">@Resource.OrderedSeatPriceLabel</th>
+                <th scope="col"></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr id=@item.Seat.Id>
+                    <th scope="row" class="pt-3">@item.Seat.Row - @item.Seat.Number</th>
+                    <td class="pt-3">@item.Area.Description</td>
+                    <td class="pt-3">@item.Event.Title</td>
+                    <td class="pt-3">@item.Event.Date.ToShortDateString(), @item.Event.Date.ToShortTimeString()</td>
+                    <td class="pt-3">@item.Venue.Name (@item.Layout.Description)</td>
+                    <td class="pt-3 price">@string.Format("${0:N2}", item.Area.Price)</td>
+                    <td>
+                        <input type="button" value=@Resource.DeleteButton
+                               onclick="DeleteSeatFromCart('@item.Seat.Id','@Resource.DeletedFromCartNotify', '@CultureInfo.CurrentUICulture.Name', this)" class="btn btn-primary" />
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <div>
+        @if (Model.Any())
+        {
+            <div id="order-button">
+                <div style="float:left; width:77%; padding-right:25px;">
+                    <input type="button" value="Order" onclick="CompleteOrder('@Resource.OrderCompleteNotify')" class="btn btn-primary order-button" style="float:right;  font-size:22px;" />
+                </div>
+                <div style="float:left; padding-left:60px;"><b>@Resource.Total</b>:<p id="total">@string.Format("${0:N2}", Model.Sum(x => x.Area.Price))</p></div>
+            </div>
+        }
+        else
+        {
+            <div style="text-align:center">@Resource.EmptyCart</div>
+        }
+    </div>
+</div>
+<br />
+<br />

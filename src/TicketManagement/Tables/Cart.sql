@@ -1,0 +1,5 @@
+﻿CREATE TABLE [dbo].[Cart]
+(
+	[Id] INT IDENTITY PRIMARY KEY, 
+    [UserId] NVARCHAR(128) NOT NULL
+)

@@ -1,0 +1,33 @@
+﻿@model IEnumerable<BusinessLogic.BusinessModels.EventModel>
+<div class="event-list">
+    @foreach (var item in Model)
+    {
+        var url = "/Home/EventInfo?id=" + item.Event.Id;
+        <a href=@url>
+
+            <div class="event-title w-75" style="float:left;">
+                @item.Event.Title
+            </div>
+
+            <div class="event-venue w-25" style="float:right;">
+                @string.Format(Resource.EventListVenue, item.Venue.Name)
+            </div>
+
+            @if (item.Event.Description.Length > 350)
+            {
+                <div class="event-description w-75" style="float:left; text-overflow: clip;">@item.Event.Description.Substring(0, 345)...</div>
+            }
+            else
+            {
+                <div class="event-description w-75" style="float:left; text-overflow: clip;">@item.Event.Description</div>
+            }
+
+            <div class="event-date w-25" style="float:right;">
+               @string.Format(Resource.EventListDate, item.Event.Date.ToShortDateString(), item.Event.Date.ToShortTimeString())
+            </div>
+
+        </a>
+        <div class="short-devider"></div>
+    }
+</div>
+

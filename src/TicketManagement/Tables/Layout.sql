@@ -1,0 +1,6 @@
+﻿CREATE TABLE [dbo].[Layout]
+(
+	[Id] INT IDENTITY PRIMARY KEY,
+	[VenueId] INT NOT NULL,
+	[Description] NVARCHAR(120) NOT NULL,
+)

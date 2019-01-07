@@ -1,0 +1,29 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title</title>
+    @Styles.Render("~/content/css")
+    @Scripts.Render("~/bundles/eventmanager")
+</head>
+<body>
+    <div>
+        <div class="container min-width1140" id="menu">
+            @Html.Partial("~/Views/Home/Partial/Menu.cshtml")
+            <hr />
+        </div>
+    </div>
+    <div class="container body-content min-width1140">
+        @RenderBody()
+    </div>
+    <div class="container">
+        <hr />
+        <footer>
+            <p>&copy; @DateTime.Now.Year - My ASP.NET Application</p>
+        </footer>
+    </div>
+
+    @Scripts.Render("~/bundles/scripts")
+</body>
+</html>

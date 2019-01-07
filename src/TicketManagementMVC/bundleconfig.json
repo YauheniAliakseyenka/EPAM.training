@@ -1,0 +1,32 @@
+[
+  {
+    "outputFileName": "Scripts/eventmanager.workflow.min.js",
+    "inputFiles": [
+      "Scripts/eventmanager.workflow.js"
+    ]
+  },
+  {
+    "outputFileName": "Scripts/cart.workflow.min.js",
+    "inputFiles": [
+      "Scripts/cart.workflow.js"
+    ]
+  },
+  {
+    "outputFileName": "Scripts/menu-navigation.min.js",
+    "inputFiles": [
+      "Scripts/menu-navigation.js"
+    ]
+  },
+  {
+    "outputFileName": "Content/bootstrap.min.css",
+    "inputFiles": [
+      "Content/bootstrap.css"
+    ]
+  },
+  {
+    "outputFileName": "Content/Site.min.css",
+    "inputFiles": [
+      "Content/Site.css"
+    ]
+  }
+]

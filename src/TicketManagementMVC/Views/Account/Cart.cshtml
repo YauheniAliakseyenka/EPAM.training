@@ -1,0 +1,13 @@
+﻿@model IEnumerable<BusinessLogic.BusinessModels.SeatModel>
+@{
+    ViewBag.Title = Resource.CartTitle;
+}
+<h2 class="m-auto w-75 title mb-3">@Resource.CartTitle</h2>
+<br />
+<div id="orderedSeatsList">
+    @Html.Partial("~/Views/Account/Partial/OrderedSeatsList.cshtml", Model)
+</div>
+
+
+
+

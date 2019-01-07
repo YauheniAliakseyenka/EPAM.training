@@ -1,0 +1,28 @@
+﻿@{
+    ViewBag.Title = Resource.EditEventTitle;
+}
+<script type="text/javascript">
+    $(window).ready(function () {
+        GetEventsByVenue();
+    });
+</script>
+
+<div id="eventPlaceHolder">
+    <h2 class="text-center">@Resource.EditEventTitle</h2>
+    <div class="form-group col-sm-10 offset-sm-1">
+        <label>@Resource.EventSelectVenueDropDownLabel</label>
+        @Html.DropDownList("venue", new SelectList(ViewBag.VenueList, "Id", "Name", "0"),
+       new { @class = "form-control", onchange = "GetEventsByVenue();", @id = "venueListToSortEvents" })
+    </div>
+
+    <div class="form-group col-sm-10 offset-sm-1">
+        <label>@Resource.EditEventSelectEventDropDownLabel</label>
+        <select class="form-control required" id="eventListOnEdit" onchange="GetEventToEdit()"></select>
+    </div>
+    <div class="short-devider"></div>
+    <div id="editEventPlaceHolder">
+    </div>
+</div>
+
+<div id="editAreaPlaceHolder">
+</div>

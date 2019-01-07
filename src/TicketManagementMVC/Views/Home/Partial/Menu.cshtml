@@ -1,0 +1,84 @@
+﻿<div class="menu-placeholder">
+    <ul class="nav nav-pills w-100">
+        <li class="nav-item menu-firstitem">
+            @Html.ActionLink(Resource.HomeMenu, "Index", "Home", null, new { @class = "nav-link active" })
+        </li>
+
+        @if (User.Identity.IsAuthenticated && User.IsInRole("User"))
+        {
+            <li class="nav-item menu-item dropdown">
+                <a class="nav-link dropdown-toggle" id="eventmanager-dropdown" href="#" onclick=" return false;">@Resource.ManageEvent</a>
+                <div class="dropdown-menu" id="eventmanager-dropdown-menu" style=" top: 0px; left: 0px; right:0px; transform: translate3d(0px, 40px, 0px);">
+                    @Html.ActionLink(Resource.CreateEventMenu, "Create", "Event", null, new { @class = "dropdown-item" })
+                    @Html.ActionLink(Resource.EditEventMenu, "Edit", "Event", null, new { @class = "dropdown-item" })
+                </div>
+            </li>
+        }
+
+        <!--user form-->
+        @if (!User.Identity.IsAuthenticated)
+        {
+            <li class="nav-item menu-item ml-auto">
+                <form class="form-inline" style="float:right;">
+                    @Html.ActionLink(Resource.SignUp, "Registration", "Account")  &nbsp; @Resource.Or &nbsp; @Html.ActionLink(Resource.SignIn, "", "",
+new { data_toggle = "modal", data_target = "#loginModal" })
+                </form>
+            </li>
+        }
+        else
+        {
+            <li class="nav-item menu-item dropdown ml-auto">
+                <form class="form-inline profile-container" style="float:right;">
+                    <a href="/Account/UserProfile" class="profile-left">
+                        <div style="float:left; padding-left:10px;"><b>@User.Identity.Name</b></div>
+                        <div class="balance">@string.Format(Resource.BalanceValue, ViewData["Balance"])</div>
+                    </a>
+
+                    <a href="#" class="profile-right" id="profile-dropdown">s</a>
+                    <div class="dropdown-menu" id="profile-dropdown-menu" style=" top: 0px; right: 0px; left:150px; transform: translate3d(0px, 40px, 0px);">
+                        @Html.ActionLink(Resource.CartTitle, "Cart", "Account", null, new { @class = "dropdown-item" })
+                        @Html.ActionLink(Resource.BalanceReplenishmentTitle, "BalanceReplenishment", "Account", null, new { @class = "dropdown-item" })
+                        @Html.ActionLink(Resource.PurchaseHistory, "PurchaseHistory", "Account", null, new { @class = "dropdown-item" })
+                        <div class="dropdown-divider"></div>
+                        @Html.ActionLink(Resource.Logout, "Logout", "Account", null, new { @class = "dropdown-item" })
+                    </div>
+                </form>
+
+            </li>
+        }
+    </ul>
+</div>
+
+<!-- Modal window for login -->
+<div class="modal fade" id="loginModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title title">@Resource.SignIn</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body login-form">
+                @using (Html.BeginForm("Login", "Account", FormMethod.Post, new { @id = "loginForm" }))
+                {
+                    @Html.AntiForgeryToken()
+
+                    <div id="errorMessagesLogin" class="errors-login text-danger"></div>
+
+                    <div class="form-group">
+                        @Html.TextBox("UserName", null, new { @class = "form-control", placeholder = Resource.Username, @id = "username" })
+                    </div>
+
+                    <div class="form-group">
+                        @Html.Password("Password", null, new { @class = "form-control", placeholder = Resource.Password, @id = "password" })
+                    </div>
+
+                    <div class="form-group">
+                        <button type="button" class="btn btn-primary login-button" onclick="SubmitLogin()">@Resource.SignIn</button>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>

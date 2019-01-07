@@ -1,0 +1,22 @@
+﻿@model BusinessLogic.BusinessModels.EventModel
+@{
+    ViewBag.Title = Resource.EventInformation;
+
+}
+
+<div class="row">
+        <div class="w-25">
+            <img id="event-image" src="@Url.Content(Model.Event.ImageURL)" style="width:260px; height:260px; margin-left:4px;" class="border" />
+        </div>
+        <div class="row w-75">
+            <div>
+                <div class="">@Model.Event.Title</div>
+                <div class="">@Model.Event.Description</div>
+            </div>
+        </div>
+</div>
+<br />
+<div id="seatMap" class="d-table m-auto">
+    @Html.Partial("~/Views/Home/Partial/SeatMap.cshtml", Model)
+</div>
+<br />

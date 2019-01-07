@@ -1,0 +1,62 @@
+﻿@using System.Globalization;
+@model TicketManagementMVC.Models.RegistrationViewModel
+@{
+    ViewBag.Title = Resource.RegistrationTtitle;
+
+}
+<h2 class="m-auto w-75 title mb-3">@Resource.RegistrationTtitle</h2>
+@using (Html.BeginForm("Registration", "Account", FormMethod.Post, new { @class = "m-auto w-75" }))
+{
+    <div class="register-form">
+
+        @Html.AntiForgeryToken()
+        @Html.ValidationSummary("", new { @class = "text-danger" })
+        <div class="form-group">
+            @Html.LabelFor(x => x.UserName, new { @class= "required" })
+            @Html.TextBoxFor(x => x.UserName, new { @class = "form-control", autocomplete = "off" })
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(x => x.Email, new { @class = "required" })
+            @Html.TextBoxFor(x => x.Email, new { @class = "form-control", placeholder = "name@example.com", autocomplete = "off" })
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(x => x.Firstname)
+            @Html.TextBoxFor(x => x.Firstname, new { @class = "form-control", autocomplete = "off" })
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(x => x.Surname)
+            @Html.TextBoxFor(x => x.Surname, new { @class = "form-control", autocomplete = "off" })
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(x => x.Culture)
+            @Html.DropDownListFor(x => x.Culture, Enum.GetValues(typeof(TicketManagementMVC.Models.Culture)).Cast<TicketManagementMVC.Models.Culture>().
+           Select(x=>new SelectListItem { Text = TicketManagementMVC.Models.CultureEnum.GetDescription(x), Value  = x.ToString()}),
+           new { @class = "form-control", autocomplete = "off" })
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(x => x.SelectedTimezone)
+            @Html.DropDownListFor(x => x.SelectedTimezone, new SelectList(TimeZoneInfo.GetSystemTimeZones().ToList(), "Id", "DisplayName", "UTC"), 
+           new { @class = "form-control select-timezone", autocomplete = "off" })
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(x => x.Password, new { @class = "required" })
+            @Html.PasswordFor(x => x.Password, new { @class = "form-control", autocomplete = "off" })
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(x => x.ConfirmPassword, new { @class = "required" })
+            @Html.PasswordFor(x => x.ConfirmPassword, new { @class = "form-control", autocomplete = "off" })
+        </div>
+
+        <div class="form-group">
+            <button type="submit" class="btn btn-primary register-button">@Resource.RegistrationButton</button>
+            <button type="button" class="btn btn-primary back-button" onclick="location.href='@Url.Action("Index", "Home")'">@Resource.BackButton</button>
+        </div>
+    </div>
+}
