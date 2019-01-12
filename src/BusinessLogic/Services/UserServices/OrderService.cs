@@ -25,16 +25,15 @@ namespace BusinessLogic.Services.UserServices
 			_userService = userService;
 		}
 
-		//returns seats's id which have been processed by this order
-		public async Task<IEnumerable<int>> Create(string userId)
+		public async Task Create(string userId)
 		{
             if (string.IsNullOrEmpty(userId))
                 throw new ArgumentNullException();
 
 			var orderedSeats = await _cartService.GetOrderedSeats(userId);
 
-            if (!orderedSeats.Any())
-				return await Task.FromResult(new List<int>().AsEnumerable());
+			if (!orderedSeats.Any())
+				return;
 
 			using (var transaction = _context.CreateTransaction())
             {
@@ -79,8 +78,6 @@ namespace BusinessLogic.Services.UserServices
 					throw;
 				}
             }
-          			
-			return orderedSeats.Select(x => x.Seat.Id).ToList();
 		}
 
 		public Task<IEnumerable<OrderModel>> GetPurchaseHistory(string userId)

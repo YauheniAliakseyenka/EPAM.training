@@ -46,9 +46,7 @@ namespace TicketManagementMVC.Controllers
 		[NoDirectAccess]
 		public async Task<ActionResult> FilterList(string filterText, FilterEventOptions filterBy = FilterEventOptions.None)
 		{
-			var model = await _eventService.GetPublishedEvents(filterBy, filterText);
-
-			return PartialView("~/Views/Home/Partial/EventList.cshtml", model);
+			return PartialView("~/Views/Home/Partial/EventList.cshtml", await _eventService.GetPublishedEvents(filterBy, filterText));
 		}
 
 		[HttpGet]

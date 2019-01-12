@@ -12,10 +12,10 @@ namespace TicketManagementMVC.App_Start
 		{
 			bundles.Add(new ScriptBundle("~/bundles/mainJs").
 				Include("~/Scripts/jquery-{version}.js").
-				Include("~/Scripts/project-js.min.js").
 				Include("~/Scripts/eventmanager.workflow.min.js"));
 
 			bundles.Add(new ScriptBundle("~/bundles/otherJs").
+				Include("~/Scripts/project-js.min.js").
 				Include("~/Scripts/jquery.timepicker.min.js").
 				Include("~/Scripts/jquery-ui.min.js").
 				Include("~/Scripts/datepicker-ru.js").

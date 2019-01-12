@@ -1,7 +1,9 @@
-﻿using BusinessLogic.Services;
+﻿using BusinessLogic.BusinessModels;
+using BusinessLogic.Services;
 using Hangfire;
 using System;
 using System.Configuration;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace TicketManagementMVC.Infrastructure.BackgroundWorker
@@ -26,6 +28,19 @@ namespace TicketManagementMVC.Infrastructure.BackgroundWorker
 			var hour = date.TimeOfDay.Hours;
 			var minute = date.TimeOfDay.Minutes;
 			RecurringJob.AddOrUpdate<ISeatLocker>("unlockSeatId" + seatId, locker => locker.UnlockSeat(seatId), minute + " " + hour + " * * *");
+		}
+
+		public void OrderCompleted(object sender, OrderEventArgs args)
+		{
+			var seats = args.OrderModel.PurchasedSeats;
+
+			if(seats.Any())
+			{
+				seats.ForEach(x =>
+				{
+					RecurringJob.RemoveIfExists("unlockSeatId" + x.Seat.Id);
+				});
+			}
 		}
 
 		public async Task UnlockSeat(int seatId)

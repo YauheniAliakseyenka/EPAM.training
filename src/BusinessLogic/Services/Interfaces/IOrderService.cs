@@ -9,7 +9,7 @@ namespace BusinessLogic.Services
     {
 		event EventHandler<OrderEventArgs> Ordered;
 
-		Task<IEnumerable<int>> Create(string userId);
+		Task Create(string userId);
 		Task<IEnumerable<OrderModel>> GetPurchaseHistory(string userId);
     }
 }

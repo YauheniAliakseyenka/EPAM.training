@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using BusinessLogic.BusinessModels;
+using System.Threading.Tasks;
 
 namespace TicketManagementMVC.Infrastructure.BackgroundWorker
 {
@@ -6,5 +7,6 @@ namespace TicketManagementMVC.Infrastructure.BackgroundWorker
 	{
 		Task LockSeat(int seatId, string userId);
 		Task UnlockSeat(int seatId);
+		void OrderCompleted(object sender, OrderEventArgs args);
 	}
 }

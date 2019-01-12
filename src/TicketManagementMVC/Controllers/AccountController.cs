@@ -185,7 +185,6 @@ namespace TicketManagementMVC.Controllers
 			try
 			{
 				await _seatLocker.LockSeat(seatId, User.Identity.GetUserId());
-				
 			}
 			catch (CartException exception)
 			{
@@ -212,13 +211,12 @@ namespace TicketManagementMVC.Controllers
 		[Authorize]
 		public async Task<ActionResult> Order()
 		{
-			List<int> seatIdList;
 			try
 			{
 				_orderService.Ordered += _emailService.Send;
+				_orderService.Ordered += _seatLocker.OrderCompleted;
 
-				var result = await _orderService.Create(User.Identity.GetUserId());
-				seatIdList = result.ToList();				
+				await _orderService.Create(User.Identity.GetUserId());		
 			}
 			catch (OrderException exception)
 			{
@@ -237,11 +235,6 @@ namespace TicketManagementMVC.Controllers
 				});
 			}
 
-			seatIdList.ForEach(x =>
-			{
-				RecurringJob.RemoveIfExists("unlockSeatId" + x);
-			});
-
 			return Json(new
 			{
 				success = true
@@ -253,9 +246,7 @@ namespace TicketManagementMVC.Controllers
 		[Authorize]
 		public async Task<ActionResult> PurchaseHistory()
 		{
-			var model = await _orderService.GetPurchaseHistory(User.Identity.GetUserId());
-
-			return View(model);
+			return View(await _orderService.GetPurchaseHistory(User.Identity.GetUserId()));
 		}
 
         //GET: user profile view

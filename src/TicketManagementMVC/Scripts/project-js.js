@@ -162,8 +162,8 @@ function FilterEventsBy(culture) {
     }
 }
 
-function GetFiltered(filter) {
-    if (filter == true) {
+function GetFiltered(filtered) {
+    if (filtered == true) {
         $.ajax({
             url: '/Home/FilterList',
             data: $('#filterForm').serialize(),

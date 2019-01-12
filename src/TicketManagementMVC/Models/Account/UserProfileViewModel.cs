@@ -9,7 +9,7 @@ namespace TicketManagementMVC.Models
 	public class UserProfileViewModel
 	{
 		[Required(ErrorMessageResourceName = "PropertyRequired", ErrorMessageResourceType = typeof(I18N.ResourceErrors))]
-		[EmailAddress]
+		[EmailAddress(ErrorMessageResourceType = typeof(I18N.ResourceErrors), ErrorMessageResourceName = "EmailError")]
 		[Display(Name = "Email", ResourceType = typeof(I18N.Resource))]
 		public string Email { get; set; }
 
