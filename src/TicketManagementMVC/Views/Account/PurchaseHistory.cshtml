@@ -1,17 +1,37 @@
 ﻿@model IEnumerable<BusinessLogic.BusinessModels.OrderModel>
 
-@foreach(var order in Model)
-{
     <div>
-        order: @order.Order.Id, Date: @order.Order.Date
-        <div>
-            @foreach(var seat in order.PurchasedSeats)
-            {
-                <div>
-                    Seat: Row-@seat.Seat.Row+" number-"@seat.Seat.Number. Event: "@seat.Event.Title" at @seat.Event.Date.ToShortDateString(). Venue: @seat.Venue.Name
-                </div>
-            }
-        </div>
+        @foreach (var order in Model)
+        {
+            <div class="row" style="font-size:20px;">
+                <div>@Resource.OrderTitle #@order.Order.Id</div>
+                <div class="pl-3"  >@Resource.Date: @order.Order.Date.ToShortDateString(), @order.Order.Date.ToShortTimeString()</div>
+            </div>
+
+            <!--purchased seats table-->
+            <div class="row">
+                <table class="table table-striped text-center  m-auto" style="font-size:15px;">
+                    <thead>
+                        <tr>
+                            <th scope="col">Seat(row-number)</th>
+                            <th scope="col">Title</th>
+                            <th scope="col">Date</th>
+                            <th scope="col">Venue</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var seat in order.PurchasedSeats)
+                        {
+                            <tr style="line-height: 5px;">
+                                <th scope="row" class="pt-3">@seat.Seat.Row-@seat.Seat.Number</th>
+                                <td class="pt-3">@seat.Event.Title</td>
+                                <td class="pt-3">@seat.Event.Date.ToShortDateString(),@seat.Event.Date.ToShortTimeString()</td>
+                                <td class="pt-3">@seat.Venue.Name (@seat.Layout.Description)</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+            <br />
+        }
     </div>
-    <br />
-}

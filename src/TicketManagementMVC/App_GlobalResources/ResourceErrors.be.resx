@@ -150,10 +150,13 @@
   <data name="NumericError" xml:space="preserve">
     <value>Для поля {0} дазволены толькі лічбы</value>
   </data>
+  <data name="OrderedSeatError" xml:space="preserve">
+    <value>У вас адсутнічаюць заблякаваныя месцы. Магчыма, час блакавання скончыўся</value>
+  </data>
   <data name="OrderError" xml:space="preserve">
     <value>Сума на балансе менш, чым сума заказу</value>
   </data>
-  <data name="PassworkdRangeError" xml:space="preserve">
+  <data name="PasswordRangeError" xml:space="preserve">
     <value>Пароль павінен утрымліваць хоць бы 10 сімвалаў</value>
   </data>
   <data name="PastDateError" xml:space="preserve">
@@ -181,6 +184,6 @@
     <value>Час не был ўведзены або ўведзена некарэктнае значэнне</value>
   </data>
   <data name="UserNameIsTaken" xml:space="preserve">
-    <value>Карыстальнік з такім імем ўжо існуе</value>
+    <value>Карыстальнік з такім іменем ўжо існуе</value>
   </data>
 </root>

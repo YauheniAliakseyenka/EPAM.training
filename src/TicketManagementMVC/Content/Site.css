@@ -116,13 +116,6 @@ textarea {
 	color: red;
 }
 
-
-
-/* login form */
-.errors-login {
-	
-}
-
 .login-form {
 	margin-left: 72px;
 }
@@ -176,12 +169,6 @@ textarea {
 }
 
 
-/* amount recharge form*/
-.currency {
-	float:left;
-	max-width:25px;
-}
-
 .recharge-form .input-amount {
 	max-width:200px;
 }
@@ -218,6 +205,32 @@ textarea {
 	color: #566573;
 }
 
+a.tooltips {
+    position: relative;
+    display: inline;
+}
+a.tooltips span {
+    position: absolute;
+    color: #ffffff;
+    background: #000000;
+    height: 30px;
+    line-height: 30px;
+    text-align: center;
+    visibility: hidden;
+    border-radius: 6px;
+cursor: default;
+}
+
+
+a:hover.tooltips span {
+    visibility: visible;
+    opacity: 0.8;
+    bottom: 25px;
+    left: 50%;
+    margin-left: -75px;
+    z-index: 999;
+}
+
 .seat-seatmap:hover {
 	background-color: #AED6F1;
 }
@@ -238,21 +251,21 @@ textarea {
 }
 
 .row-counter {
-	padding-right:5px;
-	height:23px;
+	margin-right: 2px;
+	text-align:center;
+	height: 23px;
+	width: 40px;
 }
-
-
 
 .area {
 	font-size: 23px;
 	margin-left: 7px;
-	margin-right:7px;
+	margin-right: 7px;
 	margin-bottom: 15px;
-	padding:5px 5px 5px 5px;
+	padding: 5px 5px 5px 5px;
 	position: relative;
 	display: inline-block;
-	
+
 }
 
 .scene {
@@ -261,4 +274,20 @@ textarea {
 
 .border {
 	border: 1px solid;
+}
+
+.title-event {
+	font-size: 30px;
+	color: #C0392B;
+	text-align: justify;
+	text-indent: 30px;
+}
+
+.description-event {
+	text-align: justify;
+	text-indent: 30px;
+}
+
+.img-border {
+	border-radius:20px;
 }

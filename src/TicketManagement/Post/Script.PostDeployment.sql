@@ -56,8 +56,27 @@ VALUES (1, 1, 1),
 (5, 2, 2),
 (5, 2, 3)
 
+
 --- Role
-INSERT INTo dbo.[Role]
+INSERT INTO dbo.[Role]
 VALUES ('User'),
 ('Event manager'),
 ('Venue manager')
+
+--- event_manager (password: 1231231231)
+INSERT INTO dbo.[User]
+VALUES ('ee023ac2-9d96-4sda-8056-921320sd1c54', 'event_manager', 'AFm5ad5jz9VOpSkL6yUgSX8oVYZgzebM4oiK7s4jWKdADiGQv0l50xlZoAk1CG16hg==', 'manager@gmail.com', 'John', 'Smith', 'en', 'UTC', 250.25)
+
+--- User roles for event manager
+INSERT INTO dbo.[UserRole]
+VALUES ('ee023ac2-9d96-4sda-8056-921320sd1c54', 1),
+('ee023ac2-9d96-4sda-8056-921320sd1c54', 2)
+
+--- Event
+EXEC AddEvent 'Parsifal', 'The highpoint of Andris Nelsons’ final season as the CBSO’s music director – a concert performance of Wagner’s final music drama of almost alarming maturity','http://localhost:61962/Content/images/default.jpg', 1, '12/8/2019', 'ee023ac2-9d96-4sda-8056-921320sd1c54'
+
+UPDATE EventArea SET Price = '15.25'
+
+
+
+

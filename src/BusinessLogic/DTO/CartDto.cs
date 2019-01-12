@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BusinessLogic.DTO
 {
@@ -10,5 +6,20 @@ namespace BusinessLogic.DTO
 	{
 		public int Id { get; set; }
 		public string UserId { get; set; }
+
+		public override bool Equals(object obj)
+		{
+			var entity = obj as CartDto;
+
+			if (entity == null)
+				return false;
+
+			if (Id == entity.Id && UserId.Equals(entity.UserId, StringComparison.Ordinal))
+				return true;
+
+			return false;
+		}
+
+		public override int GetHashCode() => (Id, UserId).GetHashCode();
 	}
 }

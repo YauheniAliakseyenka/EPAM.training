@@ -34,7 +34,7 @@ namespace TicketManagementMVC.Models
 		[Required(ErrorMessageResourceName = "PropertyRequired", ErrorMessageResourceType = typeof(I18N.ResourceErrors))]
 		[DataType(DataType.Password)]
 		[Display(Name = "Password", ResourceType = typeof(I18N.Resource))]
-		[MinLength(10, ErrorMessageResourceName = "PassworkdRangeError", ErrorMessageResourceType = typeof(I18N.ResourceErrors))]
+		[MinLength(10, ErrorMessageResourceName = "PasswordRangeError", ErrorMessageResourceType = typeof(I18N.ResourceErrors))]
 		public string Password { get; set; }
 
 		[DataType(DataType.Password)]

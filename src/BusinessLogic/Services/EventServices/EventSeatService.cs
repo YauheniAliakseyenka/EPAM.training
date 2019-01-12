@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Threading.Tasks;
 
 namespace BusinessLogic.Services.EventServices
 {
@@ -18,7 +19,7 @@ namespace BusinessLogic.Services.EventServices
 			_context = context;
 		}
 
-		public void Create(EventSeatDto entity)
+		public async Task Create(EventSeatDto entity)
 		{
 			if (entity == null)
 				throw new ArgumentNullException();
@@ -31,36 +32,31 @@ namespace BusinessLogic.Services.EventServices
 
 			var add = mapToEventSeat(entity);
 			_context.EventSeatRepository.Create(add);
-			_context.Save();
+			await _context.SaveAsync();
             entity.Id = add.Id;
 		}
 
-		public void Delete(int id)
+		public async Task Delete(int id)
 		{
-			_context.EventSeatRepository.Delete(id);
-			_context.Save();
+			if (await isSeatLocked(id))
+				throw new EventSeatException("Not allowed to deleted. Seat is locked");
+
+            _context.EventSeatRepository.Delete(id);
+			await _context.SaveAsync();
 		}
 
-		public IEnumerable<EventSeatDto> FindBy(Expression<Func<EventSeatDto, bool>> expression)
+		public Task<IEnumerable<EventSeatDto>> FindBy(Expression<Func<EventSeatDto, bool>> expression)
 		{
 			var resultList = new List<EventSeatDto>();
 			Expression<Func<EventSeat, bool>> predicate = x => expression.Compile().Invoke(mapToEventSeatDto(x));
-			var list = _context.EventSeatRepository.FindBy(predicate).ToList();	
+			var list =  _context.EventSeatRepository.FindBy(predicate);
 
-			if (!list.Any())
-				return resultList;
-
-			list.ForEach(x =>
-			{
-				resultList.Add(mapToEventSeatDto(x));
-			});
-
-			return resultList;
+			return Task.FromResult(list.Select(x => mapToEventSeatDto(x)).AsEnumerable());
 		}
 
-		public EventSeatDto Get(int id)
+		public async Task<EventSeatDto> Get(int id)
 		{
-			var seat = _context.EventSeatRepository.Get(id);
+			var seat = await _context.EventSeatRepository.GetAsync(id);
 
 			if (seat == null)
 				return null;
@@ -68,23 +64,14 @@ namespace BusinessLogic.Services.EventServices
 			return mapToEventSeatDto(seat);
 		}
 
-		public IEnumerable<EventSeatDto> GetList()
+		public async Task<IEnumerable<EventSeatDto>> GetList()
 		{
-			var tempSeatList = _context.EventSeatRepository.GetList();
+			var tempSeatList = await _context.EventSeatRepository.GetListAsync();
 
-			if (tempSeatList == null)
-				return null;
-
-			var result = new List<EventSeatDto>();
-			tempSeatList.ToList().ForEach(x =>
-			{
-				result.Add(mapToEventSeatDto(x));
-			});
-
-			return result;
+			return tempSeatList.Select(x => mapToEventSeatDto(x));
 		}
 
-		public void Update(EventSeatDto entity)
+		public async Task Update(EventSeatDto entity)
 		{
 			if (entity == null)
 				throw new ArgumentNullException();
@@ -94,13 +81,13 @@ namespace BusinessLogic.Services.EventServices
 
 			if (!IsSeatUnique(entity,false))
 				throw new EventSeatException("Seat already exists");
-
-			var update = _context.EventSeatRepository.FindBy(x => x.Id == entity.Id).FirstOrDefault();
+			
+			var update = await _context.EventSeatRepository.GetAsync(entity.Id);
 			update.Number = entity.Number;
 			update.Row = entity.Row;
 			update.State = entity.State;
 			_context.EventSeatRepository.Update(update);
-			_context.Save();
+			await _context.SaveAsync();
 		}
 
 		private bool IsSeatUnique(EventSeatDto seat, bool isCreating)
@@ -133,6 +120,12 @@ namespace BusinessLogic.Services.EventServices
 				Number = from.Number,
 				Row = from.Row
 			};
+		}
+
+		private async Task<bool> isSeatLocked(int seatId)
+		{
+			var seat = await _context.EventSeatRepository.GetAsync(seatId);
+			return seat.State == 1;
 		}
 	}
 }

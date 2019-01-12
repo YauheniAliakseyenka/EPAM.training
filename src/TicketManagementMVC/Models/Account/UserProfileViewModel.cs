@@ -31,7 +31,7 @@ namespace TicketManagementMVC.Models
 
 		[DataType(DataType.Password)]
 		[Display(Name = "NewPassword", ResourceType = typeof(I18N.Resource))]
-		[Range(10, int.MaxValue, ErrorMessageResourceName = "PassworkdRangeError", ErrorMessageResourceType = typeof(I18N.ResourceErrors))]
+		[MinLength(10, ErrorMessageResourceName = "PasswordRangeError", ErrorMessageResourceType = typeof(I18N.ResourceErrors))]
 		public string NewPassword { get; set; }
 
 		[DataType(DataType.Password)]

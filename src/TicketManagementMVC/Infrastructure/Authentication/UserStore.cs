@@ -9,14 +9,19 @@ using Microsoft.Win32.SafeHandles;
 using BusinessLogic.Services;
 using BusinessLogic.DTO;
 using BusinessLogic.Exceptions;
+using TicketManagementMVC.Helpers;
 
 namespace TicketManagementMVC.Infrastructure.Authentication
 {
     internal class UserStore : IUserClaimStore<User>, IUserPasswordStore<User>, IUserEmailStore<User>
     {
 		bool disposed = false;
-		SafeHandle handle = new SafeFileHandle(IntPtr.Zero, true);
 		private IUserService _userService;
+
+        ~UserStore()
+        {
+            Dispose(false);
+        }
 
         public UserStore(IUserService userService)
         {
@@ -28,43 +33,37 @@ namespace TicketManagementMVC.Infrastructure.Authentication
 			throw new NotImplementedException();
         }
 
-        public Task CreateAsync(User user)
-        {
-            var userModel = maptToUserDto(user);
-            userModel.Id = Guid.NewGuid().ToString();
-			_userService.Create(userModel);
+		public Task CreateAsync(User user)
+		{
+			var userModel = maptToUserDto(user);
+			userModel.Id = Guid.NewGuid().ToString();
 
-            return Task.FromResult(0);
-        }
+			return _userService.Create(userModel);
+		}
 
         public Task DeleteAsync(User user)
         {
-			 _userService.Delete(user.Id);
-
-			return Task.FromResult(0);
+			return _userService.Delete(user.Id);
         }
 
-        public Task<User> FindByIdAsync(string userId)
+        public async Task<User> FindByIdAsync(string userId)
         {
-            var user = _userService.Get(userId);
-
-            var result = user != null ? mapToUser(user) : null;
-
-            return Task.FromResult(result);
+            var user = await _userService.Get(userId);
+            
+            return user != null ? mapToUser(user) : null;
         }
 
-        public Task<User> FindByNameAsync(string userName)
+        public async Task<User> FindByNameAsync(string userName)
         {
-            var user = _userService.FindBy(x => x.UserName.Equals(userName)).FirstOrDefault();
+            var data = await _userService.FindBy(x => x.UserName.Equals(userName, StringComparison.Ordinal));
+			var user = data.FirstOrDefault();
 
-            var result = user != null ? mapToUser(user) : null;
-
-            return Task.FromResult(result);
+            return user != null ? mapToUser(user) : null;
         }
 
-        public Task<IList<Claim>> GetClaimsAsync(User user)
+        public async Task<IList<Claim>> GetClaimsAsync(User user)
         {
-			var userRoles = _userService.GetRoles(user.UserName);
+			var userRoles = await _userService.GetRoles(user.UserName);
 			IList<Claim> claims = new List<Claim>();
 
 			userRoles.ToList().ForEach(x =>
@@ -72,7 +71,7 @@ namespace TicketManagementMVC.Infrastructure.Authentication
                 claims.Add(new Claim(ClaimTypes.Role, x));
             });
 			
-            return Task.FromResult(claims);
+            return claims;
         }
 
         public Task<string> GetPasswordHashAsync(User user)
@@ -80,11 +79,11 @@ namespace TicketManagementMVC.Infrastructure.Authentication
             return Task.FromResult(user.PasswordHash);
         }
 
-        public Task<bool> HasPasswordAsync(User user)
+        public async Task<bool> HasPasswordAsync(User user)
         {
-            var userModel = _userService.Get(user.Id);
+            var userModel = await _userService.Get(user.Id);
 
-            return Task.FromResult(userModel.PasswordHash != null);
+            return userModel.PasswordHash != null;
         }
 
         public Task RemoveClaimAsync(User user, Claim claim)
@@ -99,9 +98,9 @@ namespace TicketManagementMVC.Infrastructure.Authentication
             return Task.FromResult(0);
         }
 
-        public Task UpdateAsync(User user)
+        public async Task UpdateAsync(User user)
         {
-			var updateUser = _userService.Get(user.Id);
+			var updateUser = await _userService.Get(user.Id);
 
 			if(updateUser != null)
 			{
@@ -115,9 +114,7 @@ namespace TicketManagementMVC.Infrastructure.Authentication
 				updateUser.Timezone = user.Timezone;
 			}
 
-			 _userService.Update(updateUser);
-
-			return Task.FromResult(0);
+			 await _userService.Update(updateUser);
         }
 
 		public void Dispose()
@@ -133,7 +130,6 @@ namespace TicketManagementMVC.Infrastructure.Authentication
 
 			if(disposing)
 			{
-				handle.Dispose();
 			}
 
 			disposed = true;
@@ -193,13 +189,12 @@ namespace TicketManagementMVC.Infrastructure.Authentication
 			throw new NotImplementedException();
 		}
 
-		public Task<User> FindByEmailAsync(string email)
+		public async Task<User> FindByEmailAsync(string email)
 		{
-			var user = _userService.FindBy(x => x.Email.Equals(email)).FirstOrDefault();
+			var data = await _userService.FindBy(x => x.Email.Equals(email, StringComparison.Ordinal));
+			var user = data.FirstOrDefault();
 
-			var result = user != null ? mapToUser(user) : null;
-
-			return Task.FromResult(result);
+			return user != null ? mapToUser(user) : null;
 		}
 	}
 }

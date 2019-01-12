@@ -18,16 +18,8 @@ namespace TicketManagementMVC
     {
         public void Configuration(IAppBuilder app)
         {
-			this.Configure(app);
-
-			GlobalConfiguration.Configuration.UseAutofacActivator(HangFireContainer.GetContainer());
-			GlobalConfiguration.Configuration.UseSqlServerStorage(ConfigurationManager.ConnectionStrings["ConnectionString"].ConnectionString);
-			app.UseHangfireServer();
-			var options = new DashboardOptions
-			{
-				Authorization = new[] { new DashBoardAuthorizationFilter() }
-			};
-			app.UseHangfireDashboard("/hangfire", options);
+			this.ConfigureAuth(app);
+            this.ConfigureHangfire(app);
         }
 	}
 }

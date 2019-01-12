@@ -1,11 +1,12 @@
 ﻿using DataAccess.Entities;
 using DataAccess.Repositories;
+using System;
 using System.Data.Common;
-using System.Data.Entity;
+using System.Threading.Tasks;
 
 namespace DataAccess
 {
-	public interface IWorkUnit
+	public interface IWorkUnit : IDisposable
 	{
 		IRepository<OrderedSeat, int> OrderedSeatsRepository { get; }
 		IRepository<Cart, int> CartRepository { get; }
@@ -23,7 +24,7 @@ namespace DataAccess
 		IRepository<Seat, int> SeatRepository { get; }
 
 		void Save();
-		void SaveAsync();
+		Task<int> SaveAsync();
 		DbTransaction CreateTransaction();
 	}
 }

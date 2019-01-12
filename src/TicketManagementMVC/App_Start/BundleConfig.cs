@@ -10,19 +10,18 @@ namespace TicketManagementMVC.App_Start
 	{
 		public static void RegisterBundles(BundleCollection bundles)
 		{
-			bundles.Add(new ScriptBundle("~/bundles/eventmanager").
+			bundles.Add(new ScriptBundle("~/bundles/mainJs").
 				Include("~/Scripts/jquery-{version}.js").
+				Include("~/Scripts/project-js.min.js").
 				Include("~/Scripts/eventmanager.workflow.min.js"));
 
-			bundles.Add(new ScriptBundle("~/bundles/scripts").
-				Include("~/Scripts/bootstrap.min.js").
-				Include("~/Scripts/bootstrap-notify.min.js").
-				Include("~/Scripts/cart.workflow.min.js").
-				Include("~/Scripts/menu-navigation.min.js").
+			bundles.Add(new ScriptBundle("~/bundles/otherJs").
 				Include("~/Scripts/jquery.timepicker.min.js").
 				Include("~/Scripts/jquery-ui.min.js").
 				Include("~/Scripts/datepicker-ru.js").
-				Include("~/Scripts/datepicker-be.js"));
+				Include("~/Scripts/datepicker-be.js").
+				Include("~/Scripts/bootstrap.min.js").
+				Include("~/Scripts/bootstrap-notify.min.js"));
 
 			bundles.Add(new StyleBundle("~/content/css").
 				Include("~/Content/bootstrap.min.css").

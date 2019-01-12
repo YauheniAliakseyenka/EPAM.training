@@ -34,14 +34,9 @@
     <Reference Include="Autofac, Version=4.8.1.0, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
       <HintPath>..\packages\Autofac.4.8.1\lib\net45\Autofac.dll</HintPath>
     </Reference>
-    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
-      <HintPath>..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.dll</HintPath>
-    </Reference>
-    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
-      <HintPath>..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.SqlServer.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Transactions" />
     <Reference Include="System.Xml.Linq" />
@@ -52,7 +47,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BusinessModels\EmailEventArgs.cs" />
+    <Compile Include="BusinessModels\OrderEventArgs.cs" />
     <Compile Include="DTO\AreaDto.cs" />
     <Compile Include="DTO\CartDto.cs" />
     <Compile Include="DTO\EventSeatDto.cs" />
@@ -71,30 +66,28 @@
     <Compile Include="Exceptions\OrderException.cs" />
     <Compile Include="Exceptions\UserException.cs" />
     <Compile Include="Exceptions\VenueExceptions.cs" />
+    <Compile Include="DiContainer\TestsModule.cs" />
+    <Compile Include="DiContainer\WebModule.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\CustomTransactionScope.cs" />
     <Compile Include="Services\EventServices\EventAreaService.cs" />
     <Compile Include="Services\EventServices\EventSeatService.cs" />
     <Compile Include="Services\EventServices\EventService.cs" />
     <Compile Include="Services\EventServices\EventServicePartial.cs" />
-    <Compile Include="Services\IEmailService.cs" />
-    <Compile Include="Services\IEventService.cs" />
-    <Compile Include="Services\IOrderService.cs" />
-    <Compile Include="Services\IStoreService.cs" />
-    <Compile Include="Services\IUserService.cs" />
+    <Compile Include="Services\Interfaces\IEmailService.cs" />
+    <Compile Include="Services\Interfaces\IEventService.cs" />
+    <Compile Include="Services\Interfaces\IOrderService.cs" />
+    <Compile Include="Services\Interfaces\IStoreService.cs" />
+    <Compile Include="Services\Interfaces\IUserService.cs" />
     <Compile Include="Services\UserServices\CartService.cs" />
     <Compile Include="Services\UserServices\EmailService.cs" />
     <Compile Include="Services\UserServices\OrderService.cs" />
     <Compile Include="Services\UserServices\UserService.cs" />
-    <Compile Include="Services\UserServices\UserServicePartial.cs" />
     <Compile Include="Services\VenueServices\AreaService.cs" />
-    <Compile Include="Services\ICartService.cs" />
+    <Compile Include="Services\Interfaces\ICartService.cs" />
     <Compile Include="Services\VenueServices\LayoutService.cs" />
     <Compile Include="Services\VenueServices\SeatService.cs" />
     <Compile Include="Services\VenueServices\VenueService.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\DataAccess\DataAccess.csproj">
@@ -102,6 +95,8 @@
       <Name>DataAccess</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

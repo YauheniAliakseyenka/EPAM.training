@@ -6,12 +6,13 @@ using DataAccess;
 using DataAccess.Entities;
 using BusinessLogic.BusinessModels;
 using BusinessLogic.DTO;
+using System.Threading.Tasks;
 
 namespace BusinessLogic.Services.UserServices
 {
     internal class OrderService : IOrderService
     {
-		public event EventHandler<EmailEventArgs> OrderCompleted;
+		public event EventHandler<OrderEventArgs> Ordered;
 
 		private readonly IWorkUnit _context;
 		private ICartService _cartService;
@@ -24,24 +25,26 @@ namespace BusinessLogic.Services.UserServices
 			_userService = userService;
 		}
 
-		public void Create(string userId)
+		//returns seats's id which have been processed by this order
+		public async Task<IEnumerable<int>> Create(string userId)
 		{
-			var orderedSeats = _cartService.GetOrderedSeats(userId).ToList();
+            if (string.IsNullOrEmpty(userId))
+                throw new ArgumentNullException();
 
-			if (!orderedSeats.Any())
-				return;
+			var orderedSeats = await _cartService.GetOrderedSeats(userId);
+
+            if (!orderedSeats.Any())
+				return await Task.FromResult(new List<int>().AsEnumerable());
 
 			using (var transaction = _context.CreateTransaction())
             {
                 try
 				{
-					var balance = (from users in _context.UserRepository.GetList()
-								   where users.Id.Equals(userId)
-								   select users).FirstOrDefault().Amount;
+					var user = await _userService.Get(userId);
 					var orderTotal = orderedSeats.Sum(x => x.Area.Price);
 
-					if (balance < orderTotal)
-						throw new OrderException("Balance of user less than total amount of order");
+					if (user.Amount < orderTotal)
+						throw new OrderException("Balance of user is less than total amount of order");
 
 					var order = new Order
 					{
@@ -49,9 +52,9 @@ namespace BusinessLogic.Services.UserServices
 						UserId = userId
 					};
 					_context.OrderRepository.Create(order);
-					_context.Save();
+					await _context.SaveAsync();
 
-					orderedSeats.ForEach(x =>
+					orderedSeats.ToList().ForEach(x =>
 					{
 						_context.PurchasedSeatRepository.Create(new PurchasedSeat
 						{
@@ -60,15 +63,14 @@ namespace BusinessLogic.Services.UserServices
 							Price = x.Area.Price
 						});
 					});
-					_context.Save();
-					_cartService.DeleteUserCart(userId);
-
-					var user = _userService.FindBy(x => x.Id.Equals(userId)).FirstOrDefault();
+                    await _context.SaveAsync();
+					
 					user.Amount -= orderTotal;
-					_userService.Update(user);
+					await _userService.Update(user);
 
 					notify(user, order.Id);
 
+					await _cartService.DeleteUserCart(userId);
 					transaction.Commit();
 				}
 				catch(Exception)
@@ -77,11 +79,16 @@ namespace BusinessLogic.Services.UserServices
 					throw;
 				}
             }
+          			
+			return orderedSeats.Select(x => x.Seat.Id).ToList();
 		}
 
-		public IEnumerable<OrderModel> GetPurchaseHistory(string userId)
+		public Task<IEnumerable<OrderModel>> GetPurchaseHistory(string userId)
 		{
-			var result = new List<OrderModel>();
+            if (string.IsNullOrEmpty(userId))
+                throw new ArgumentNullException();
+
+            var result = new List<OrderModel>();
 			var data = (from orders in _context.OrderRepository.GetList()
 						join purchasedSeats in _context.PurchasedSeatRepository.GetList() on orders.Id equals purchasedSeats.OrderId
 						join seats in _context.EventSeatRepository.GetList() on purchasedSeats.SeatId equals seats.Id
@@ -89,11 +96,11 @@ namespace BusinessLogic.Services.UserServices
 						join events in _context.EventRepository.GetList() on eventAreas.EventId equals events.Id
 						join layouts in _context.LayoutRepository.GetList() on events.LayoutId equals layouts.Id
 						join venues in _context.VenueRepository.GetList() on layouts.VenueId equals venues.Id
-						where orders.UserId.Equals(userId)
+						where orders.UserId.Equals(userId, StringComparison.Ordinal)
 						select new { order = orders, seat = seats, area = eventAreas, currentEvent = events, layout = layouts, venue = venues }).ToList();
 
 			if (!data.Any())
-				return result;
+				return Task.FromResult(result.AsEnumerable());
 
 			data.ForEach(x =>
 			{
@@ -160,7 +167,7 @@ namespace BusinessLogic.Services.UserServices
 					order.PurchasedSeats.Add(seatRow);
 			});
 
-			return result;
+			return Task.FromResult(result.AsEnumerable());
 		}
 
 		private OrderDto mapToOrderDto(Order from)
@@ -173,15 +180,12 @@ namespace BusinessLogic.Services.UserServices
 			};
 		}
 
-		private void notify(UserDto user, int orderId)
+		private async void notify(UserDto user, int orderId)
 		{
-			var args = new EmailEventArgs
-			{
-				User = user,
-				OrderModel = GetPurchaseHistory(user.Id).FirstOrDefault(x=>x.Order.Id == orderId)
-			};
+			var puchases = await GetPurchaseHistory(user.Id);
+			var args = new OrderEventArgs(user, puchases.FirstOrDefault(x => x.Order.Id == orderId));
 
-			OrderCompleted?.Invoke(this, args);
+			Ordered?.Invoke(this, args);
 		}
 	}
 }

@@ -1,5 +1,5 @@
 ﻿<Project ToolsVersion="15.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.1\build\net46\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props" Condition="Exists('..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.1\build\net46\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" />
+  <Import Project="..\packages\Microsoft.Net.Compilers.2.10.0\build\Microsoft.Net.Compilers.props" Condition="Exists('..\packages\Microsoft.Net.Compilers.2.10.0\build\Microsoft.Net.Compilers.props')" />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.Default.props" Condition="Exists('$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.Default.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -77,9 +77,6 @@
     </Reference>
     <Reference Include="Microsoft.AspNet.Identity.Owin, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.AspNet.Identity.Owin.2.2.2\lib\net45\Microsoft.AspNet.Identity.Owin.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.CodeDom.Providers.DotNetCompilerPlatform, Version=2.0.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.1\lib\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Microsoft.Owin, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
@@ -162,10 +159,6 @@
     <Content Include="Scripts\bootstrap-notify.min.js" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
-    <Content Include="Scripts\cart.workflow.js" />
-    <Content Include="Scripts\cart.workflow.min.js">
-      <DependentUpon>cart.workflow.js</DependentUpon>
-    </Content>
     <Content Include="Scripts\datepicker-be.js" />
     <Content Include="Scripts\datepicker-ru.js" />
     <Content Include="Scripts\eventmanager.workflow.js" />
@@ -182,9 +175,9 @@
     <Content Include="Scripts\jquery-ui.min.js" />
     <Content Include="Scripts\jquery.timepicker.js" />
     <Content Include="Scripts\jquery.timepicker.min.js" />
-    <Content Include="Scripts\menu-navigation.js" />
-    <Content Include="Scripts\menu-navigation.min.js">
-      <DependentUpon>menu-navigation.js</DependentUpon>
+    <Content Include="Scripts\project-js.js" />
+    <Content Include="Scripts\project-js.min.js">
+      <DependentUpon>project-js.js</DependentUpon>
     </Content>
     <Content Include="Web.config" />
   </ItemGroup>
@@ -205,9 +198,13 @@
       <DependentUpon>InvalidValueError.resx</DependentUpon>
     </Compile>
     <Compile Include="App_Start\BundleConfig.cs" />
-    <Compile Include="Infrastructure\Attributes\DashBoardAuthorizationFilter.cs" />
+    <Compile Include="App_Start\Startup.Hangfire.cs" />
+    <Compile Include="Infrastructure\Helpers\CultureSetter.cs" />
+    <Compile Include="Infrastructure\Helpers\DispalyBalance.cs" />
+    <Compile Include="Infrastructure\Authentication\ApplicationUserManager.cs" />
+    <Compile Include="Infrastructure\BackgroundWorker\ISeatLocker.cs" />
+    <Compile Include="Infrastructure\BackgroundWorker\SeatLocker.cs" />
     <Compile Include="Models\Account\BalanceReplenishmentViewModel.cs" />
-    <Compile Include="Models\ErrorViewModel.cs" />
     <Compile Include="App_GlobalResources\Resource.be.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -219,7 +216,6 @@
       <DependentUpon>Resource.ru.resx</DependentUpon>
     </Compile>
     <Compile Include="App_Start\ContainerConfig.cs" />
-    <Compile Include="App_Start\HangFireContainer.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="Controllers\AccountController.cs" />
@@ -231,7 +227,6 @@
     <Compile Include="Infrastructure\Authentication\PasswordHasher.cs" />
     <Compile Include="Infrastructure\Authentication\User.cs" />
     <Compile Include="Infrastructure\Authentication\UserStore.cs" />
-    <Compile Include="Infrastructure\Attributes\CustomAuthorizeAttribute.cs" />
     <Compile Include="Infrastructure\Attributes\NoDirectAccessAttribute.cs" />
     <Compile Include="Infrastructure\Attributes\ValidIntegerAttribute.cs" />
     <Compile Include="Models\Event\EditEventViewModel.cs" />
@@ -285,7 +280,6 @@
     <Content Include="Views\Event\Edit.cshtml" />
     <Content Include="Views\Event\Partial\GetEventToEdit.cshtml" />
     <Content Include="Views\Event\Partial\EventArea.cshtml" />
-    <Content Include="Views\Shared\_Error.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -389,7 +383,7 @@
     <PropertyGroup>
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
-    <Error Condition="!Exists('..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.1\build\net46\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.1\build\net46\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props'))" />
+    <Error Condition="!Exists('..\packages\Microsoft.Net.Compilers.2.10.0\build\Microsoft.Net.Compilers.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Net.Compilers.2.10.0\build\Microsoft.Net.Compilers.props'))" />
   </Target>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

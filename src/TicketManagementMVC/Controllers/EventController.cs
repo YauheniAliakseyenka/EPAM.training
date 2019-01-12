@@ -2,49 +2,46 @@
 using BusinessLogic.Exceptions.EventExceptions;
 using BusinessLogic.Services;
 using Microsoft.AspNet.Identity;
-using Microsoft.Owin.Security;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Data.Entity.Infrastructure;
-using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Threading;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
-using TicketManagementMVC.Infrastructure;
+using TicketManagementMVC.Helpers;
+using TicketManagementMVC.Infrastructure.Attributes;
 using TicketManagementMVC.Infrastructure.Authentication;
 using TicketManagementMVC.Models.Event;
 
 namespace TicketManagementMVC.Controllers
 {
-    [CustomAuthorize(Roles = "User")]
+    [Authorize(Roles = "Event manager")]
     public class EventController : Controller
     {
-        private IAuthenticationManager _authManager => HttpContext.GetOwinContext().Authentication;
-        private UserManager<User, string> _userManager;
+        private ApplicationUserManager _userManager;
         private IStoreService<VenueDto, int> _venueService;
         private IStoreService<LayoutDto, int> _layoutService;
         private IEventService _eventService;
 		private IStoreService<EventAreaDto, int> _eventAreaService;
 		private IStoreService<EventSeatDto, int> _eventSeatService;
 
-		protected override void Initialize(RequestContext requestContext)
+		protected override async void Initialize(RequestContext requestContext)
 		{
 			base.Initialize(requestContext);
 			var identity = HttpContext.User.Identity;
 			if (identity.IsAuthenticated)
 			{
-				var user = _userManager.FindByName(identity.GetUserName());
-				Thread.CurrentThread.CurrentCulture = new CultureInfo(user.Culture);
-				Thread.CurrentThread.CurrentUICulture = new CultureInfo(user.Culture);
-				ViewData["Balance"] = string.Format("${0:N2}", user.Amount);
+				var user = await _userManager.FindByNameAsync(identity.GetUserName());
+				ViewData["Balance"] = DisplayBalance.Get(user.Amount);
 			}
 		}
 
         public EventController(IStoreService<VenueDto, int> venueService,
-            UserManager<User, string> userManager,
+			ApplicationUserManager userManager,
 			IStoreService<LayoutDto, int> layoutService,
             IEventService eventService,
 			IStoreService<EventAreaDto, int> eventAreaService,
@@ -58,15 +55,18 @@ namespace TicketManagementMVC.Controllers
 			_eventSeatService = eventSeatService;
         }
 
+        //GET: create new event view
         [HttpGet]
-        public ActionResult Create()
+        public async Task<ActionResult> Create()
         {
-			ViewBag.VenueList = _venueService.GetList();
+			ViewBag.VenueList = await _venueService.GetList();
 			return View(new EventViewModel());
         }
 
+		//POST: create new event
         [HttpPost]
-        public ActionResult Create(EventViewModel model, HttpPostedFileBase image)
+		[ValidateAntiForgeryToken]
+		public async Task<ActionResult> Create(EventViewModel model, HttpPostedFileBase image)
         {
             if (!ModelState.IsValid)
             {
@@ -83,8 +83,8 @@ namespace TicketManagementMVC.Controllers
                 string url;
                 string path;
 				url = getImageUrl(image, out path);
-				var s = model.Date.Date + model.Time.TimeOfDay;
-				_eventService.Create(new EventDto
+
+				await _eventService.Create(new EventDto
 				{
 					Date = model.Date.Date + model.Time.TimeOfDay,
 					Description = model.Description,
@@ -126,22 +126,26 @@ namespace TicketManagementMVC.Controllers
 			});
 		}
 
-        [HttpGet]
+        //get layouts by venue id
 		[NoDirectAccess]
-		public JsonResult GetLayouts(int venueId)
+		public async Task<ActionResult> GetLayouts(int venueId)
         {
-            return Json(new {
-                layouts = _layoutService.FindBy(x => x.VenueId == venueId).Select(x => new { Id = x.Id, Display = x.Description }).ToList()
+			var list = await _layoutService.FindBy(x => x.VenueId == venueId);
+
+			return Json(new {
+                layouts = list.Select(x => new { Id = x.Id, Display = x.Description }).ToList()
             }, JsonRequestBehavior.AllowGet);
         }
 
-        [HttpGet]
-		[NoDirectAccess]
-		public JsonResult GetEventsByVenue(int venueId)
+        //get events by venue id
+        [NoDirectAccess]
+		public async Task<ActionResult> GetEventsByVenue(int venueId)
         {
+			var list = await _eventService.GetEventManagerEvents(venueId, User.Identity.GetUserId());
+
 			return Json(new
 			{
-				events = _eventService.GetEventsByVenueIdForParticularEventManager(venueId, User.Identity.GetUserId()).Select(x => new
+				events = list.Select(x => new
 				{
 					Id = x.Id,
 					Display = x.Title + " (" + x.Date.ToShortDateString() + ", " + x.Date.ToShortTimeString() + ")"
@@ -149,13 +153,12 @@ namespace TicketManagementMVC.Controllers
 			}, JsonRequestBehavior.AllowGet);
         }
 
-        [HttpGet]
-		public ActionResult EditArea(int areaId, int eventId)
+		//GET: edit area view
+		[HttpGet]
+		public async Task<ActionResult> EditArea(int areaId, int eventId)
         {
-			var area = _eventService.GetEventStructure(eventId).Areas.Where(x => x.Id == areaId).FirstOrDefault();
-
-			if (area == null)
-				throw new NullReferenceException();
+			var data = await _eventService.GetEventInformation(eventId);
+			var area = data.Areas.Where(x => x.Id == areaId).FirstOrDefault();
 
 			var model = new EventAreaViewModel
 			{
@@ -172,8 +175,10 @@ namespace TicketManagementMVC.Controllers
 			return PartialView("~/Views/Event/Partial/EventArea.cshtml", model);
         }
 
+		//POST: edit area
 		[HttpPost]
-		public ActionResult EditArea(EventAreaViewModel model)
+		[ValidateAntiForgeryToken]
+		public async Task<ActionResult> EditArea(EventAreaViewModel model)
 		{
 			if (model.SeatList == null)
 			{
@@ -194,13 +199,13 @@ namespace TicketManagementMVC.Controllers
 			
             try
             {
-				var area = _eventAreaService.Get(model.Id);
+				var area = await _eventAreaService.Get(model.Id);
 				area.CoordX = model.CoordX;
 				area.CoordY = model.CoordY;
 				area.Description = model.Description;
 				area.Price = model.Price;
                 area.Seats = model.SeatList;
-				_eventAreaService.Update(area);
+				await _eventAreaService.Update(area);
 			}
 			catch (EventSeatException exception)
 			{
@@ -235,15 +240,19 @@ namespace TicketManagementMVC.Controllers
 			});
 		}
 
+        //POST: create new area
         [HttpPost]
-        public ActionResult CreateArea(EventAreaViewModel model)
+		[ValidateAntiForgeryToken]
+		public async Task<ActionResult> CreateArea(EventAreaViewModel model)
         {
 			if (model.SeatList == null)
+			{
 				return Json(new
 				{
 					success = false,
 					errors = new string[] { I18N.ResourceErrors.SeatListError }
 				});
+			}
 
 			if (!ModelState.IsValid)
                 return Json(new
@@ -264,7 +273,7 @@ namespace TicketManagementMVC.Controllers
                     Seats = model.SeatList,
                     EventId = model.EventId
                 };
-                _eventAreaService.Create(area);
+                await _eventAreaService.Create(area);
             }
 			catch(EventSeatException exception)
 			{
@@ -299,6 +308,7 @@ namespace TicketManagementMVC.Controllers
             });
         }
 
+        //GET: create new area view
         [HttpGet]
         public ActionResult CreateArea(int eventId)
         {
@@ -311,15 +321,18 @@ namespace TicketManagementMVC.Controllers
             });
         }
 
+		//GET: edit event view
         [HttpGet]
-        public ActionResult Edit()
+        public async Task<ActionResult> Edit()
         {
-            ViewBag.VenueList = _venueService.GetList();
+            ViewBag.VenueList = await _venueService.GetList();
             return View();
         }
 
+		//POST: edit event
 		[HttpPost]
-		public ActionResult Edit(EditEventViewModel model, HttpPostedFileBase image)
+		[ValidateAntiForgeryToken]
+		public async Task<ActionResult> Edit(EditEventViewModel model, HttpPostedFileBase image)
 		{
 			if (!ModelState.IsValid)
 			{
@@ -337,7 +350,7 @@ namespace TicketManagementMVC.Controllers
 				string newImageUrl = string.Empty;
 				string oldImageUrl = string.Empty;
 				
-				var update = _eventService.Get(model.Event.Id);
+				var update = await _eventService.Get(model.Event.Id);
 
 				if (image != null && image.ContentLength > 0)
 				{
@@ -350,7 +363,7 @@ namespace TicketManagementMVC.Controllers
 				update.ImageURL = string.IsNullOrEmpty(newImageUrl) ? update.ImageURL : newImageUrl;
 				update.LayoutId = model.Event.LayoutId;
 				update.Title = model.Event.Title;
-				_eventService.Update(update);
+				await _eventService.Update(update);
 
 				if (!string.IsNullOrEmpty(newImageUrl))
 				{
@@ -360,7 +373,7 @@ namespace TicketManagementMVC.Controllers
 					string fileName = Path.GetFileName(oldImageUrl);
 					if (!fileName.Equals("default", StringComparison.OrdinalIgnoreCase))
 					{
-						string fullPath = Server.MapPath("~/Content/images/uploads/" + fileName);
+						string fullPath = Server.MapPath(ConfigurationManager.AppSettings["Uploads"] + fileName);
 						System.IO.File.Delete(fullPath);
 					}
 				}
@@ -372,7 +385,7 @@ namespace TicketManagementMVC.Controllers
 				if (exception.Message.Equals("Invalid date", StringComparison.OrdinalIgnoreCase))
 					error = I18N.ResourceErrors.EventInvalidDateError;
 
-				if (exception.Message.Equals("Attempt of creating event with a date in the past", StringComparison.OrdinalIgnoreCase))
+				if (exception.Message.Equals("Attempt of updating event with a date in the past", StringComparison.OrdinalIgnoreCase))
 					error = I18N.ResourceErrors.PastDateError;
 
 				if (exception.Message.Equals("Not allowed to update layout. Event has locked seats", StringComparison.OrdinalIgnoreCase))
@@ -391,11 +404,11 @@ namespace TicketManagementMVC.Controllers
 			});
 		}
 
-		[HttpGet]
+        //get event by id to placeholder
 		[NoDirectAccess]
-		public ActionResult GetEventToEdit(int eventId)
+		public async Task<ActionResult> GetEventToEdit(int eventId)
         {
-            var data = _eventService.GetEventStructure(eventId);
+            var data = await _eventService.GetEventInformation(eventId);
 
 			var edit = new EventViewModel
 			{
@@ -408,7 +421,7 @@ namespace TicketManagementMVC.Controllers
 				Id = data.Event.Id
 			};
 
-			ViewBag.VenueList = _venueService.GetList();
+			ViewBag.VenueList = await _venueService.GetList();
 			return PartialView("~/Views/Event/Partial/GetEventToEdit.cshtml", new EditEventViewModel
             {
                 Event = edit,
@@ -416,12 +429,12 @@ namespace TicketManagementMVC.Controllers
             });
         }
 
-		[NoDirectAccess]
-		public ActionResult DeleteArea(int areaId)
+        [NoDirectAccess]
+		public async Task<ActionResult> DeleteArea(int areaId)
 		{
 			try
 			{
-				_eventAreaService.Delete(areaId);
+				await _eventAreaService.Delete(areaId);
 				return Json(new
 				{
 					success = true
@@ -438,11 +451,11 @@ namespace TicketManagementMVC.Controllers
 		}
 
 		[NoDirectAccess]
-		public ActionResult DeleteEvent(int eventId)
+		public async Task<ActionResult> DeleteEvent(int eventId)
 		{
 			try
 			{
-				_eventService.Delete(eventId);
+				await _eventService.Delete(eventId);
 			}
 			catch (EventException exception)
 			{
@@ -464,19 +477,21 @@ namespace TicketManagementMVC.Controllers
 			});
 		}
 
-		private string getImageUrl(HttpPostedFileBase image, out string path)
+        //get url of loaded image  and  path to save
+        private string getImageUrl(HttpPostedFileBase image, out string path)
 		{
+			var uploadsPath = ConfigurationManager.AppSettings["Uploads"];
 			string url;
 			if (image != null && image.ContentLength > 0)
 			{
 				var fileName = Path.GetFileName(image.FileName);
-				path = Path.Combine(Server.MapPath("~/Content/images/uploads"), fileName);
-				url = new Uri(Request.Url, Url.Content("~/Content/images/uploads/" + image.FileName)).ToString();
+				path = Path.Combine(Server.MapPath(uploadsPath), fileName);
+				url = new Uri(Request.Url, Url.Content(uploadsPath + image.FileName)).ToString();
 				return url;
 			}
 			else
 			{
-				url = new Uri(Request.Url, Url.Content("~/Content/Images/default.jpg")).ToString();
+				url = new Uri(Request.Url, Url.Content(ConfigurationManager.AppSettings["DefaultEventImage"])).ToString();
 				path = string.Empty;
 				return url;
 			}

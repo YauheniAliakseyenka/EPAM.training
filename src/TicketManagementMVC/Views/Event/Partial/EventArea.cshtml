@@ -36,8 +36,8 @@
         </div>
     </div>
     <div class="text-center">
-        <button type="button" class="btn btn-primary register-button col-lg-3" onclick="SaveArea('@ViewBag.Action')">@Resource.SaveAreaButton</button>
-        <button type="button" class="btn btn-primary back-button col-2" onclick="CloseEventAreaForm()">@Resource.BackButton</button>
+        <button type="button" class="btn btn-primary register-button" style="width:200px;" onclick="SaveArea('@ViewBag.Action')">@Resource.SaveAreaButton</button>
+        <button type="button" class="btn btn-primary back-button" style="width:100px;" onclick="CloseEventAreaForm()">@Resource.BackButton</button>
     </div>
     <div class="text-center text-success font-weight-bold text" style="font-size:30px;">@Resource.SuccessNotification</div>
 
@@ -56,37 +56,37 @@
         <tbody>
             @for (int i = 0; i < Model.SeatList.Count(); i++)
             {
-                <tr id="seatRow_@i">
+                <tr id="seatRow_@i"  style="line-height:10px;">
                     @Html.HiddenFor(x => Model.SeatList[i].Id)
                     @Html.HiddenFor(x => Model.SeatList[i].EventAreaId)
 
                     @if (Model.SeatList[i].State == 1)
                     {
-                        <th scope="row">
+                        <th scope="row" class="pt-1 pb-1">
                             @Html.TextBoxFor(x => Model.SeatList[i].Row, new { @class = "form-control",
                            autocomplete = "off", @readonly= "readonly"})
                         </th>
-                        <td >
+                        <td class="pt-1 pb-1">
                             @Html.TextBoxFor(x => Model.SeatList[i].Number, new { @class = "form-control",
                            autocomplete = "off", @readonly= "readonly"})
                         </td>
-                        <td>
+                        <td class="pt-1 pb-1">
                             @Html.TextBoxFor(x => Model.SeatList[i].State, new { @class = "form-control",
                            autocomplete = "off", @readonly= "readonly"})
                         </td>
                     }
                     else
                     {
-                        <th scope="row">
+                        <th scope="row" class="pt-1 pb-1">
                             @Html.TextBoxFor(x => Model.SeatList[i].Row, new { @class = "form-control", autocomplete = "off" })
                         </th>
-                        <td >
+                        <td class="pt-1 pb-1">
                             @Html.TextBoxFor(x => Model.SeatList[i].Number, new { @class = "form-control", autocomplete = "off" })
                         </td>
-                        <td>
+                        <td class="pt-1 pb-1">
                             @Html.TextBoxFor(x => Model.SeatList[i].State, new { @class = "form-control", autocomplete = "off", @readonly = "readonly" })
                         </td>
-                        <td>
+                        <td class="pt-1 pb-1">
                             <input type="button" value="X" style="width:45px;" onclick="DeleteSeat('@Model.SeatList[i].Id', this)" class="btn btn-primary" name="button" />
                         </td>
                     }

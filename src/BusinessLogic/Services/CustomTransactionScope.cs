@@ -16,7 +16,7 @@ namespace BusinessLogic.Services
 				IsolationLevel = IsolationLevel.ReadCommitted,
 				Timeout = TransactionManager.MaximumTimeout
 			};
-			return new TransactionScope(TransactionScopeOption.Required, transactionOptions);
+			return new TransactionScope(TransactionScopeOption.Required, transactionOptions, TransactionScopeAsyncFlowOption.Enabled);
 		}
 	}
 }

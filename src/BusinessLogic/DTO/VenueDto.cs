@@ -1,7 +1,5 @@
 ﻿using System;
-using DataAccess.Entities;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace BusinessLogic.DTO
 {
@@ -27,11 +25,10 @@ namespace BusinessLogic.DTO
 				return false;
 
 			if (Id == entity.Id &&
-				Name == entity.Name &&
+				Name.Equals(entity.Name, StringComparison.OrdinalIgnoreCase) &&
 				Description.Equals(entity.Description, StringComparison.OrdinalIgnoreCase) &&
 				Address.Equals(entity.Address, StringComparison.OrdinalIgnoreCase) &&
-				Phone.Equals(entity.Phone, StringComparison.OrdinalIgnoreCase) &&
-				LayoutList.SequenceEqual(entity.LayoutList))
+				Phone.Equals(entity.Phone, StringComparison.OrdinalIgnoreCase))
 				return true;
 
 			return false;

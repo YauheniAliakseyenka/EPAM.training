@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Threading.Tasks;
 
 namespace BusinessLogic.Services
 {
@@ -20,12 +21,12 @@ namespace BusinessLogic.Services
 			_layoutService = layoutService;
 		}
 
-		public void Create(VenueDto entity)
+		public async Task Create(VenueDto entity)
 		{
 			if (entity == null)
 				throw new ArgumentNullException();
 
-			if (IsNameNotUnique(entity.Name))
+			if (!IsNameUnique(entity, true))
 				throw new VenueException("Such venue already exists");
 
 			if(entity.LayoutList == null || !entity.LayoutList.Any())
@@ -35,43 +36,35 @@ namespace BusinessLogic.Services
 			using (var transaction = CustomTransactionScope.GetTransactionScope())
 			{
 				_context.VenueRepository.Create(venueAdd);
-				_context.Save();
+				await _context.SaveAsync();
 				entity.Id = venueAdd.Id;
 				foreach (var layout in entity.LayoutList)
 				{
 					layout.VenueId = venueAdd.Id;
-					_layoutService.Create(layout);
+					await _layoutService.Create(layout);
 				}
 				transaction.Complete();
 			}
 		}
 
-		public void Delete(int id)
+		public async Task Delete(int id)
 		{
 			_context.VenueRepository.Delete(id);
-			_context.Save();
+			await _context.SaveAsync();
 		}
 
-		public IEnumerable<VenueDto> FindBy(Expression<Func<VenueDto, bool>> expression)
+		public Task<IEnumerable<VenueDto>> FindBy(Expression<Func<VenueDto, bool>> expression)
 		{
 			var result = new List<VenueDto>();
 			Expression<Func<Venue, bool>> predicate = x => expression.Compile().Invoke(mapToVenueDto(x));
-			var list = _context.VenueRepository.FindBy(predicate).ToList();
+			var list = _context.VenueRepository.FindBy(predicate);
 
-			if (!list.Any())
-				return result;
-
-			list.ForEach(x =>
-			{
-				result.Add(mapToVenueDto(x));
-			});
-
-			return result;
+			return Task.FromResult(list.Select(x => mapToVenueDto(x)).AsEnumerable());
 		}
 
-		public VenueDto Get(int id)
+		public async Task<VenueDto> Get(int id)
 		{
-			var venue = _context.VenueRepository.Get(id);
+			var venue = await _context.VenueRepository.GetAsync(id);
 
 			if(venue == null)
 				return null;
@@ -79,38 +72,28 @@ namespace BusinessLogic.Services
 			return mapToVenueDto(venue);
 		}
 
-		public IEnumerable<VenueDto> GetList()
+		public async Task<IEnumerable<VenueDto>> GetList()
 		{
-			var temp = _context.VenueRepository.GetList();
+			var list = await _context.VenueRepository.GetListAsync();
 
-			if (temp == null)
-				return null;
-
-			var result = new List<VenueDto>();
-
-			temp.ToList().ForEach(x =>
-			{
-				result.Add(mapToVenueDto(x));
-			});
-
-			return result;
+			return list.Select(x => mapToVenueDto(x));
 		}
 
-        public void Update(VenueDto entity)
+        public async Task Update(VenueDto entity)
 		{
 			if (entity == null)
 				throw new ArgumentNullException();
 
-			if (IsNameNotUnique(entity.Name))
+			if (!IsNameUnique(entity, false))
 				throw new VenueException("Such venue already exists");
 
-			var update = _context.VenueRepository.Get(entity.Id);
+			var update = await _context.VenueRepository.GetAsync(entity.Id);
 			update.Name = entity.Name;
 			update.Phone = entity.Phone;
 			update.Description = entity.Description;
 			update.Address = entity.Address;
 			_context.VenueRepository.Update(update);
-			_context.Save();
+			await _context.SaveAsync();
 		}
 
 		private VenueDto mapToVenueDto(Venue from)
@@ -138,9 +121,11 @@ namespace BusinessLogic.Services
 			};
 		}
 
-		private bool IsNameNotUnique(string name)
+		private bool IsNameUnique(VenueDto entity, bool isCreating)
 		{
-			return _context.VenueRepository.FindBy(y => y.Name.Equals(name, StringComparison.OrdinalIgnoreCase)).Any();
+            return isCreating ?
+                !_context.VenueRepository.FindBy(y => y.Name.Equals(entity.Name, StringComparison.OrdinalIgnoreCase)).Any() :
+                !_context.VenueRepository.FindBy(y => y.Id != entity.Id && y.Name.Equals(entity.Name, StringComparison.OrdinalIgnoreCase)).Any();
 		}
 	}
 }

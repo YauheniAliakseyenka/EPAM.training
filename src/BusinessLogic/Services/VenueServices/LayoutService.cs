@@ -1,14 +1,12 @@
 ﻿using BusinessLogic.DTO;
-using BusinessLogic.Exceptions;
 using BusinessLogic.Exceptions.VenueExceptions;
 using DataAccess;
 using DataAccess.Entities;
-using DataAccess.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Transactions;
+using System.Threading.Tasks;
 
 namespace BusinessLogic.Services
 {
@@ -23,7 +21,7 @@ namespace BusinessLogic.Services
 			_areaService = areaService;
 		}
 
-		public void Create(LayoutDto entity)
+		public async Task Create(LayoutDto entity)
 		{
 			if (entity == null)
 				throw new ArgumentNullException();
@@ -31,7 +29,7 @@ namespace BusinessLogic.Services
 			if (entity.VenueId == 0)
 				throw new LayoutException("VenueID equals zero");
 
-			if (IsDescriptionNotUnique(entity.Description))
+			if (!IsDescriptionUnique(entity, true))
 				throw new LayoutException("Layout description isn't unique");
 
 			if (entity.AreaList == null || !entity.AreaList.Any())
@@ -41,43 +39,35 @@ namespace BusinessLogic.Services
 			using (var transaction = CustomTransactionScope.GetTransactionScope())
 			{
 				_context.LayoutRepository.Create(layoutAdd);
-				_context.Save();
+				await _context.SaveAsync();
 				entity.Id = layoutAdd.Id;
 				foreach (var area in entity.AreaList)
 				{
 					area.LayoutId = layoutAdd.Id;
-					_areaService.Create(area);
+					await _areaService.Create(area);
 				}
 				transaction.Complete();
 			}
 		}
 
-		public void Delete(int id)
+		public async Task Delete(int id)
 		{
 			_context.LayoutRepository.Delete(id);
-			_context.Save();
+			await _context.SaveAsync();
 		}
 
-		public IEnumerable<LayoutDto> FindBy(Expression<Func<LayoutDto, bool>> expression)
+		public Task<IEnumerable<LayoutDto>> FindBy(Expression<Func<LayoutDto, bool>> expression)
 		{
 			var result = new List<LayoutDto>();
-			Expression<Func<Layout, bool>> predicate = x => expression.Compile().Invoke(mapToLayoutDto(x));
-			var list = _context.LayoutRepository.FindBy(predicate).ToList();
+			Expression<Func<Layout, bool>> predicate =  x =>  expression.Compile().Invoke(mapToLayoutDto(x));
+			var list = _context.LayoutRepository.FindBy(predicate);
 
-			if (!list.Any())
-				return result;
-
-			list.ForEach(x =>
-			{
-				result.Add(mapToLayoutDto(x));
-			});
-
-			return result;
+			return Task.FromResult(list.Select(x => mapToLayoutDto(x)).AsEnumerable());
 		}
 
-		public LayoutDto Get(int id)
+		public async Task<LayoutDto> Get(int id)
 		{
-			var layout = _context.LayoutRepository.Get(id);
+			var layout = await _context.LayoutRepository.GetAsync(id);
 
 			if (layout == null)
 				return null;
@@ -85,24 +75,14 @@ namespace BusinessLogic.Services
 			return mapToLayoutDto(layout);
 		}
 
-		public  IEnumerable<LayoutDto> GetList()
+		public  async Task<IEnumerable<LayoutDto>> GetList()
 		{
-			var temp = _context.LayoutRepository.GetList();
+			var list = await _context.LayoutRepository.GetListAsync();
 
-			if (temp == null)
-				return null;
-
-			var result = new List<LayoutDto>();
-
-			temp.ToList().ForEach(x =>
-			{
-				result.Add(mapToLayoutDto(x));
-			});
-
-			return result;
+			return list.Select(x => mapToLayoutDto(x));
 		}
 
-		public void Update(LayoutDto entity)
+		public async Task Update(LayoutDto entity)
 		{
 			if (entity == null)
 				throw new ArgumentNullException();
@@ -110,14 +90,14 @@ namespace BusinessLogic.Services
 			if (entity.VenueId == 0)
 				throw new LayoutException("VenueId equals zero");
 
-			if (IsDescriptionNotUnique(entity.Description))
+			if (!IsDescriptionUnique(entity, false))
 				throw new LayoutException("Area description isn't unique");
 
-			var update = _context.LayoutRepository.Get(entity.Id);
+			var update = await _context.LayoutRepository.GetAsync(entity.Id);
 			update.VenueId = entity.VenueId;
 			update.Description = entity.Description;
 			_context.LayoutRepository.Update(update);
-			_context.Save();
+			await _context.SaveAsync();
 		}
 
 		private LayoutDto mapToLayoutDto(Layout from)
@@ -141,9 +121,13 @@ namespace BusinessLogic.Services
 			};
 		}
 
-		private bool IsDescriptionNotUnique(string description)
+		private bool IsDescriptionUnique(LayoutDto entity, bool isCreating)
 		{
-			return _context.LayoutRepository.FindBy(x => x.Description.Equals(description, StringComparison.OrdinalIgnoreCase)).Any();
+            return isCreating ?
+                !_context.LayoutRepository.FindBy(x => x.VenueId == entity.VenueId &&
+                x.Description.Equals(entity.Description, StringComparison.OrdinalIgnoreCase)).Any() :
+                !_context.LayoutRepository.FindBy(x => x.Id != entity.Id && (x.VenueId == entity.VenueId &&
+                x.Description.Equals(entity.Description, StringComparison.OrdinalIgnoreCase))).Any();
 		}
 	}
 }

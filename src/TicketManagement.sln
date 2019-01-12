@@ -9,15 +9,13 @@ Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "TicketManagement", "TicketM
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BusinessLogic.Services.Tests", "tests\BusinessLogic.Services.Tests\BusinessLogic.Services.Tests.csproj", "{7F58C1B0-5018-4ADE-BE42-1D60173FEA73}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BusinessLogic.Validation.Tests", "tests\BusinessLogic.Validation.Tests\BusinessLogic.Validation.Tests.csproj", "{D18C46DA-DA42-4E45-BA2E-A13A933D0198}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BusinessLogic", "BusinessLogic\BusinessLogic.csproj", "{08660A4A-F508-4F46-8E69-7F076CBA6390}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{E34365A7-9CB9-4672-8856-759F2488E10A}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TicketManagementMVC", "TicketManagementMVC\TicketManagementMVC.csproj", "{6BD157C2-F642-49C7-9200-AFB7855EDF7F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BusinessLogin.Unit.Tests", "tests\BusinessLogin.Unit.Tests\BusinessLogin.Unit.Tests.csproj", "{ABEE4855-9953-4C4D-BB06-D5DB29EFE5F9}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BusinessLogic.Tests.Unit", "tests\BusinessLogic.Tests.Unit\BusinessLogic.Tests.Unit.csproj", "{D46B90B4-4130-49E3-9175-B7C94F0BD3D9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,10 +37,6 @@ Global
 		{7F58C1B0-5018-4ADE-BE42-1D60173FEA73}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7F58C1B0-5018-4ADE-BE42-1D60173FEA73}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7F58C1B0-5018-4ADE-BE42-1D60173FEA73}.Release|Any CPU.Build.0 = Release|Any CPU
-		{D18C46DA-DA42-4E45-BA2E-A13A933D0198}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D18C46DA-DA42-4E45-BA2E-A13A933D0198}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D18C46DA-DA42-4E45-BA2E-A13A933D0198}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D18C46DA-DA42-4E45-BA2E-A13A933D0198}.Release|Any CPU.Build.0 = Release|Any CPU
 		{08660A4A-F508-4F46-8E69-7F076CBA6390}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{08660A4A-F508-4F46-8E69-7F076CBA6390}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{08660A4A-F508-4F46-8E69-7F076CBA6390}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -51,17 +45,17 @@ Global
 		{6BD157C2-F642-49C7-9200-AFB7855EDF7F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6BD157C2-F642-49C7-9200-AFB7855EDF7F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6BD157C2-F642-49C7-9200-AFB7855EDF7F}.Release|Any CPU.Build.0 = Release|Any CPU
-		{ABEE4855-9953-4C4D-BB06-D5DB29EFE5F9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{ABEE4855-9953-4C4D-BB06-D5DB29EFE5F9}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{ABEE4855-9953-4C4D-BB06-D5DB29EFE5F9}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{ABEE4855-9953-4C4D-BB06-D5DB29EFE5F9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D46B90B4-4130-49E3-9175-B7C94F0BD3D9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D46B90B4-4130-49E3-9175-B7C94F0BD3D9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D46B90B4-4130-49E3-9175-B7C94F0BD3D9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D46B90B4-4130-49E3-9175-B7C94F0BD3D9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{7F58C1B0-5018-4ADE-BE42-1D60173FEA73} = {E34365A7-9CB9-4672-8856-759F2488E10A}
-		{D18C46DA-DA42-4E45-BA2E-A13A933D0198} = {E34365A7-9CB9-4672-8856-759F2488E10A}
+		{D46B90B4-4130-49E3-9175-B7C94F0BD3D9} = {E34365A7-9CB9-4672-8856-759F2488E10A}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {EB02AA01-983D-417C-9069-2DD067674501}

@@ -3,12 +3,9 @@ using BusinessLogic.DTO;
 using BusinessLogic.Exceptions;
 using DataAccess;
 using DataAccess.Entities;
-using DataAccess.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace BusinessLogic.Services.UserServices
@@ -16,56 +13,65 @@ namespace BusinessLogic.Services.UserServices
 	internal class CartService : ICartService
 	{
 		private readonly IWorkUnit _context;
+		private readonly IStoreService<EventSeatDto,int> _eventSeatService;
 
-		public CartService(IWorkUnit context)
+		public CartService(IWorkUnit context, IStoreService<EventSeatDto, int> eventSeatService)
 		{
 			_context = context;
+			_eventSeatService = eventSeatService;
 		}
 
-		public void AddSeat(int seatId, string userId)
-		{
-			if (_context.EventSeatRepository.Get(seatId).State == 1)
-				throw new CartException("Seat is locked");
+        public async Task AddSeat(int seatId, string userId)
+        {
+            if (string.IsNullOrEmpty(userId))
+                throw new ArgumentNullException();
 
-			var cart = (from carts in _context.CartRepository.GetList()
-						where carts.UserId.Equals(userId)
-						select carts).FirstOrDefault();
+            if (seatId <= 0)
+                throw new CartException("SeadId is invalid");
 
-			using (var transaction = _context.CreateTransaction())
-			{
-				try
-				{
-					if (cart == null)
-					{
-						var newCart = new Cart
-						{
-							UserId = userId
-						};
-						_context.CartRepository.Create(newCart);
-						_context.Save();
-						cart = newCart;
-					}
+			var seat = await _eventSeatService.Get(seatId);
+			if (seat.State == 1)
+                throw new CartException("Seat is locked");
+
+			var cart = _context.CartRepository.FindBy(x => x.UserId.Equals(userId, StringComparison.Ordinal)).FirstOrDefault();
+
+            using (var transaction = _context.CreateTransaction())
+            {
+                try
+                {
+                    if (cart == null)
+                    {
+                        var newCart = new Cart
+                        {
+                            UserId = userId
+                        };
+                        _context.CartRepository.Create(newCart);
+						await _context.SaveAsync();
+                        cart = newCart;
+                    }
+					
 					_context.OrderedSeatsRepository.Create(new OrderedSeat
-					{
-						CartId = cart.Id,
-						SeatId = seatId
-					});
-					var updateSeat = _context.EventSeatRepository.Get(seatId);
-					updateSeat.State = 1;
-					_context.Save();
-					transaction.Commit();
-				}
-				catch
-				{
-					transaction.Rollback();
-					throw;
-				}
-			}
-		}
+                    {
+                        CartId = cart.Id,
+                        SeatId = seatId
+                    });
 
-		public IEnumerable<SeatModel> GetOrderedSeats(string userId)
+					seat.State = 1;
+					await _eventSeatService.Update(seat);
+					transaction.Commit();
+                }
+                catch
+                {
+                    transaction.Rollback();
+                    throw;
+                }
+            }
+        }
+
+		public Task<IEnumerable<SeatModel>> GetOrderedSeats(string userId)
 		{
 			var result = new List<SeatModel>();
+
 			var data = (from carts in _context.CartRepository.GetList()
 						join orderedSeats in _context.OrderedSeatsRepository.GetList() on carts.Id equals orderedSeats.CartId
 						join seats in _context.EventSeatRepository.GetList() on orderedSeats.SeatId equals seats.Id
@@ -73,11 +79,11 @@ namespace BusinessLogic.Services.UserServices
 						join events in _context.EventRepository.GetList() on areas.EventId equals events.Id
 						join layouts in _context.LayoutRepository.GetList() on events.LayoutId equals layouts.Id
 						join venues in _context.VenueRepository.GetList() on layouts.VenueId equals venues.Id
-						where carts.UserId == userId
+						where carts.UserId.Equals(userId,StringComparison.Ordinal)
 						select new { seat = seats, currentEvent = events, layout = layouts, area = areas, venue = venues }).ToList();
 
 			if (!data.Any())
-				return result;
+				return Task.FromResult(result.AsEnumerable());
 
 			data.ForEach(x =>
 			{
@@ -131,28 +137,42 @@ namespace BusinessLogic.Services.UserServices
 				});
 			});
 
-			return result;
+			return Task.FromResult(result.AsEnumerable());
 		}
 
-		public void DeleteUserCart(string userId)
+		public async Task DeleteUserCart(string userId)
 		{
-			_context.CartRepository.DeleteBy(x => x.UserId.Equals(userId));
-			_context.Save();
+            if (string.IsNullOrEmpty(userId))
+                throw new ArgumentNullException();
+
+			if (!isCartExist(userId))
+				throw new CartException("Cart for this user does not exists");
+
+            _context.CartRepository.DeleteBy(x => x.UserId.Equals(userId));
+			await _context.SaveAsync();
 		}
 
-		public void UnlockSeat(int seatId)
+		public async Task DeleteSeat(int seatId)
 		{
-			var delete = (from orderedSeats in _context.OrderedSeatsRepository.GetList()
-						  where orderedSeats.SeatId == seatId
-						  select orderedSeats).FirstOrDefault();
+            if (seatId <= 0)
+                throw new CartException("SeadId is invalid");
 
-			if (delete == null)
+			var update = await _eventSeatService.Get(seatId);
+
+			if (update == null)
 				return;
 
-			_context.OrderedSeatsRepository.Delete(delete.SeatId);
-			var updateEventSeat = _context.EventSeatRepository.Get(seatId);
-			updateEventSeat.State = 0;
-			_context.Save();
+			_context.OrderedSeatsRepository.Delete(update.Id);
+			update.State = 0;
+			await _eventSeatService.Update(update);
+			await _context.SaveAsync();
+		}
+
+		private bool isCartExist(string userId)
+		{
+			return (from carts in _context.CartRepository.GetList()
+					where carts.UserId.Equals(userId, StringComparison.Ordinal)
+					select carts).Any();
 		}
 	}
 }

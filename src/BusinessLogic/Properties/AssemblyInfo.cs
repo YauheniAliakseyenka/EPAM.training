@@ -13,9 +13,8 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyCopyright("Copyright ©  2018")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
-[assembly: InternalsVisibleTo("BusinessLogic.Validation.Tests")]
 [assembly: InternalsVisibleTo("BusinessLogic.Services.Tests")]
-[assembly: InternalsVisibleTo("BusinessLogin.Unit.Tests")]
+[assembly: InternalsVisibleTo("BusinessLogic.Tests.Unit")]
 [assembly: InternalsVisibleTo("TicketManagementMVC")]
 
 // Setting ComVisible to false makes the types in this assembly not visible

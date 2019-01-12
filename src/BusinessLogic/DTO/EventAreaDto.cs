@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace BusinessLogic.DTO
 {
@@ -33,8 +32,7 @@ namespace BusinessLogic.DTO
 				CoordX == entity.CoordX &&
 				CoordY == entity.CoordY &&
 				Price == entity.Price &&
-				AreaDefaultId == entity.AreaDefaultId &&
-				Seats.SequenceEqual(entity.Seats))
+				AreaDefaultId == entity.AreaDefaultId)
 				return true;
 
 			return false;

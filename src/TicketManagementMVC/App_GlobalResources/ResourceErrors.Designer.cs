@@ -160,6 +160,15 @@ namespace I18N {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to You have no ordered seats. It might lock&apos;s time&apos;s up.
+        /// </summary>
+        public static string OrderedSeatError {
+            get {
+                return ResourceManager.GetString("OrderedSeatError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The balance is less than order amount.
         /// </summary>
         public static string OrderError {
@@ -171,9 +180,9 @@ namespace I18N {
         /// <summary>
         ///   Looks up a localized string similar to Password must has at least 10 characters.
         /// </summary>
-        public static string PassworkdRangeError {
+        public static string PasswordRangeError {
             get {
-                return ResourceManager.GetString("PassworkdRangeError", resourceCulture);
+                return ResourceManager.GetString("PasswordRangeError", resourceCulture);
             }
         }
         

@@ -121,7 +121,7 @@
     <value>Добавить</value>
   </data>
   <data name="AmounLabel" xml:space="preserve">
-    <value>Сумма</value>
+    <value>Сумма, USD</value>
   </data>
   <data name="AreaListLabel" xml:space="preserve">
     <value>Список зон</value>
@@ -219,10 +219,10 @@
     <value>Имя</value>
   </data>
   <data name="HomeMenu" xml:space="preserve">
-    <value>Домашняя страница</value>
+    <value>Главная страница</value>
   </data>
   <data name="HomePageTitle" xml:space="preserve">
-    <value>Домашняя страница</value>
+    <value>Главная страница</value>
   </data>
   <data name="Layout" xml:space="preserve">
     <value>Выберите зал</value>
@@ -258,7 +258,7 @@
     <value>Пароль</value>
   </data>
   <data name="Price" xml:space="preserve">
-    <value>Цена</value>
+    <value>Цена, USD</value>
   </data>
   <data name="PurchaseHistory" xml:space="preserve">
     <value>История покупок</value>
@@ -333,7 +333,7 @@
     <value>фыв</value>
   </data>
   <data name="PurchasedSeatCounter" xml:space="preserve">
-    <value>Куплено/заблокировано мест</value>
+    <value>Заблокировано</value>
   </data>
   <data name="Scene" xml:space="preserve">
     <value>Сцена</value>
@@ -355,5 +355,20 @@
   </data>
   <data name="Total" xml:space="preserve">
     <value>Всего</value>
+  </data>
+  <data name="OrderTitle" xml:space="preserve">
+    <value>Заказ</value>
+  </data>
+  <data name="EventListTitle" xml:space="preserve">
+    <value>Список событий</value>
+  </data>
+  <data name="None" xml:space="preserve">
+    <value>Выберете фильтр</value>
+  </data>
+  <data name="Clear" xml:space="preserve">
+    <value>Очистить</value>
+  </data>
+  <data name="Search" xml:space="preserve">
+    <value>Найти</value>
   </data>
 </root>

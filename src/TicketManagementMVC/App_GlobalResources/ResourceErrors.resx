@@ -150,10 +150,13 @@
   <data name="NumericError" xml:space="preserve">
     <value>For field {0} only characters are allowed</value>
   </data>
+  <data name="OrderedSeatError" xml:space="preserve">
+    <value>You have no ordered seats. It might lock's time's up</value>
+  </data>
   <data name="OrderError" xml:space="preserve">
     <value>The balance is less than order amount</value>
   </data>
-  <data name="PassworkdRangeError" xml:space="preserve">
+  <data name="PasswordRangeError" xml:space="preserve">
     <value>Password must has at least 10 characters</value>
   </data>
   <data name="PastDateError" xml:space="preserve">

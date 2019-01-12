@@ -1,18 +1,14 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
 using System.Data;
 using System.Data.Entity;
-using System.Data.SqlClient;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace DataAccess.Repositories
 {
-	internal class Repository<T, Tkey> : IRepository<T, Tkey> where T : class, new()
+	internal class Repository<T,  Tkey> : IRepository<T, Tkey> where T : class, new()
 	{
         private DbSet<T> _dbSet;
 		private DataContext _context;
@@ -57,6 +53,16 @@ namespace DataAccess.Repositories
 		public void DeleteBy(Expression<Func<T, bool>> expression)
 		{
 			_dbSet.RemoveRange(_dbSet.Where(expression.Compile()));
+		}
+
+		public async Task<T> GetAsync(Tkey id)
+		{
+			return await _dbSet.FindAsync(id);
+		}
+
+		public async Task<IEnumerable<T>> GetListAsync()
+		{
+			return await _dbSet.ToListAsync();
 		}
 	}
 }

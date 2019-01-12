@@ -29,8 +29,7 @@ namespace BusinessLogic.DTO
 				LayoutId == entity.LayoutId &&
 				Description.Equals(entity.Description, StringComparison.OrdinalIgnoreCase) &&
 				CoordX == entity.CoordX &&
-				CoordY == entity.CoordY &&
-				SeatList.SequenceEqual(entity.SeatList))
+				CoordY == entity.CoordY)
 				return true;
 
 			return false;

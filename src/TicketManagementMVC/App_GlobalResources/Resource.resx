@@ -121,7 +121,7 @@
     <value>Add</value>
   </data>
   <data name="AmounLabel" xml:space="preserve">
-    <value>Amount</value>
+    <value>Amount, USD</value>
   </data>
   <data name="AreaListLabel" xml:space="preserve">
     <value>Area list</value>
@@ -258,7 +258,7 @@
     <value>Password</value>
   </data>
   <data name="Price" xml:space="preserve">
-    <value>Price</value>
+    <value>Price, USD</value>
   </data>
   <data name="PurchaseHistory" xml:space="preserve">
     <value>Purchase history</value>
@@ -333,7 +333,7 @@
     <value>Edit area</value>
   </data>
   <data name="PurchasedSeatCounter" xml:space="preserve">
-    <value>Purchased/locked seats</value>
+    <value>Locked</value>
   </data>
   <data name="Scene" xml:space="preserve">
     <value>Scene</value>
@@ -352,5 +352,20 @@
   </data>
   <data name="Total" xml:space="preserve">
     <value>Total</value>
+  </data>
+  <data name="OrderTitle" xml:space="preserve">
+    <value>Order</value>
+  </data>
+  <data name="Clear" xml:space="preserve">
+    <value>Clear</value>
+  </data>
+  <data name="EventListTitle" xml:space="preserve">
+    <value>Event list</value>
+  </data>
+  <data name="None" xml:space="preserve">
+    <value>Select filter</value>
+  </data>
+  <data name="Search" xml:space="preserve">
+    <value>Search</value>
   </data>
 </root>

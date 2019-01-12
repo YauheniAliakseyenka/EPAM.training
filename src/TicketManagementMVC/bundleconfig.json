@@ -28,5 +28,17 @@
     "inputFiles": [
       "Content/Site.css"
     ]
+  },
+  {
+    "outputFileName": "Scripts/filter-event-list.min.js",
+    "inputFiles": [
+      "Scripts/filter-event-list.js"
+    ]
+  },
+  {
+    "outputFileName": "Scripts/project-js.min.js",
+    "inputFiles": [
+      "Scripts/project-js.js"
+    ]
   }
 ]

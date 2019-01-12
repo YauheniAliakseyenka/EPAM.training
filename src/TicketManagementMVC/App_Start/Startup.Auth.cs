@@ -10,7 +10,7 @@ namespace TicketManagementMVC
 {
 	internal partial class Startup
     {
-        public void Configure(IAppBuilder app)
+        public void ConfigureAuth(IAppBuilder app)
         {
             app.UseCookieAuthentication(new CookieAuthenticationOptions
             {

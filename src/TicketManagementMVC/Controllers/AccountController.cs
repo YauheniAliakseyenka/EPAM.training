@@ -1,21 +1,19 @@
-﻿using BusinessLogic;
-using BusinessLogic.Exceptions;
+﻿using BusinessLogic.Exceptions;
 using BusinessLogic.Services;
 using Hangfire;
 using Microsoft.AspNet.Identity;
 using Microsoft.Owin.Security;
 using System;
 using System.Collections.Generic;
-using System.Configuration;
-using System.Globalization;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
-using TicketManagementMVC.Infrastructure;
+using TicketManagementMVC.Helpers;
+using TicketManagementMVC.Infrastructure.Attributes;
 using TicketManagementMVC.Infrastructure.Authentication;
+using TicketManagementMVC.Infrastructure.BackgroundWorker;
 using TicketManagementMVC.Models;
 
 namespace TicketManagementMVC.Controllers
@@ -23,40 +21,35 @@ namespace TicketManagementMVC.Controllers
 	public class AccountController : Controller
     {
 		private IAuthenticationManager _authManager => HttpContext.GetOwinContext().Authentication;
-		private UserManager<User, string> _userManager;
+		private ApplicationUserManager _userManager;
 		private ICartService _cartService;
 		private IOrderService _orderService;
 		private IEmailService _emailService;
+		private ISeatLocker _seatLocker;
 
-		protected override void Initialize(RequestContext requestContext)
+		protected override async void Initialize(RequestContext requestContext)
 		{
 			base.Initialize(requestContext);
 			var identity = HttpContext.User.Identity;
 			if (identity.IsAuthenticated)
 			{
-				var user = _userManager.FindByName(identity.GetUserName());
-				Thread.CurrentThread.CurrentCulture = new CultureInfo(user.Culture);
-				Thread.CurrentThread.CurrentUICulture = Thread.CurrentThread.CurrentCulture;
-				ViewData["Balance"] = string.Format("${0:N2}", user.Amount);
+				var user = await _userManager.FindByNameAsync(identity.GetUserName());
+				ViewData["Balance"] = DisplayBalance.Get(user.Amount);
 			}
 		}
 
-		public AccountController(UserManager<User, string> userManager, ICartService cartService,  
-			IOrderService orderService, IEmailService emailService)
+		public AccountController(ApplicationUserManager userManager, ICartService cartService,  
+			IOrderService orderService, IEmailService emailService, ISeatLocker seatLocker)
 		{
 			_userManager = userManager;
 			_cartService = cartService;
 			_orderService = orderService;
 			_emailService = emailService;
-
-			_userManager.UserValidator = new UserValidator<User>(_userManager)
-			{
-				AllowOnlyAlphanumericUserNames = false,
-				RequireUniqueEmail = true
-			};
+			_seatLocker = seatLocker;
 		}
-		
-		[HttpGet]
+
+        //GET: registration view
+        [HttpGet]
 		[AllowAnonymous]
 		public ActionResult Registration()
 		{
@@ -66,18 +59,11 @@ namespace TicketManagementMVC.Controllers
 			return View(new RegistrationViewModel());
 		}
 
-		[HttpGet]
-		[AllowAnonymous]
-		public ActionResult Login()
-		{
-			if (User.Identity.IsAuthenticated)
-				return RedirectToAction("Index", "Home");
-
-			return View(new LoginViewModel());
-		}
-
-		[HttpPost]
-		public async Task<ActionResult> Login(LoginViewModel model)
+        //POST: login
+        [HttpPost]
+        [AllowAnonymous]
+		[ValidateAntiForgeryToken]
+        public async Task<ActionResult> Login(LoginViewModel model)
 		{
 			if(string.IsNullOrEmpty(model.UserName) || string.IsNullOrEmpty(model.Password))
 			{
@@ -106,6 +92,7 @@ namespace TicketManagementMVC.Controllers
 			});
 		}
 
+        //create identity to login
 		private async Task<ModelStateDictionary> SignIn(string userName, string password)
 		{
 			var user = await _userManager.FindAsync(userName, password);
@@ -116,12 +103,13 @@ namespace TicketManagementMVC.Controllers
 			}
 
 			var identity = await _userManager.CreateIdentityAsync(user, DefaultAuthenticationTypes.ApplicationCookie);
+			CultureSetter.Set(user.Culture, this);
 			_authManager.SignOut();
 			_authManager.SignIn(identity);
 			return ModelState;
 		}
 
-		[CustomAuthorize]
+		[Authorize]
 		public ActionResult Logout()
 		{
 			_authManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie);
@@ -129,7 +117,10 @@ namespace TicketManagementMVC.Controllers
 			return RedirectToAction("Index", "Home");
 		}
 
-		[HttpPost]
+        //POST: registration
+        [HttpPost]
+        [AllowAnonymous]
+		[ValidateAntiForgeryToken]
 		public async Task<ActionResult> Registration(RegistrationViewModel model)
 		{
 			if (!ModelState.IsValid)
@@ -147,9 +138,8 @@ namespace TicketManagementMVC.Controllers
 				Firstname = model.Firstname,
 				Timezone = model.SelectedTimezone
 			};
-
-
-			var insert = _userManager.Create(user, model.Password);
+			
+			var insert = await _userManager.CreateAsync(user, model.Password);
 
 			if (insert.Errors.Any())
 			{
@@ -173,46 +163,36 @@ namespace TicketManagementMVC.Controllers
 			return RedirectToAction("Index", "Home");
 		}
 
-		[CustomAuthorize]
-		public ActionResult Cart()
+        //GET: cart view
+        [Authorize]
+		[HttpGet]
+		public async Task<ActionResult> Cart()
 		{
-			if (!User.Identity.IsAuthenticated)
-				return RedirectToAction("Index", "Home");
-
-			return View(_cartService.GetOrderedSeats(User.Identity.GetUserId()));
-		}
-		
-		[CustomAuthorize]
-		[NoDirectAccess]
-		public void DeleteFromCart(int seatId)
-		{
-			RecurringJob.Trigger("unlockSeatId" + seatId);
+			return View(await _cartService.GetOrderedSeats(User.Identity.GetUserId()));
 		}
 
-		[CustomAuthorize]
-		[HttpPost]
-		public ActionResult CompleteOrder()
+        //seat's deleting from cart 
+        [NoDirectAccess]
+		public async Task DeleteFromCart(int seatId)
+		{
+			await _seatLocker.UnlockSeat(seatId);
+		}
+
+        //seat's adding to cart 
+        [NoDirectAccess]
+		public async Task<ActionResult> AddSeatToCart(int seatId)
 		{
 			try
 			{
-				var seatIds = _cartService.GetOrderedSeats(User.Identity.GetUserId()).
-				Select(x => x.Seat).
-				Select(x => x.Id).ToList();
-
-				_orderService.OrderCompleted += _emailService.Send;
-				_orderService.Create(User.Identity.GetUserId());
-
-				seatIds.ForEach(x =>
-				{
-					RecurringJob.RemoveIfExists("unlockSeatId" + x);
-				});
+				await _seatLocker.LockSeat(seatId, User.Identity.GetUserId());
+				
 			}
-			catch (OrderException exception)
+			catch (CartException exception)
 			{
-				string error = exception.Message;
+				string error = string.Empty;
 
-				if (exception.Message.Equals("Balance of user less than total amount of order", StringComparison.OrdinalIgnoreCase))
-					error = I18N.ResourceErrors.OrderError;
+				if (exception.Message.Equals("Seat is locked", StringComparison.OrdinalIgnoreCase))
+					error = I18N.ResourceErrors.SeatLocked;
 
 				return Json(new
 				{
@@ -220,29 +200,70 @@ namespace TicketManagementMVC.Controllers
 					error
 				});
 			}
-			
+
+			return Json(new
+			{
+				success = true,
+				message = I18N.Resource.AddedToCartNotify
+			});
+		}
+
+        //complete order
+		[Authorize]
+		public async Task<ActionResult> Order()
+		{
+			List<int> seatIdList;
+			try
+			{
+				_orderService.Ordered += _emailService.Send;
+
+				var result = await _orderService.Create(User.Identity.GetUserId());
+				seatIdList = result.ToList();				
+			}
+			catch (OrderException exception)
+			{
+				string error = exception.Message;
+
+				if (exception.Message.Equals("Balance of user is less than total amount of order", StringComparison.OrdinalIgnoreCase))
+					error = I18N.ResourceErrors.OrderError;
+
+				if (exception.Message.Equals("User has no ordered seats", StringComparison.OrdinalIgnoreCase))
+					error = I18N.ResourceErrors.OrderedSeatError;
+
+				return Json(new
+				{
+					success = false,
+					error
+				});
+			}
+
+			seatIdList.ForEach(x =>
+			{
+				RecurringJob.RemoveIfExists("unlockSeatId" + x);
+			});
+
 			return Json(new
 			{
 				success = true
 			});
 		}
 
+        //GET: purchase history view
 		[HttpGet]
-		[CustomAuthorize]
-		public ActionResult PurchaseHistory()
+		[Authorize]
+		public async Task<ActionResult> PurchaseHistory()
 		{
-			if (!User.Identity.IsAuthenticated)
-				return RedirectToAction("Index", "Home");
+			var model = await _orderService.GetPurchaseHistory(User.Identity.GetUserId());
 
-			return View(_orderService.GetPurchaseHistory(User.Identity.GetUserId()).ToList());
+			return View(model);
 		}
 
-		[HttpGet]
-		[CustomAuthorize]
+        //GET: user profile view
+        [HttpGet]
 		public async Task<ActionResult> UserProfile()
 		{
 			if (!User.Identity.IsAuthenticated)
-				return RedirectToAction("Index", "Home");
+				return RedirectToAction("Registration", "Account");
 
 			var user = await _userManager.FindByNameAsync(User.Identity.GetUserName());
 
@@ -256,13 +277,12 @@ namespace TicketManagementMVC.Controllers
 			});
 		}
 
-		[HttpPost]
-		[CustomAuthorize]
+        //POST: user profile's saving
+        [HttpPost]
+		[Authorize]
+		[ValidateAntiForgeryToken]
 		public async Task<ActionResult> UserProfile(UserProfileViewModel model)
 		{
-			if (!User.Identity.IsAuthenticated)
-				return RedirectToAction("Registration", "Account");
-
 			var user = await _userManager.FindByNameAsync(User.Identity.GetUserName());
 
 			if (!string.IsNullOrEmpty(model.Password))
@@ -300,20 +320,23 @@ namespace TicketManagementMVC.Controllers
 				});
 				return View();
 			}
-
-
+			CultureSetter.Set(user.Culture, this);
+			
 			return RedirectToAction("Index", "Home");
 		}
 
-		[HttpGet]
-		[CustomAuthorize]
+        //GET: replenishment of balance view
+        [HttpGet]
+		[Authorize]
 		public ActionResult BalanceReplenishment()
 		{
 			return View(new BalanceReplenishmentViewModel());
 		}
 
-		[HttpPost]
-		[CustomAuthorize]
+        //GET: replenishment of balance
+        [HttpPost]
+		[Authorize]
+		[ValidateAntiForgeryToken]
 		public async Task<ActionResult> BalanceReplenishment(BalanceReplenishmentViewModel model)
 		{
             if (!ModelState.IsValid)

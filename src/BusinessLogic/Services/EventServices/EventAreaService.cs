@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Threading.Tasks;
 
 namespace BusinessLogic.Services.EventServices
 {
@@ -20,12 +21,12 @@ namespace BusinessLogic.Services.EventServices
             _seatService = seatService;
 		}
 
-		public void Create(EventAreaDto entity)
+		public async Task Create(EventAreaDto entity)
 		{
 			if (entity == null)
 				throw new ArgumentNullException();
 
-			if (entity.EventId == 0)
+			if (entity.EventId <= 0)
 				throw new EventAreaException("EventId equals zero");
 
 			if (!isDescriptionUnique(entity, true))
@@ -38,11 +39,11 @@ namespace BusinessLogic.Services.EventServices
 			{
 				var add = mapToEventArea(entity);
 				_context.EventAreaRepository.Create(add);
-				_context.Save();
+				await _context.SaveAsync();
 				foreach (var seat in entity.Seats)
 				{
 					seat.EventAreaId = add.Id;
-					_seatService.Create(seat);
+					await _seatService.Create(seat);
 				}					
 
 				entity.Id = add.Id;
@@ -50,38 +51,29 @@ namespace BusinessLogic.Services.EventServices
 			}
 		}
 
-		public void Delete(int id)
+		public async Task Delete(int id)
 		{
 			if (hasLockedSeats(id))
 				throw new EventAreaException("Not allowed to delete. Area has locked seat");
 
 			_context.EventAreaRepository.Delete(id);
-			_context.Save();
+			await _context.SaveAsync();
 		}
 
-		public IEnumerable<EventAreaDto> FindBy(Expression<Func<EventAreaDto, bool>> expression)
+		public Task<IEnumerable<EventAreaDto>> FindBy(Expression<Func<EventAreaDto, bool>> expression)
 		{
-			var result = new List<EventAreaDto>();
-
 			Expression<Func<EventArea, bool>> predicate = x => expression.Compile().Invoke(mapToEventAreaDto(x));
-			var list = _context.EventAreaRepository.FindBy(predicate);
+			var list =  _context.EventAreaRepository.FindBy(predicate);
 
-			if (!list.Any())
-				return result;
-
-			foreach(var item in list)
-			{
-				var entity = mapToEventAreaDto(item);
-				result.Add(entity);
-			}
+			var result = list.Select(x => mapToEventAreaDto(x)).ToList();
 			result.Sort();
 
-			return result;
+			return Task.FromResult(result.AsEnumerable());
 		}
 
-		public EventAreaDto Get(int id)
+		public async Task<EventAreaDto> Get(int id)
 		{
-			var area = _context.EventAreaRepository.Get(id);
+            var area = await _context.EventAreaRepository.GetAsync(id);
 
 			if (area == null)
 				return null;
@@ -89,23 +81,14 @@ namespace BusinessLogic.Services.EventServices
 			return mapToEventAreaDto(area);
 		}
 
-		public IEnumerable<EventAreaDto> GetList()
+		public async Task<IEnumerable<EventAreaDto>> GetList()
 		{
-			var tempAreaList = _context.EventAreaRepository.GetList();
+			var tempAreaList = await _context.EventAreaRepository.GetListAsync();
 
-			if (tempAreaList == null)
-				return null;
-
-			var result = new List<EventAreaDto>();
-			tempAreaList.ToList().ForEach(x =>
-			{
-				result.Add(mapToEventAreaDto(x));
-			});
-
-			return result;
+			return tempAreaList.Select(x=>mapToEventAreaDto(x));
 		}
 
-		public void Update(EventAreaDto entity)
+		public async Task Update(EventAreaDto entity)
 		{
 			if (entity == null)
 				throw new ArgumentNullException();
@@ -113,37 +96,36 @@ namespace BusinessLogic.Services.EventServices
 			if (entity.EventId == 0)
 				throw new EventAreaException("EventId equals zero");
 
-            if(!entity.Seats.Any())
-                throw new EventAreaException("Invalid state of event area. Seat list is empty");
-
             if (!isDescriptionUnique(entity, false))
-				throw new EventAreaException("Area description isn't unique");
+                throw new EventAreaException("Area description isn't unique");
+
+            if (!entity.Seats.Any())
+                throw new EventAreaException("Invalid state of event area. Seat list is empty");           
 
             using (var transaction = CustomTransactionScope.GetTransactionScope())
             {
-				var update = _context.EventAreaRepository.Get(entity.Id);
+				var update = await _context.EventAreaRepository.GetAsync(entity.Id);
 				update.Price = entity.Price;
 				update.Description = entity.Description;
 				update.CoordY = entity.CoordY;
 				update.CoordX = entity.CoordX;
 				_context.EventAreaRepository.Update(update);
-                _context.Save();
+                await _context.SaveAsync();
 
 				//find seats which were deleted
-				var differences = _seatService.FindBy(x => x.EventAreaId == update.Id).
-					Where(list2 => entity.Seats.All(list1 => list1.Id != list2.Id));
-				differences.ToList().ForEach(x =>
-				{
-					_seatService.Delete(x.Id);
-				});
+				var seats = await _seatService.FindBy(x => x.EventAreaId == update.Id);
+				var differences = seats.Where(list2 => entity.Seats.All(list1 => list1.Id != list2.Id)).ToList();
+
+                foreach(var seat in differences)
+                    await _seatService.Delete(seat.Id);
 
 				foreach (var seat in entity.Seats)
                 {
                     seat.EventAreaId = update.Id;
                     if(seat.Id == 0)
-						_seatService.Create(seat);
+						await _seatService.Create(seat);
 					else
-						_seatService.Update(seat);
+						await _seatService.Update(seat);
 				}
 				
                 transaction.Complete();

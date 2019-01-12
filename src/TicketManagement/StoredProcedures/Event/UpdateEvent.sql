@@ -11,7 +11,7 @@ BEGIN
 BEGIN TRAN
 BEGIN TRY
 	DECLARE @layoutChanged INT = 0
-		IF (SELECT [Event].[LayoutId] FROM [Event] WHERE [Event].Id = @id) != @LayoutId
+		IF (SELECT [Event].[LayoutId] FROM [Event] WHERE [Event].Id = @Id) != @LayoutId
 			BEGIN
 				DELETE FROM [EventArea] WHERE [EventArea].[EventId] = @Id
 

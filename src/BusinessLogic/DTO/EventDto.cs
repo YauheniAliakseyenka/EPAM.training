@@ -1,4 +1,5 @@
 ﻿using System;
+
 namespace BusinessLogic.DTO
 {
 	public class EventDto
@@ -21,7 +22,7 @@ namespace BusinessLogic.DTO
 			if (Id == entity.Id &&
 				Title.Equals(entity.Title, StringComparison.OrdinalIgnoreCase) &&
 				Description.Equals(entity.Description, StringComparison.OrdinalIgnoreCase) &&
-				ImageURL.Equals(entity.ImageURL, StringComparison.OrdinalIgnoreCase) &&
+				ImageURL.Equals(entity.ImageURL, StringComparison.Ordinal) &&
 				LayoutId == entity.LayoutId &&
 				Date.Equals(entity.Date))
 				return true;

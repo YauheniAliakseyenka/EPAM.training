@@ -121,7 +121,7 @@
     <value>Дадаць</value>
   </data>
   <data name="AmounLabel" xml:space="preserve">
-    <value>Сума</value>
+    <value>Сума, USD</value>
   </data>
   <data name="AreaListLabel" xml:space="preserve">
     <value>Спіс зон</value>
@@ -259,7 +259,7 @@
     <value>Пароль</value>
   </data>
   <data name="Price" xml:space="preserve">
-    <value>Цана</value>
+    <value>Цана, USD</value>
   </data>
   <data name="PurchaseHistory" xml:space="preserve">
     <value>Гісторыя пакупак</value>
@@ -331,7 +331,7 @@
     <value>Рэдагаваць зону</value>
   </data>
   <data name="PurchasedSeatCounter" xml:space="preserve">
-    <value>Куплена / заблакавана месца</value>
+    <value>Заблакавана</value>
   </data>
   <data name="Scene" xml:space="preserve">
     <value>Сцэна</value>
@@ -353,5 +353,20 @@
   </data>
   <data name="Total" xml:space="preserve">
     <value>Усяго</value>
+  </data>
+  <data name="OrderTitle" xml:space="preserve">
+    <value>Заказ</value>
+  </data>
+  <data name="Clear" xml:space="preserve">
+    <value>Ачысціць</value>
+  </data>
+  <data name="EventListTitle" xml:space="preserve">
+    <value>Спіс падзей</value>
+  </data>
+  <data name="None" xml:space="preserve">
+    <value>Вылучыце фільтр</value>
+  </data>
+  <data name="Search" xml:space="preserve">
+    <value>Знайсці</value>
   </data>
 </root>

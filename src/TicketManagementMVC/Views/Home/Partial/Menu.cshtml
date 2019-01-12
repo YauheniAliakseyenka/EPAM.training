@@ -4,7 +4,7 @@
             @Html.ActionLink(Resource.HomeMenu, "Index", "Home", null, new { @class = "nav-link active" })
         </li>
 
-        @if (User.Identity.IsAuthenticated && User.IsInRole("User"))
+        @if (User.IsInRole("Event manager"))
         {
             <li class="nav-item menu-item dropdown">
                 <a class="nav-link dropdown-toggle" id="eventmanager-dropdown" href="#" onclick=" return false;">@Resource.ManageEvent</a>
@@ -33,8 +33,7 @@ new { data_toggle = "modal", data_target = "#loginModal" })
                         <div style="float:left; padding-left:10px;"><b>@User.Identity.Name</b></div>
                         <div class="balance">@string.Format(Resource.BalanceValue, ViewData["Balance"])</div>
                     </a>
-
-                    <a href="#" class="profile-right" id="profile-dropdown">s</a>
+                    <a href="#" class="profile-right" id="profile-dropdown"><img src="~/Content/Images/config-menu.png" style="width:45px; mix-blend-mode: multiply;"></a>
                     <div class="dropdown-menu" id="profile-dropdown-menu" style=" top: 0px; right: 0px; left:150px; transform: translate3d(0px, 40px, 0px);">
                         @Html.ActionLink(Resource.CartTitle, "Cart", "Account", null, new { @class = "dropdown-item" })
                         @Html.ActionLink(Resource.BalanceReplenishmentTitle, "BalanceReplenishment", "Account", null, new { @class = "dropdown-item" })
@@ -43,12 +42,10 @@ new { data_toggle = "modal", data_target = "#loginModal" })
                         @Html.ActionLink(Resource.Logout, "Logout", "Account", null, new { @class = "dropdown-item" })
                     </div>
                 </form>
-
             </li>
         }
     </ul>
 </div>
-
 <!-- Modal window for login -->
 <div class="modal fade" id="loginModal" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog" role="document">
@@ -63,7 +60,6 @@ new { data_toggle = "modal", data_target = "#loginModal" })
                 @using (Html.BeginForm("Login", "Account", FormMethod.Post, new { @id = "loginForm" }))
                 {
                     @Html.AntiForgeryToken()
-
                     <div id="errorMessagesLogin" class="errors-login text-danger"></div>
 
                     <div class="form-group">

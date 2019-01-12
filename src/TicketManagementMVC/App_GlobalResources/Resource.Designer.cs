@@ -79,7 +79,7 @@ namespace I18N {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Amount.
+        ///   Looks up a localized string similar to Amount, USD.
         /// </summary>
         public static string AmounLabel {
             get {
@@ -138,6 +138,15 @@ namespace I18N {
         public static string CartTitle {
             get {
                 return ResourceManager.GetString("CartTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Clear.
+        /// </summary>
+        public static string Clear {
+            get {
+                return ResourceManager.GetString("Clear", resourceCulture);
             }
         }
         
@@ -358,6 +367,15 @@ namespace I18N {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Event list.
+        /// </summary>
+        public static string EventListTitle {
+            get {
+                return ResourceManager.GetString("EventListTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to It is on {0}.
         /// </summary>
         public static string EventListVenue {
@@ -448,6 +466,15 @@ namespace I18N {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Select filter.
+        /// </summary>
+        public static string None {
+            get {
+                return ResourceManager.GetString("None", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to or.
         /// </summary>
         public static string Or {
@@ -520,6 +547,15 @@ namespace I18N {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Order.
+        /// </summary>
+        public static string OrderTitle {
+            get {
+                return ResourceManager.GetString("OrderTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Password.
         /// </summary>
         public static string Password {
@@ -529,7 +565,7 @@ namespace I18N {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Price.
+        ///   Looks up a localized string similar to Price, USD.
         /// </summary>
         public static string Price {
             get {
@@ -538,7 +574,7 @@ namespace I18N {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Purchased/locked seats.
+        ///   Looks up a localized string similar to Locked.
         /// </summary>
         public static string PurchasedSeatCounter {
             get {
@@ -606,6 +642,15 @@ namespace I18N {
         public static string Scene {
             get {
                 return ResourceManager.GetString("Scene", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Search.
+        /// </summary>
+        public static string Search {
+            get {
+                return ResourceManager.GetString("Search", resourceCulture);
             }
         }
         

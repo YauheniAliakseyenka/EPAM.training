@@ -150,10 +150,13 @@
   <data name="NumericError" xml:space="preserve">
     <value>Для поля {0} разрешены только цифры</value>
   </data>
+  <data name="OrderedSeatError" xml:space="preserve">
+    <value>У вас отсутствуют заблокированные места. Возможно, время блокировки истекло</value>
+  </data>
   <data name="OrderError" xml:space="preserve">
     <value>Сумма на балансе меньше, чем сумма заказа</value>
   </data>
-  <data name="PassworkdRangeError" xml:space="preserve">
+  <data name="PasswordRangeError" xml:space="preserve">
     <value>Пароль должен содержать хотя бы 10 символов</value>
   </data>
   <data name="PastDateError" xml:space="preserve">

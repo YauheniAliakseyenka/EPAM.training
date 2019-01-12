@@ -20,46 +20,38 @@
             @Html.LabelFor(x => x.Firstname)
             @Html.TextBoxFor(x => x.Firstname, new { @class = "form-control", autocomplete = "off" })
         </div>
-
         <div class="form-group">
             @Html.LabelFor(x => x.Surname)
             @Html.TextBoxFor(x => x.Surname, new { @class = "form-control", autocomplete = "off" })
         </div>
-
         <div class="form-group">
             @Html.LabelFor(x => x.Email, new { @class = "required" })
             @Html.TextBoxFor(x => x.Email, new { @class = "form-control", autocomplete = "off" })
         </div>
-
         <div class="form-group">
             @Html.LabelFor(x => x.Culture)
             @Html.DropDownListFor(x => x.Culture, Enum.GetValues(typeof(TicketManagementMVC.Models.Culture)).Cast<TicketManagementMVC.Models.Culture>().
            Select(x=>new SelectListItem { Text = TicketManagementMVC.Models.CultureEnum.GetDescription(x), Value  = x.ToString()}),
            new { @class = "form-control", autocomplete = "off" })
         </div>
-
         <div class="form-group">
             @Html.LabelFor(x => x.Timezone)
             @Html.DropDownListFor(x => x.Timezone, new SelectList(TimeZoneInfo.GetSystemTimeZones().ToList(), "Id", "DisplayName", "UTC"),
            new { @class = "form-control select-timezone", autocomplete = "off" })
         </div>
         <br />
-
         <div class="form-group">
             @Html.LabelFor(x => x.Password)
             @Html.PasswordFor(x => x.Password, new { @class = "form-control", autocomplete = "off" })
         </div>
-
         <div class="form-group">
             @Html.LabelFor(x => x.NewPassword)
             @Html.PasswordFor(x => x.NewPassword, new { @class = "form-control", autocomplete = "off" })
         </div>
-
         <div class="form-group">
             @Html.LabelFor(x => x.ConfirmNewPassword)
             @Html.PasswordFor(x => x.ConfirmNewPassword, new { @class = "form-control", autocomplete = "off" })
         </div>
-
         <div class="form-group">
             <button type="submit" class="btn btn-primary register-button">@Resource.SaveChangesButton</button>
             <button type="button" class="btn btn-primary back-button" onclick="location.href='@Url.Action("Index", "Home")'">@Resource.BackButton</button>

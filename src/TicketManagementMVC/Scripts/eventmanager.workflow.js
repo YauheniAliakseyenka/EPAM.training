@@ -263,10 +263,10 @@ function AddSeatToTable() {
     }
   
     var inputRow = '<tr id="seatRow_' + index + '">' +
-        '<th><input autocomplete="off" class="form-control" type="text" name="SeatList[' + index + '].Row"></th>' +
-        '<td><input autocomplete="off" class="form-control" type="text" name="SeatList[' + index + '].Number"></td>' +
-        '<td><input autocomplete="off" value="0" class="form-control" disabled="disabled" name="SeatList[' + index + '].State" type="text"></td>' +
-        '<td><input type="button" value="X" onclick="DeleteSeat(null, this)" class="btn btn-primary col-8" name="button"></td>'
+        '<th class="pt-1 pb-1"><input autocomplete="off" class="form-control" type="text" name="SeatList[' + index + '].Row"></th>' +
+        '<td class="pt-1 pb-1"><input autocomplete="off" class="form-control" type="text" name="SeatList[' + index + '].Number"></td>' +
+        '<td class="pt-1 pb-1"><input autocomplete="off" value="0" class="form-control" disabled="disabled" name="SeatList[' + index + '].State" type="text"></td>' +
+        '<td class="pt-1 pb-1"><input type="button" value="X" style="width:45px;" onclick="DeleteSeat(null, this)" class="btn btn-primary" name="button"></td>'
     '</tr >'
 
     if (lastrow === undefined) {
@@ -284,6 +284,7 @@ function DeleteEvent(eventId) {
             url: '/Event/DeleteEvent?eventId=' + eventId,
             success: function (result) {
                 if (!result.success) {
+                    $('#errorMessagesEditEvent').show();
                     $('#errorMessagesEditEvent').html(result.error + ' <br />');
                 }
                 else {
@@ -297,7 +298,8 @@ function DeleteEvent(eventId) {
 function SetDatePickerCulture(element,culture) {
     $(element).datepicker($.extend({
         changeMonth: true,
-        changeYear: true
+        changeYear: true,
+        minDate: new Date()
     },
         $.datepicker.regional[culture]
     ));

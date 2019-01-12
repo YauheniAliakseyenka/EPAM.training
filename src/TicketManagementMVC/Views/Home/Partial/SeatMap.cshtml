@@ -17,6 +17,7 @@
             int j = 0;
     <div class="area border">
         <div class="float-left row-counter">@seatRow</div>
+
         @while (j < Model.Areas[i].Seats.Count)
         {
             if (Model.Areas[i].Seats[j].Row == seatRow)
@@ -25,7 +26,7 @@
                 {
                     if (User.Identity.IsAuthenticated)
                     {
-                        <a href="#" class="text-decoration-none" onclick="AddToCart('@Model.Areas[i].Seats[j].Id', this, '@Resource.AddedToCartNotify'); return false;">
+                        <a href="#" class="text-decoration-none" onclick="AddToCart('@Model.Areas[i].Seats[j].Id', this, '@Resource.AddedToCartNotify'); return false;">                          
                             <div class="seat-seatmap seat-available">
                                 @Model.Areas[i].Seats[j].Number
                             </div>
@@ -44,9 +45,9 @@
                 {
                     <a href="#" class="text-decoration-none locked-seat">
                         <div class="seat-seatmap seat-unavailable">
-                                @Model.Areas[i].Seats[j].Number
-                         </div>
-                     </a>
+                            @Model.Areas[i].Seats[j].Number
+                        </div>
+                    </a>
                 }
                 j++;
             }
@@ -56,7 +57,9 @@
                 <br />
                 <div class="float-left row-counter">@seatRow</div>
             }
+
         }
+
     </div>
             i++;
         }

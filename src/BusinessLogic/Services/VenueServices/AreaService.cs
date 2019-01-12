@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Threading.Tasks;
 
 namespace BusinessLogic.Services
 {
@@ -20,7 +21,7 @@ namespace BusinessLogic.Services
 			_seatService = seatService;
 		}
 
-		public void Create(AreaDto entity)
+		public async Task Create(AreaDto entity)
 		{
 			if (entity == null)
 				throw new ArgumentNullException();
@@ -28,53 +29,46 @@ namespace BusinessLogic.Services
 			if (entity.LayoutId == 0)
 				throw new AreaException("LayoutId equals zero");
 
-			if(IsDescriptionNotUnique(entity.Description))
+			if(!IsDescriptionUnique(entity, false))
 				throw new AreaException("Area description isn't unique");
 
 			if(entity.SeatList == null || !entity.SeatList.Any())
-				throw new AreaException("Incorrect state of the area. The area must have at least one seat");
+				throw new AreaException("Incorrect state of area. An area must have atleast one seat");
 
 			var areaAdd = mapToArea(entity);
 			using (var transaction = CustomTransactionScope.GetTransactionScope())
 			{
 				_context.AreaRepository.Create(areaAdd);
-				_context.Save();
+				await _context.SaveAsync();
 				entity.Id = areaAdd.Id;
 				foreach (var seat in entity.SeatList)
 				{
 					seat.AreaId = areaAdd.Id;
-					_seatService.Create(seat);
+					await _seatService.Create(seat);
 				}
 
 				transaction.Complete();
 			}
 		}
 
-		public void Delete(int id)
+		public async Task Delete(int id)
 		{
 			_context.AreaRepository.Delete(id);
+			await _context.SaveAsync();
 		}
 
-		public IEnumerable<AreaDto> FindBy(Expression<Func<AreaDto, bool>> expression)
+		public Task<IEnumerable<AreaDto>> FindBy(Expression<Func<AreaDto, bool>> expression)
 		{
 			var result = new List<AreaDto>();
 			Expression<Func<Area, bool>> predicate = x => expression.Compile().Invoke(mapToAreaDto(x));
-			var list = _context.AreaRepository.FindBy(predicate).ToList();
+			var list = _context.AreaRepository.FindBy(predicate);
 
-			if (!list.Any())
-				return result;
-
-			list.ForEach(x =>
-			{
-				result.Add(mapToAreaDto(x));
-			});
-
-			return result;
+			return Task.FromResult(list.Select(x => mapToAreaDto(x)).AsEnumerable());
 		}
 
-		public AreaDto Get(int id)
+		public async Task<AreaDto> Get(int id)
 		{
-			var area = _context.AreaRepository.Get(id);
+			var area = await _context.AreaRepository.GetAsync(id);
 
 			if (area == null)
 				return null;
@@ -82,23 +76,14 @@ namespace BusinessLogic.Services
 			return mapToAreaDto(area);
 		}
 
-		public IEnumerable<AreaDto> GetList()
+		public async Task<IEnumerable<AreaDto>> GetList()
 		{
-			var temp = _context.AreaRepository.GetList();
+			var temp = await _context.AreaRepository.GetListAsync();
 
-			if (temp == null)
-				return null;
-
-			var result = new List<AreaDto>();
-			temp.ToList().ForEach(x =>
-			{
-				result.Add(mapToAreaDto(x));
-			});
-
-			return result;
+			return temp.Select(x => mapToAreaDto(x));
 		}
 
-		public void Update(AreaDto entity)
+		public async Task Update(AreaDto entity)
 		{
 			if (entity == null)
 				throw new ArgumentNullException();
@@ -106,15 +91,15 @@ namespace BusinessLogic.Services
 			if (entity.LayoutId == 0)
 				throw new AreaException("LayoutId equals zero");
 
-			if (IsDescriptionNotUnique(entity.Description))
+			if (!IsDescriptionUnique(entity, false))
 				throw new AreaException("Area description isn't unique");
 
-			var update = _context.AreaRepository.Get(entity.Id);
+			var update = await _context.AreaRepository.GetAsync(entity.Id);
 			update.Description = entity.Description;
 			update.CoordY = entity.CoordY;
 			update.CoordX = entity.CoordX;
 			_context.AreaRepository.Update(update);
-			_context.Save();
+			await _context.SaveAsync();
 		}
 
 		private AreaDto mapToAreaDto(Area from)
@@ -142,9 +127,13 @@ namespace BusinessLogic.Services
 			};
 		}
 
-		private bool IsDescriptionNotUnique(string description)
+		private bool IsDescriptionUnique(AreaDto entity, bool isCreating)
 		{
-			return _context.AreaRepository.FindBy(x => x.Description.Equals(description, StringComparison.OrdinalIgnoreCase)).Any();
+			return isCreating? 
+               !_context.AreaRepository.FindBy(x => x.LayoutId == entity.LayoutId
+                && x.Description.Equals(entity.Description, StringComparison.OrdinalIgnoreCase)).Any() :
+               !_context.AreaRepository.FindBy(x => x.Id != entity.Id && (x.LayoutId == entity.LayoutId
+                && x.Description.Equals(entity.Description, StringComparison.OrdinalIgnoreCase))).Any();
 		}
 	}
 }

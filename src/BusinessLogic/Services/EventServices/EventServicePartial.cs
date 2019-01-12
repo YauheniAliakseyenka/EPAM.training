@@ -1,67 +1,90 @@
 ﻿using BusinessLogic.BusinessModels;
 using BusinessLogic.DTO;
-using BusinessLogic.Exceptions.EventExceptions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace BusinessLogic.Services.EventServices
 {
+	public enum  FilterEventOptions
+	{
+		None, Title, Date
+	}
+
 	internal partial class EventService
 	{
-		public IEnumerable<EventModel> GetPublishedEvents()
+		public Task<IEnumerable<EventModel>> GetPublishedEvents(FilterEventOptions filter, string filterText = null)
 		{
 			var result = new List<EventModel>();
 
 			var eventsList = _context.EventRepository.GetList();
 			var areasList = _context.EventAreaRepository.GetList();
 
-			var data = (from events in eventsList
-						join areas in areasList on events.Id equals areas.EventId
-						where areas.Price > 0
-						group areas by areas.EventId into areaGroup
-						where areaGroup.Count() == (from areas in areasList
-													where areas.EventId == areaGroup.Key
-													select areas.EventId).Count() 
-						join events in eventsList on areaGroup.Key equals events.Id
-						join layouts in _context.LayoutRepository.GetList() on events.LayoutId equals layouts.Id
-						join venues in _context.VenueRepository.GetList() on layouts.VenueId equals venues.Id
-						where events.Date > DateTime.Today
-						select new { venue = venues, currentEvent = events }).ToList();
+			var data = from events in eventsList
+					   join areas in areasList on events.Id equals areas.EventId
+					   where areas.Price > 0
+					   group areas by areas.EventId into areaGroup
+					   where areaGroup.Count() == (from areas in areasList
+												   where areas.EventId == areaGroup.Key
+												   select areas.EventId).Count()
+					   join events in eventsList on areaGroup.Key equals events.Id
+					   join layouts in _context.LayoutRepository.GetList() on events.LayoutId equals layouts.Id
+					   join venues in _context.VenueRepository.GetList() on layouts.VenueId equals venues.Id
+					   where events.Date >= DateTime.Today
+					   select new { venue = venues, currentEvent = events };
 
-			if (data.Any())
+			switch (filter)
 			{
-				data.ForEach(x =>
-				{
-					if (!result.Any(y => y.Event.Id == x.currentEvent.Id))
-					{
-						var add = new EventModel
-						{
-							Event = new EventDto
-							{
-								Date = x.currentEvent.Date,
-								Description = x.currentEvent.Description,
-								Id = x.currentEvent.Id,
-								Title = x.currentEvent.Title
-							},
-							Venue = new VenueDto
-							{
-								Address = x.venue.Address,
-								Name = x.venue.Name,
-								Phone = x.venue.Phone
-							}
-						};
-						result.Add(add);
-					}
-				});
-
-				return result.OrderBy(x => x.Event.Date);
+				case FilterEventOptions.Title:
+					if (!string.IsNullOrEmpty(filterText))
+						data = from events in data
+							   where events.currentEvent.Title.Contains(filterText)
+							   select events;
+					break;
+				case FilterEventOptions.Date:
+					DateTime date;
+					if (!string.IsNullOrEmpty(filterText) && DateTime.TryParse(filterText, out date))
+						data = from events in data
+							   where events.currentEvent.Date.Year == date.Date.Year &&
+							   events.currentEvent.Date.Month == date.Date.Month &&
+							   events.currentEvent.Date.Day == date.Date.Day
+							   select events;
+					break;
 			}
+			
+			if (!data.ToList().Any())
+				return Task.FromResult(result.AsEnumerable());
 
-			return result;
+			data.ToList().ForEach(x =>
+			{
+				if (!result.Any(y => y.Event.Id == x.currentEvent.Id))
+				{
+					var add = new EventModel
+					{
+						Event = new EventDto
+						{
+							Date = x.currentEvent.Date,
+							Description = x.currentEvent.Description,
+							Id = x.currentEvent.Id,
+							Title = x.currentEvent.Title,
+							ImageURL = x.currentEvent.ImageURL
+						},
+						Venue = new VenueDto
+						{
+							Address = x.venue.Address,
+							Name = x.venue.Name,
+							Phone = x.venue.Phone
+						}
+					};
+					result.Add(add);
+				}
+			});
+
+			return Task.FromResult(result.AsEnumerable());
 		}
 
-		public EventModel GetEventStructure(int id)
+		public Task<EventModel> GetEventInformation(int id)
 		{
 			var result = new EventModel();
 
@@ -75,7 +98,7 @@ namespace BusinessLogic.Services.EventServices
                             currentEvent = events, eventArea = areas, eventSeat = seats }).ToList();
 
 			if (!data.Any())
-				return result;
+				return Task.FromResult(result);
 
 			bool isPublished = true;
 			result.LayoutName = data.First().layoutName;
@@ -146,27 +169,21 @@ namespace BusinessLogic.Services.EventServices
 			result.Areas.ForEach(x => { x.Seats.Sort(); });
 			result.IsPublished = isPublished;
 
-			return result;
+			return Task.FromResult(result);
 		}
 
-        public IEnumerable<EventDto> GetEventsByVenueIdForParticularEventManager(int venueId, string userId)
+        public Task<IEnumerable<EventDto>> GetEventManagerEvents(int venueId, string userId)
         {
-            if (venueId == 0)
-                throw new EventException("VenueId is equals zero");
-
-			if (string.IsNullOrEmpty(userId))
-				throw new ArgumentNullException();
-
             var result = new List<EventDto>();
 
             var data = (from venues in _context.VenueRepository.GetList()
                         join layouts in _context.LayoutRepository.GetList() on venues.Id equals layouts.VenueId
                         join events in _context.EventRepository.GetList() on layouts.Id equals events.LayoutId
-                        where venues.Id == venueId && events.CreatedBy.Equals(userId)
+                        where venues.Id == venueId && events.CreatedBy.Equals(userId, StringComparison.Ordinal)
                         select events).ToList();
 
 			if (!data.Any())
-				return result;
+				return Task.FromResult(result.AsEnumerable());
 
             data.ForEach(x =>
 			{
@@ -174,8 +191,8 @@ namespace BusinessLogic.Services.EventServices
 			});
 			result.OrderBy(x => x.Title);
 
-            return result;
-        }
+            return Task.FromResult(result.AsEnumerable());
+		}
 
 		public bool HasLockedSeats(int eventId)
 		{
@@ -185,7 +202,7 @@ namespace BusinessLogic.Services.EventServices
 						where events.Id == eventId && eventSeats.State == 1
 						select eventSeats).ToList();
 
-			if (!data.Any())
+			if (data.Any())
 				return true;
 
 			return false;

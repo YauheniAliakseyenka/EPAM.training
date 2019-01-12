@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Data.Entity;
+﻿using System.Data.Entity;
 using DataAccess.Entities;
 using System.Data.Entity.ModelConfiguration.Conventions;
 
@@ -56,7 +51,6 @@ namespace DataAccess
 					.Parameter(p=>p.CreatedBy, "CreatedBy")
                     .Parameter(p=>p.Id, "Id")));
 
-			//set composite key
 			modelBuilder.Entity<UserRole>().HasKey(x => new { x.UserId, x.RoleId });
 		}
     }

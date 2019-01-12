@@ -6,6 +6,7 @@ using DataAccess.Entities;
 using DataAccess;
 using BusinessLogic.Exceptions.EventExceptions;
 using BusinessLogic.DTO;
+using System.Threading.Tasks;
 
 namespace BusinessLogic.Services.EventServices
 {
@@ -18,53 +19,46 @@ namespace BusinessLogic.Services.EventServices
 			_context = context;
 		}
 
-		public void Create(EventDto entity)
+		public async Task Create(EventDto entity)
 		{
 			if (entity == null)
 				throw new ArgumentNullException();
 
-			if(entity.LayoutId == 0)
+			if (entity.LayoutId == 0)
 				throw new EventException("LayoutId equals zero");
-			
+
 			if (!isDateValid(entity, true))
 				throw new EventException("Invalid date");
 
 			if (isPastDate(entity.Date))
 				throw new EventException("Attempt of creating event with a date in the past");
 
-			_context.EventRepository.Create(mapToEventDAL(entity));
-			_context.Save();
+			var addEvent = mapToEventDAL(entity);
+            _context.EventRepository.Create(addEvent);
+			await _context.SaveAsync();
+			entity.Id = addEvent.Id;
         }
 
-		public void Delete(int id)
+		public async Task Delete(int id)
 		{
-			if (!HasLockedSeats(id))
+			if (HasLockedSeats(id))
 				throw new EventException("Not allowed to delete. Event has locked seat");
 
 			_context.EventRepository.Delete(id);
-			_context.Save();
+			await _context.SaveAsync();
 		}
 
-		public IEnumerable<EventDto> FindBy(Expression<Func<EventDto, bool>> expression)
+		public Task<IEnumerable<EventDto>> FindBy(Expression<Func<EventDto, bool>> expression)
 		{
-			var result = new List<EventDto>();
 			Expression<Func<Event, bool>> predicate = x => expression.Compile().Invoke(mapToEventDto(x));
 			var list = _context.EventRepository.FindBy(predicate);
 
-			if (!list.Any())
-				return result;
-
-			list.ToList().ForEach(x =>
-			{
-				result.Add(mapToEventDto(x));
-			});
-
-			return result;
+			return Task.FromResult(list.Select(x => mapToEventDto(x)).AsEnumerable());
 		}
 
-		public EventDto Get(int id)
+		public async Task<EventDto> Get(int id)
 		{
-			var tempEvent = _context.EventRepository.Get(id);
+			var tempEvent = await _context.EventRepository.GetAsync(id);
 
 			if (tempEvent == null)
 				return null;
@@ -72,13 +66,14 @@ namespace BusinessLogic.Services.EventServices
 			return mapToEventDto(tempEvent);
 		}	
 
-		public IEnumerable<EventDto> GetList()
+		public async Task<IEnumerable<EventDto>> GetList()
 		{
-			return (from events in _context.EventRepository.GetList()
-					select mapToEventDto(events));
+			var list = await _context.EventRepository.GetListAsync();
+
+			return list.Select(x => mapToEventDto(x));
 		}
 
-		public void Update(EventDto entity)
+		public async Task Update(EventDto entity)
 		{
 			if (entity == null)
 				throw new ArgumentNullException();
@@ -90,11 +85,11 @@ namespace BusinessLogic.Services.EventServices
 				throw new EventException("Invalid date");
 
 			if (isPastDate(entity.Date))
-				throw new EventException("Attempt of creating event with a date in the past");
+				throw new EventException("Attempt of updating event with a date in the past");
 
-			var update = _context.EventRepository.Get(entity.Id);
+			var update = await _context.EventRepository.GetAsync(entity.Id);
 
-			if(update.LayoutId != entity.LayoutId && !HasLockedSeats(entity.Id))
+			if (update.LayoutId != entity.LayoutId && HasLockedSeats(entity.Id))
 				throw new EventException("Not allowed to update layout. Event has locked seats");
 
 			update.Title = entity.Title;
@@ -103,7 +98,7 @@ namespace BusinessLogic.Services.EventServices
 			update.Description = entity.Description;
 			update.Date = entity.Date;
 			_context.EventRepository.Update(update);
-			_context.Save();
+			await _context.SaveAsync();
 		}
 
 		private Event mapToEventDAL(EventDto from)

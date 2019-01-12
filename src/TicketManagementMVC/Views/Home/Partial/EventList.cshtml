@@ -13,9 +13,9 @@
                 @string.Format(Resource.EventListVenue, item.Venue.Name)
             </div>
 
-            @if (item.Event.Description.Length > 350)
+            @if (item.Event.Description.Length > 325)
             {
-                <div class="event-description w-75" style="float:left; text-overflow: clip;">@item.Event.Description.Substring(0, 345)...</div>
+                <div class="event-description w-75" style="float:left; text-overflow: clip;">@item.Event.Description.Substring(0, 320)...</div>
             }
             else
             {

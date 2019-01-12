@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace BusinessLogic.DTO
 {
@@ -25,8 +24,7 @@ namespace BusinessLogic.DTO
 
 			if (Id == entity.Id &&
 				VenueId == entity.VenueId &&
-				Description.Equals(entity.Description, StringComparison.OrdinalIgnoreCase) &&
-				AreaList.SequenceEqual(entity.AreaList))
+				Description.Equals(entity.Description, StringComparison.OrdinalIgnoreCase))
 				return true;
 
 			return false;

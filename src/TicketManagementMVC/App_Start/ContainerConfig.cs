@@ -1,16 +1,13 @@
 ﻿using Autofac;
 using Autofac.Integration.Mvc;
-using BusinessLogic.DTO;
-using BusinessLogic.Services;
-using BusinessLogic.Services.EventServices;
-using BusinessLogic.Services.UserServices;
-using DataAccess;
+using BusinessLogic.DiContainer;
 using Hangfire;
 using Microsoft.AspNet.Identity;
 using System.Configuration;
 using System.Reflection;
 using System.Web.Mvc;
 using TicketManagementMVC.Infrastructure.Authentication;
+using TicketManagementMVC.Infrastructure.BackgroundWorker;
 
 namespace TicketManagementMVC.App_Start
 {
@@ -20,30 +17,21 @@ namespace TicketManagementMVC.App_Start
 		{
 			var builder = new ContainerBuilder();
 			builder.RegisterControllers(Assembly.GetExecutingAssembly());
-			builder.RegisterType<WorkUnit>().As<IWorkUnit>().WithParameter("connectionString",
-				ConfigurationManager.ConnectionStrings["ConnectionString"].ConnectionString);
 
-			builder.RegisterType<UserStore>().As<IUserStore<User, string>>();
-			builder.RegisterType<UserManager<User, string>>().AsSelf();
+			builder.RegisterType<UserStore>().As<IUserStore<User, string>>().InstancePerLifetimeScope();
+			builder.RegisterType<ApplicationUserManager>().AsSelf().InstancePerLifetimeScope();
+			builder.RegisterType<SeatLocker>().As<ISeatLocker>().InstancePerLifetimeScope();
 
-			//services
-			builder.RegisterType<EventService>().As<IEventService>();
-			builder.RegisterType<EventAreaService>().As<IStoreService<EventAreaDto, int>>();
-			builder.RegisterType<EventSeatService>().As<IStoreService<EventSeatDto, int>>();
-			builder.RegisterType<UserService>().As<IUserService>();
-			builder.RegisterType<VenueService>().As<IStoreService<VenueDto, int>>();
-			builder.RegisterType<LayoutService>().As<IStoreService<LayoutDto, int>>();
-			builder.RegisterType<AreaService>().As<IStoreService<AreaDto, int>>();
-			builder.RegisterType<SeatService>().As<IStoreService<SeatDto, int>>();
-			builder.RegisterType<CartService>().As<ICartService>();
-			builder.RegisterType<OrderService>().As<IOrderService>();
-			builder.RegisterType<EmailService>().As<IEmailService>();
+			builder.RegisterModule(new WebModule()
+            {
+                ConnectionString = ConfigurationManager.ConnectionStrings["ConnectionString"].ConnectionString
+            });			
 
 			var container = builder.Build();			
 			DependencyResolver.SetResolver(new AutofacDependencyResolver(container));
 
-			//set up hangfire resolver
-			GlobalConfiguration.Configuration.UseAutofacActivator(container);
+			//set hangfire resolver
+			GlobalConfiguration.Configuration.UseAutofacActivator(container, true);
 		}
 	}
 }

@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data.Common;
-using System.Data.Entity;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using DataAccess.Entities;
 using DataAccess.Repositories;
@@ -28,6 +24,7 @@ namespace DataAccess
 		public IRepository<Seat, int> SeatRepository { get; private set; }
 
 		private readonly DataContext _context;
+		private bool disposed = false;
 
 		public WorkUnit(string connectionString)
 		{
@@ -58,9 +55,33 @@ namespace DataAccess
 			_context.SaveChanges();
 		}
 
-		public void SaveAsync()
+		public async Task<int> SaveAsync()
 		{
-			_context.SaveChangesAsync();
+			return await _context.SaveChangesAsync();
 		}
+
+		public void Dispose()
+		{
+			Dispose(true);
+			GC.SuppressFinalize(this);
+		}
+
+		protected virtual void Dispose(bool disposing)
+		{
+			if (disposed)
+				return;
+
+			if (disposing)
+			{
+                _context.Dispose();
+            }
+
+			disposed = true;
+		}
+
+        ~WorkUnit()
+        {
+            Dispose(false);
+        }
 	}
 }
