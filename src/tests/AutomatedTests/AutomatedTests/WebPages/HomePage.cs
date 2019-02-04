@@ -42,11 +42,10 @@ namespace AutomatedTests.WebPages
 			FindByXPath(xPath).Click();
 		}
 
-		public void LockSeats()
+		public void LockSeat()
 		{
-            var seats = FindElementsByXPath("//*[@id='seatMap']//*[contains(@class,'seat-available') and contains(@class, 'seat-seatmap')]").ToList();			
-			seats[seats.IndexOf(seats.First())].Click();
-			seats[seats.IndexOf(seats.Last())].Click();
+            var seat = FindByXPath("//*[@id='seatMap']//*[contains(@class,'seat-available') and contains(@class, 'seat-seatmap')]");			
+			seat.Click();
 			Thread.Sleep(300);
 		}
 

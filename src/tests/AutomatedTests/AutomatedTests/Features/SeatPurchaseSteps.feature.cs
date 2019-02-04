@@ -104,7 +104,7 @@ namespace AutomatedTests.Features
 #line 17
  testRunner.And("Selects \"test event\" event", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 18
- testRunner.And("Adds two seats to cart", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+ testRunner.And("Adds seat to cart", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 19
  testRunner.And("Goes to balance replenishment page", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 20
@@ -114,7 +114,7 @@ namespace AutomatedTests.Features
 #line 22
  testRunner.And("Goes to cart page", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 23
- testRunner.And("Removes one seat from cart", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+ testRunner.And("Removes seat from cart", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 24
  testRunner.And("Confirms order", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 25

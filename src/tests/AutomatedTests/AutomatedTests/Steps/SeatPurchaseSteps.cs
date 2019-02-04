@@ -41,10 +41,10 @@ namespace AutomatedTests.Steps
 			_homePage.SelectEvent(title);
 		}
 
-		[When(@"Adds two seats to cart")]
+		[When(@"Adds seat to cart")]
 		public void WhenUserAddsTwoSeatToCart()
 		{
-			_homePage.LockSeats();
+			_homePage.LockSeat();
 		}
 
 		[When(@"Goes to balance replenishment page")]
@@ -72,7 +72,7 @@ namespace AutomatedTests.Steps
 			_cartPage.Open();
 		}
 
-		[When(@"Removes one seat from cart")]
+		[When(@"Removes seat from cart")]
 		public void WhenUserRemovesOneSeatFromCart()
 		{
 			_cartPage.DeleteFirstSeatFromCart();
@@ -96,13 +96,13 @@ namespace AutomatedTests.Steps
 			Assert.IsTrue(_purchaseHistoryPage.OrderTable.Displayed);
 		}
 
-		[Then(@"User can see added seats to cart")]
+		[Then(@"User can see added seat to cart")]
 		public void ThenUserCanSeeAddedSeatsToCart()
 		{
 			Assert.IsTrue(_cartPage.OrderedSeats().Any());
 		}
 
-		[Then(@"User can see only one seat left in the cart")]
+		[Then(@"User can see no seats left in the cart")]
 		public void ThenUserCanSeeOneSeatLeftInTheCart()
 		{
 			Assert.IsTrue(_cartPage.OrderedSeats().Count() == 1);

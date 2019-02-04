@@ -8,9 +8,9 @@
 	And Selects filter by "Title"
 	And Enters "test event" to filter input
 	And Selects "test event" event
-	And Adds two seats to cart
+	And Adds seat to cart
 	And Goes to cart page
-	Then User can see added seats to cart
+	Then User can see added seat to cart
 
 	@RemoveFromCart
 	Scenario: Remove seat from cart
@@ -19,10 +19,10 @@
 	And Selects filter by "Title"
 	And Enters "test event" to filter input
 	And Selects "test event" event
-	And Adds two seats to cart
+	And Adds seat to cart
 	And Goes to cart page
-	And Removes one seat from cart
-	Then User can see only one seat left in the cart
+	And Removes seat from cart
+	Then User can see no seats left in the cart
 
 	@CompleteOrder
 	Scenario: Comlete order
