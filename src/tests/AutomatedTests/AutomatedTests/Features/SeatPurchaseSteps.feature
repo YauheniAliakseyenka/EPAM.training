@@ -20,7 +20,6 @@
 	And Enters "100.25" to amount input
 	And Confirms balance replenishment
 	And Goes to cart page
-	And Removes seat from cart
 	And Confirms order
 	Then User goes to purchase history page
 	And Can see created order

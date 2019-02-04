@@ -114,12 +114,10 @@ namespace AutomatedTests.Features
 #line 22
  testRunner.And("Goes to cart page", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 23
- testRunner.And("Removes seat from cart", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 24
  testRunner.And("Confirms order", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 25
+#line 24
  testRunner.Then("User goes to purchase history page", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
-#line 26
+#line 25
  testRunner.And("Can see created order", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
             this.ScenarioCleanup();
