@@ -31,7 +31,7 @@
 	And Selects filter by "Title"
 	And Enters "test event" to filter input
 	And Selects "test event" event
-	And Adds two seats to cart
+	And Adds seat to cart
 	And Goes to balance replenishment page
 	And Enters "95.25" to amount input
 	And Confirms balance replenishment

@@ -1,6 +1,7 @@
 ﻿using AutomatedTests.Utils;
 using AutomatedTests.WebPages;
 using NUnit.Framework;
+using OpenQA.Selenium;
 using System.Linq;
 using System.Threading;
 using TechTalk.SpecFlow;
@@ -106,7 +107,7 @@ namespace AutomatedTests.Steps
 		[Then(@"User can see no seats left in the cart")]
 		public void ThenUserCanSeeOneSeatLeftInTheCart()
 		{
-			Assert.IsTrue(_cartPage.OrderedSeats().Count() == 1);
+			Assert.Throws<WebDriverTimeoutException>(() => _cartPage.OrderedSeats());
 		}
 
 		[Then(@"User can see his cash balance ""(.*)""")]
