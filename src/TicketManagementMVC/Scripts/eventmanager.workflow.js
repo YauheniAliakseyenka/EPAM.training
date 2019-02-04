@@ -30,6 +30,7 @@ function readURL(input) {
 
 function GetEventsByVenue() {
     let id = $('#venueListToSortEvents').val();
+    $('#editEventPlaceHolder').html(null);
 
     let dropdown = $('#eventListOnEdit');
     dropdown.empty();
@@ -46,6 +47,7 @@ function GetEventsByVenue() {
 
 function GetEventToEdit() {
     let id = $('#eventListOnEdit').val();
+    $('#editEventPlaceHolder').html(null);
 
     if (id !== undefined && id !== "" && id!== null) {
         $.ajax({

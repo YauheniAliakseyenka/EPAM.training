@@ -98,6 +98,7 @@ namespace AutomatedTests.Utils
 
             //select venue from dropdown
 			SelectFromDropDown(By.XPath("//select[@id='venueListToSortEvents']"), "Royal Albert Hall");
+			Thread.Sleep(300);
 
 			//select event from dropdown
 			SelectFromDropDown(By.XPath("//select[@id='eventListOnEdit']"), "test event");

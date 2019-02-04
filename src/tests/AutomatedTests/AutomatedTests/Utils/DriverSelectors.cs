@@ -49,7 +49,7 @@ namespace AutomatedTests.Utils
 
 		public IWebElement SelectFromDropDownByText(By findBy, string selectByText)
 		{
-			 new WebDriverWait(_driver, TimeSpan.FromSeconds(3)).
+			new WebDriverWait(_driver, TimeSpan.FromSeconds(3)).
 				Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(findBy));
 
 			var element = _driver.FindElement(findBy);
