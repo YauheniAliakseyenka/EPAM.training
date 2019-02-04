@@ -45,6 +45,7 @@ namespace AutomatedTests.Steps
 		public void WhenUserAddsTwoSeatToCart()
 		{
 			_homePage.LockSeat();
+			Thread.Sleep(300);
 		}
 
 		[When(@"Goes to balance replenishment page")]

@@ -1,7 +1,6 @@
-﻿using OpenQA.Selenium;
+﻿using AutomatedTests.Utils;
+using OpenQA.Selenium;
 using System.Configuration;
-using System.Linq;
-using System.Threading;
 
 namespace AutomatedTests.WebPages
 {
@@ -46,7 +45,7 @@ namespace AutomatedTests.WebPages
 		{
             var seat = FindByXPath("//*[@id='seatMap']//*[contains(@class,'seat-available') and contains(@class, 'seat-seatmap')]");			
 			seat.Click();
-			Thread.Sleep(300);
+			CustomConditionals.WaitForNotisfaction(Driver);
 		}
 
 		public void SelectEvent(string title)

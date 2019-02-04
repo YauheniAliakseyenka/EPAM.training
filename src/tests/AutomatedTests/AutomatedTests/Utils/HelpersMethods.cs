@@ -140,8 +140,8 @@ namespace AutomatedTests.Utils
             GoToUrl(selectEvent.GetAttribute("href"));
 			var firstSeat = FindByXPath("//*[contains(@class,'seat-available') and contains(@class, 'seat-seatmap')]");
             firstSeat.Click();
-			Thread.Sleep(300);
-        }
+			CustomConditionals.WaitForNotisfaction(_driver);
+		}
 
 		public void SignOut()
 		{
