@@ -1,10 +1,8 @@
 ﻿using BusinessLogic.Exceptions;
 using BusinessLogic.Services;
-using Hangfire;
 using Microsoft.AspNet.Identity;
 using Microsoft.Owin.Security;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
@@ -13,7 +11,7 @@ using System.Web.Routing;
 using TicketManagementMVC.Helpers;
 using TicketManagementMVC.Infrastructure.Attributes;
 using TicketManagementMVC.Infrastructure.Authentication;
-using TicketManagementMVC.Infrastructure.BackgroundWorker;
+using TicketManagementMVC.Infrastructure.WebServices.Interfaces;
 using TicketManagementMVC.Models;
 
 namespace TicketManagementMVC.Controllers
@@ -27,6 +25,8 @@ namespace TicketManagementMVC.Controllers
 		private IEmailService _emailService;
 		private ISeatLocker _seatLocker;
 
+		private static int _purchaseHistoryPageSize;
+
 		protected override async void Initialize(RequestContext requestContext)
 		{
 			base.Initialize(requestContext);
@@ -34,7 +34,7 @@ namespace TicketManagementMVC.Controllers
 			if (identity.IsAuthenticated)
 			{
 				var user = await _userManager.FindByNameAsync(identity.GetUserName());
-				ViewData["Balance"] = DisplayBalance.Get(user.Amount);
+				ViewData["Balance"] = user.Amount;
 			}
 		}
 
@@ -46,6 +46,7 @@ namespace TicketManagementMVC.Controllers
 			_orderService = orderService;
 			_emailService = emailService;
 			_seatLocker = seatLocker;
+			_purchaseHistoryPageSize = 5;
 		}
 
         //GET: registration view
@@ -56,7 +57,7 @@ namespace TicketManagementMVC.Controllers
 			if (User.Identity.IsAuthenticated)
 				return RedirectToAction("Index", "Home");
 
-			return View(new RegistrationViewModel());
+            return View(new RegistrationViewModel());
 		}
 
         //POST: login
@@ -67,7 +68,7 @@ namespace TicketManagementMVC.Controllers
 		{
 			if(string.IsNullOrEmpty(model.UserName) || string.IsNullOrEmpty(model.Password))
 			{
-				ModelState.AddModelError(string.Empty, I18N.ResourceErrors.LoginError);
+				ModelState.AddModelError(string.Empty, ProjectResources.ResourceErrors.LoginError);
 				return Json(new
 				{
 					success = false,
@@ -92,17 +93,19 @@ namespace TicketManagementMVC.Controllers
 			});
 		}
 
-        //create identity to login
+		//create identity to login
 		private async Task<ModelStateDictionary> SignIn(string userName, string password)
 		{
 			var user = await _userManager.FindAsync(userName, password);
+
 			if (user == null)
 			{
-				ModelState.AddModelError(string.Empty, I18N.ResourceErrors.LoginError);
+				ModelState.AddModelError(string.Empty, ProjectResources.ResourceErrors.LoginError);
 				return ModelState;
 			}
 
 			var identity = await _userManager.CreateIdentityAsync(user, DefaultAuthenticationTypes.ApplicationCookie);
+
 			CultureSetter.Set(user.Culture, this);
 			_authManager.SignOut();
 			_authManager.SignIn(identity);
@@ -125,8 +128,13 @@ namespace TicketManagementMVC.Controllers
 		{
 			if (!ModelState.IsValid)
 			{
-				return View();
-			}
+                return Json(new
+                {
+                    success = false,
+                    errors = ModelState.Keys.SelectMany(k => ModelState[k].Errors)
+                                  .Select(m => m.ErrorMessage).ToArray()
+                });
+            }
 
 			var user = new User
 			{
@@ -138,7 +146,7 @@ namespace TicketManagementMVC.Controllers
 				Firstname = model.Firstname,
 				Timezone = model.SelectedTimezone
 			};
-			
+
 			var insert = await _userManager.CreateAsync(user, model.Password);
 
 			if (insert.Errors.Any())
@@ -146,29 +154,37 @@ namespace TicketManagementMVC.Controllers
 				foreach (var error in insert.Errors)
 				{
 					string errorMessage = error;
-					if (error.StartsWith("Name") && error.EndsWith("is already taken."))
-						errorMessage = I18N.ResourceErrors.UserNameIsTaken;
+					if (error.StartsWith("Name") && error.EndsWith("taken."))
+						errorMessage = ProjectResources.ResourceErrors.UserNameIsTaken;
 
-					if (error.StartsWith("Email") && error.EndsWith("is already taken."))
-						errorMessage = I18N.ResourceErrors.EmalIsTaken;
+					if (error.StartsWith("Email") && error.EndsWith("taken."))
+						errorMessage = ProjectResources.ResourceErrors.EmailIsTaken;
 
 					ModelState.AddModelError(string.Empty, errorMessage);
 				}
 
-				return View();
+                return Json(new
+                {
+                    success = false,
+                    errors = ModelState.Keys.SelectMany(k => ModelState[k].Errors)
+                                  .Select(m => m.ErrorMessage).ToArray()
+                });
 			}
 
 			await SignIn(model.UserName, model.Password);
 
-			return RedirectToAction("Index", "Home");
-		}
+            return Json(new
+            {
+                success = true
+            });
+        }
 
         //GET: cart view
         [Authorize]
 		[HttpGet]
 		public async Task<ActionResult> Cart()
 		{
-			return View(await _cartService.GetOrderedSeats(User.Identity.GetUserId()));
+			return View(await _cartService.GetOrderedSeats(User.Identity.GetUserId<int>()));
 		}
 
         //seat's deleting from cart 
@@ -184,14 +200,14 @@ namespace TicketManagementMVC.Controllers
 		{
 			try
 			{
-				await _seatLocker.LockSeat(seatId, User.Identity.GetUserId());
+				await _seatLocker.LockSeat(seatId, User.Identity.GetUserId<int>());
 			}
 			catch (CartException exception)
 			{
 				string error = string.Empty;
 
 				if (exception.Message.Equals("Seat is locked", StringComparison.OrdinalIgnoreCase))
-					error = I18N.ResourceErrors.SeatLocked;
+					error = ProjectResources.ResourceErrors.SeatLocked;
 
 				return Json(new
 				{
@@ -203,7 +219,7 @@ namespace TicketManagementMVC.Controllers
 			return Json(new
 			{
 				success = true,
-				message = I18N.Resource.AddedToCartNotify
+				message = ProjectResources.AccountResource.AddedToCartNotify
 			});
 		}
 
@@ -215,18 +231,17 @@ namespace TicketManagementMVC.Controllers
 			{
 				_orderService.Ordered += _emailService.Send;
 				_orderService.Ordered += _seatLocker.OrderCompleted;
-
-				await _orderService.Create(User.Identity.GetUserId());		
+				await _orderService.Create(User.Identity.GetUserId<int>());		
 			}
 			catch (OrderException exception)
 			{
 				string error = exception.Message;
 
 				if (exception.Message.Equals("Balance of user is less than total amount of order", StringComparison.OrdinalIgnoreCase))
-					error = I18N.ResourceErrors.OrderError;
+					error = ProjectResources.ResourceErrors.OrderError;
 
 				if (exception.Message.Equals("User has no ordered seats", StringComparison.OrdinalIgnoreCase))
-					error = I18N.ResourceErrors.OrderedSeatError;
+					error = ProjectResources.ResourceErrors.OrderedSeatError;
 
 				return Json(new
 				{
@@ -241,16 +256,21 @@ namespace TicketManagementMVC.Controllers
 			});
 		}
 
-        //GET: purchase history view
+        //GET: get first page of purchase history
 		[HttpGet]
 		[Authorize]
-		public async Task<ActionResult> PurchaseHistory()
+		public async Task<ActionResult> PurchaseHistory(int index = 0)
 		{
-			return View(await _orderService.GetPurchaseHistory(User.Identity.GetUserId()));
+			var data = await _orderService.GetPurchaseHistory(User.Identity.GetUserId<int>());
+			ViewBag.Count = data.Count();
+			ViewBag.PageSize = _purchaseHistoryPageSize;
+			ViewBag.CurrentIndex = index;
+			return View(data.Skip(index).Take(_purchaseHistoryPageSize));
 		}
 
-        //GET: user profile view
-        [HttpGet]
+		//GET: user profile view
+		[HttpGet]
+		[Authorize]
 		public async Task<ActionResult> UserProfile()
 		{
 			if (!User.Identity.IsAuthenticated)
@@ -258,7 +278,7 @@ namespace TicketManagementMVC.Controllers
 
 			var user = await _userManager.FindByNameAsync(User.Identity.GetUserName());
 
-			return View(new UserProfileViewModel
+            return View(new UserProfileViewModel
 			{
 				Surname = user.Surname,
 				Culture = user.Culture,
@@ -276,25 +296,36 @@ namespace TicketManagementMVC.Controllers
 		{
 			var user = await _userManager.FindByNameAsync(User.Identity.GetUserName());
 
-			if (!string.IsNullOrEmpty(model.Password))
-			{
-				//check current password
-				if (_userManager.PasswordHasher.VerifyHashedPassword(user.PasswordHash, model.Password).Equals(PasswordVerificationResult.Failed))
-				{
-					ModelState.AddModelError(string.Empty, I18N.ResourceErrors.ChangePasswordError);
-					return View();
-				}
+            if (!string.IsNullOrEmpty(model.Password))
+            {
+                //check current password
+                if (_userManager.PasswordHasher.VerifyHashedPassword(user.PasswordHash, model.Password).Equals(PasswordVerificationResult.Failed))
+                    return Json(new
+                    {
+                        success = false,
+                        errors = new string[] { ProjectResources.ResourceErrors.ChangePasswordError }
+                    });
 
-				if ((string.IsNullOrEmpty(model.NewPassword) | string.IsNullOrEmpty(model.ConfirmNewPassword)) || !ModelState.IsValid)
-					return View();
+                if ((string.IsNullOrEmpty(model.NewPassword) | string.IsNullOrEmpty(model.ConfirmNewPassword)) || !ModelState.IsValid)
+                    return Json(new
+                    {
+                        success = false,
+                        errors = ModelState.Keys.SelectMany(k => ModelState[k].Errors)
+                                 .Select(m => m.ErrorMessage).ToArray()
+                    });
 
-				user.PasswordHash = _userManager.PasswordHasher.HashPassword(model.NewPassword);
-			}
-			else
-			{
-				if (!ModelState.IsValid)
-					return View();
-			}
+                user.PasswordHash = _userManager.PasswordHasher.HashPassword(model.NewPassword);
+            }
+            else
+            {
+                if (!ModelState.IsValid)
+                    return Json(new
+                    {
+                        success = false,
+                        errors = ModelState.Keys.SelectMany(k => ModelState[k].Errors)
+                                 .Select(m => m.ErrorMessage).ToArray()
+                    });
+            }
 
 			user.Surname = model.Surname;
 			user.Culture = model.Culture;
@@ -309,12 +340,21 @@ namespace TicketManagementMVC.Controllers
 				{
 					ModelState.AddModelError(string.Empty, x);
 				});
-				return View();
-			}
+
+                return Json(new
+                {
+                    success = false,
+                    errors = ModelState.Keys.SelectMany(k => ModelState[k].Errors)
+                                 .Select(m => m.ErrorMessage).ToArray()
+                });
+            }
 			CultureSetter.Set(user.Culture, this);
-			
-			return RedirectToAction("Index", "Home");
-		}
+
+            return Json(new
+            {
+                success = true
+            });
+        }
 
         //GET: replenishment of balance view
         [HttpGet]
@@ -331,22 +371,38 @@ namespace TicketManagementMVC.Controllers
 		public async Task<ActionResult> BalanceReplenishment(BalanceReplenishmentViewModel model)
 		{
             if (!ModelState.IsValid)
-                return View();
+                return Json(new
+                {
+                    success = false,
+                    errors = ModelState.Keys.SelectMany(k => ModelState[k].Errors)
+                                  .Select(m => m.ErrorMessage).ToArray()
+                });
 
-			var user = await _userManager.FindByIdAsync(User.Identity.GetUserId());
+            var user = await _userManager.FindByIdAsync(User.Identity.GetUserId<int>());
 			user.Amount += model.Amount;
 			var update = await _userManager.UpdateAsync(user);
 
 			if (update.Errors.Any())
 			{
-				update.Errors.ToList().ForEach(x =>
-				{
-					ModelState.AddModelError(string.Empty, x);
-				});
-				return View();
-			}
+                return Json(new
+                {
+                    success = false,
+                    errors = update.Errors.Select(x=>x).ToArray()
+                });
+            }
 
-			return RedirectToAction("Index", "Home");
+			return Json(new
+			{
+				success = true
+			});
+		}
+
+		//cancel order and refund money
+		[Authorize]
+		[NoDirectAccess]
+		public async Task Refund(int orderId)
+		{
+			await _orderService.CancelOrderAndRefund(orderId);
 		}
 	}
 }

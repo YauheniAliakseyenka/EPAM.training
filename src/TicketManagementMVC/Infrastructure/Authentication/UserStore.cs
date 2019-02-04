@@ -4,16 +4,12 @@ using System.Collections.Generic;
 using System.Security.Claims;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Runtime.InteropServices;
-using Microsoft.Win32.SafeHandles;
 using BusinessLogic.Services;
 using BusinessLogic.DTO;
-using BusinessLogic.Exceptions;
-using TicketManagementMVC.Helpers;
 
 namespace TicketManagementMVC.Infrastructure.Authentication
 {
-    internal class UserStore : IUserClaimStore<User>, IUserPasswordStore<User>, IUserEmailStore<User>
+    internal class UserStore : IUserClaimStore<User, int>, IUserPasswordStore<User, int>, IUserEmailStore<User, int>
     {
 		bool disposed = false;
 		private IUserService _userService;
@@ -35,8 +31,7 @@ namespace TicketManagementMVC.Infrastructure.Authentication
 
 		public Task CreateAsync(User user)
 		{
-			var userModel = maptToUserDto(user);
-			userModel.Id = Guid.NewGuid().ToString();
+			var userModel = MaptToUserDto(user);
 
 			return _userService.Create(userModel);
 		}
@@ -46,19 +41,18 @@ namespace TicketManagementMVC.Infrastructure.Authentication
 			return _userService.Delete(user.Id);
         }
 
-        public async Task<User> FindByIdAsync(string userId)
+        public async Task<User> FindByIdAsync(int userId)
         {
             var user = await _userService.Get(userId);
-            
-            return user != null ? mapToUser(user) : null;
+
+            return user != null ? MapToUser(user) : null;
         }
 
         public async Task<User> FindByNameAsync(string userName)
         {
-            var data = await _userService.FindBy(x => x.UserName.Equals(userName, StringComparison.Ordinal));
-			var user = data.FirstOrDefault();
+			var user = await _userService.FindByUserName(userName);
 
-            return user != null ? mapToUser(user) : null;
+            return user != null ? MapToUser(user) : null;
         }
 
         public async Task<IList<Claim>> GetClaimsAsync(User user)
@@ -135,7 +129,7 @@ namespace TicketManagementMVC.Infrastructure.Authentication
 			disposed = true;
 		}
 
-		private User mapToUser(UserDto user)
+		private User MapToUser(UserDto user)
         {
             return new User
 			{
@@ -151,7 +145,7 @@ namespace TicketManagementMVC.Infrastructure.Authentication
             };
         }
 
-        private UserDto maptToUserDto(User user)
+        private UserDto MaptToUserDto(User user)
         {
             return new UserDto
 			{
@@ -191,10 +185,9 @@ namespace TicketManagementMVC.Infrastructure.Authentication
 
 		public async Task<User> FindByEmailAsync(string email)
 		{
-			var data = await _userService.FindBy(x => x.Email.Equals(email, StringComparison.Ordinal));
-			var user = data.FirstOrDefault();
+			var user = await _userService.FindByEmail(email);
 
-			return user != null ? mapToUser(user) : null;
+			return user != null ? MapToUser(user) : null;
 		}
 	}
 }

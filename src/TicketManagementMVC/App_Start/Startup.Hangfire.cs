@@ -1,5 +1,4 @@
-﻿using Autofac;
-using Hangfire;
+﻿using Hangfire;
 using Hangfire.Dashboard;
 using Owin;
 using System.Configuration;

@@ -9,7 +9,8 @@ namespace BusinessLogic.Services
     {
 		event EventHandler<OrderEventArgs> Ordered;
 
-		Task Create(string userId);
-		Task<IEnumerable<OrderModel>> GetPurchaseHistory(string userId);
-    }
+		Task Create(int userId);
+		Task<IEnumerable<OrderModel>> GetPurchaseHistory(int userId);
+		Task CancelOrderAndRefund(int orderId);
+	}
 }

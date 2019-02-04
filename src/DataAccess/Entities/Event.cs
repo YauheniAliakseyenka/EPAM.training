@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace DataAccess.Entities
@@ -6,6 +7,7 @@ namespace DataAccess.Entities
 	[Table(name: "Event")]
 	public class Event
 	{
+		[Key]
 		[Column(name: "Id")]
 		public int Id { get; set; }
 		[Column(name: "Title")]
@@ -19,6 +21,6 @@ namespace DataAccess.Entities
 		[Column(name: "Date")]
 		public DateTime Date { get; set; }
 		[Column(name: "CreatedBy")]
-		public string CreatedBy { get; set; }
+		public int CreatedBy { get; set; }
 	}
 }

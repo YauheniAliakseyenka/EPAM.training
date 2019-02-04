@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BusinessLogic.Services;
+using System;
 
 namespace BusinessLogic.DTO
 {
@@ -8,7 +9,7 @@ namespace BusinessLogic.DTO
 		public int EventAreaId { get; set; }
 		public int Row { get; set; }
 		public int Number { get; set; }
-		public int State { get; set; }
+		public SeatState State { get; set; }
 
 		public int CompareTo(EventSeatDto other)
 		{
@@ -33,9 +34,7 @@ namespace BusinessLogic.DTO
 
 		public override bool Equals(object obj)
 		{
-			var entity = obj as EventSeatDto;
-
-			if (entity == null)
+			if (!(obj is EventSeatDto entity))
 				return false;
 
 			if (Id == entity.Id &&

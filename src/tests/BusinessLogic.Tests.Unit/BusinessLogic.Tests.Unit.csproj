@@ -80,20 +80,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="FakeRepositories\EventServices\EventAreaRepository.cs" />
-    <Compile Include="FakeRepositories\EventServices\EventRepository.cs" />
-    <Compile Include="FakeRepositories\EventServices\EventSeatRepository.cs" />
-    <Compile Include="FakeRepositories\UserServices\CartRepository.cs" />
-    <Compile Include="FakeRepositories\UserServices\OrderedSeatsRepository.cs" />
-    <Compile Include="FakeRepositories\UserServices\OrderRepository.cs" />
-    <Compile Include="FakeRepositories\UserServices\PurchasedSeatRepository.cs" />
-    <Compile Include="FakeRepositories\UserServices\RoleRepostiroy.cs" />
-    <Compile Include="FakeRepositories\UserServices\UserRepository.cs" />
-    <Compile Include="FakeRepositories\UserServices\UserRoleRepository.cs" />
-    <Compile Include="FakeRepositories\VenueServices\AreaRepository.cs" />
-    <Compile Include="FakeRepositories\VenueServices\LayoutRepository.cs" />
-    <Compile Include="FakeRepositories\VenueServices\SeatRepository.cs" />
-    <Compile Include="FakeRepositories\VenueServices\VenueRepository.cs" />
+    <Compile Include="FakeRepositories\Data\FakeEventData.cs" />
+    <Compile Include="FakeRepositories\Data\FakeUserData.cs" />
+    <Compile Include="FakeRepositories\Data\FakeVenueData.cs" />
+    <Compile Include="FakeRepositories\FakeRepository.cs" />
     <Compile Include="DiContainer\Container.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Tests\EventServicesValidation.cs" />

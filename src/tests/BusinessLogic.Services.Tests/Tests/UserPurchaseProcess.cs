@@ -1,14 +1,10 @@
 ﻿using Autofac;
 using BusinessLogic.DTO;
 using BusinessLogic.Exceptions;
-using BusinessLogic.Exceptions.EventExceptions;
-using BusinessLogic.Services.EventServices;
 using BusinessLogic.Services.Tests.DiContainer;
 using NUnit.Framework;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace BusinessLogic.Services.Tests
@@ -37,7 +33,6 @@ namespace BusinessLogic.Services.Tests
 			_user = new UserDto
 			{
 				PasswordHash = "AL5sqo4EuA4QndxLBI76AP9qJhPKKsE4Z4BzPI9/dPfug71640OUJlF13BATwgq2ZA==",
-				Id = "57b9433e-78ac-4619-91eb-dd7a5c130f08",
 				Culture = "en",
 				Email = "superb@mail.ru",
 				UserName = "vasia93",
@@ -48,7 +43,7 @@ namespace BusinessLogic.Services.Tests
 			Assert.Multiple(async () =>
 			{
 				Assert.DoesNotThrowAsync(async () => await userService.Create(_user));
-				Assert.IsNotNull(await  userService.Get("57b9433e-78ac-4619-91eb-dd7a5c130f08"));
+				Assert.IsNotNull(await  userService.Get(_user.Id));
 			});
 		}
 
@@ -74,7 +69,6 @@ namespace BusinessLogic.Services.Tests
 			var user = new UserDto
 			{
 				PasswordHash = "AL5sqo4EuA4QndxLBI76AP9qJhPKKsE4Z4BzPI9/dPfug71640OUJlF13BATwgq2ZA==",
-				Id = "57b9443e-78ac-4644-912b-ddd7sc130f08",
 				Culture = "en",
 				Email = "vanko@mail.ru",
 				UserName = "vasia93"
@@ -95,7 +89,6 @@ namespace BusinessLogic.Services.Tests
 			var user = new UserDto
 			{
 				PasswordHash = "AL5sqo4EuA4QndxLBI76AP9qJhPKKsE4Z4BzPI9/dPfug71640OUJlF13BATwgq2ZA==",
-				Id = "57b9443e-78ac-4644-912b-ddd7sc130f08",
 				Culture = "en",
 				Email = "superb@mail.ru",
 				UserName = "vasia95"
@@ -188,6 +181,22 @@ namespace BusinessLogic.Services.Tests
 
 			//Assert
 			Assert.IsTrue(purchaseList.Any());
+		}
+
+		[Test, Order(11)]
+		public async Task Refund_order()
+		{
+			//Arrange
+			var orderService = _container.Resolve<IOrderService>();
+			var purchaseHistory = await orderService.GetPurchaseHistory(_user.Id);
+			var order = purchaseHistory.FirstOrDefault();
+
+			//Act
+			await orderService.CancelOrderAndRefund(order.Order.Id);
+			purchaseHistory = await orderService.GetPurchaseHistory(_user.Id);
+
+			//Assert
+			Assert.IsFalse(purchaseHistory.Any(x => x.Order.Id == order.Order.Id));
 		}
 
 		[OneTimeTearDown]

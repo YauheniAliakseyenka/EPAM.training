@@ -21,9 +21,7 @@ namespace BusinessLogic.DTO
 
 		public override bool Equals(object obj)
 		{
-			var entity = obj as EventAreaDto;
-
-			if (entity == null)
+			if (!(obj is EventAreaDto entity))
 				return false;
 
 			if (Id == entity.Id &&
@@ -38,27 +36,27 @@ namespace BusinessLogic.DTO
 			return false;
 		}
 
-		public override int GetHashCode() => (Id, EventId, Description, CoordX, CoordY, Price, AreaDefaultId).GetHashCode();		
+		public override int GetHashCode() => (Id, EventId, Description, CoordX, CoordY, Price, AreaDefaultId).GetHashCode();
 
-		public int CompareTo(EventAreaDto other)
-		{
-			if (CoordY > other.CoordY)
-				return 1;
-			else
-				if (CoordY == other.CoordY)
-			{
-				if (CoordX > other.CoordX)
-					return 1;
-				if (CoordX < CoordX)
-					return -1;
+        public int CompareTo(EventAreaDto other)
+        {
+            if (CoordY > other.CoordY)
+                return 1;
+            else
+                if (CoordY == other.CoordY)
+            {
+                if (CoordX > other.CoordX)
+                    return 1;
+                if (CoordX < CoordX)
+                    return -1;
 
-				return 0;
-			}
-			else
-				if (CoordY < other.CoordY)
-				return -1;
+                return 0;
+            }
+            else
+                if (CoordY < other.CoordY)
+                return -1;
 
-			return 0;
-		}
+            return 0;
+        }
 	}
 }

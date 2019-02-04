@@ -9,9 +9,7 @@
 
 		public override bool Equals(object obj)
 		{
-			var entity = obj as SeatDto;
-
-			if (entity == null)
+			if (!(obj is SeatDto entity))
 				return false;
 
 			if (Id == entity.Id &&

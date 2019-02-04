@@ -1,24 +1,33 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Threading.Tasks;
 
 namespace DataAccess.Repositories
 {
-    public interface IRepository<T, in Tkey> where T: class
+    public interface IRepository<T> where T: class
     {
-		void Create(T entity);
+        void Create(T entity);
         void Update(T entity);
-        void Delete(Tkey id);
-		void DeleteBy(Expression<Func<T, bool>> expression);
+        void Delete(T entity);
 
-		T Get(Tkey id);
-		Task<T> GetAsync(Tkey id);
+        /// <summary>
+        /// Find an entity by key values
+        /// </summary>
+        /// <param name="keys"></param>
+        /// <returns></returns>
+        T Get(params object[] keys);
 
-		IQueryable<T> GetList();
-		Task<IEnumerable<T>> GetListAsync();
+        /// <summary>
+        /// Find an entity by key values async
+        /// </summary>
+        /// <param name="keys"></param>
+        /// <returns></returns>
+        Task<T> GetAsync(params object[] keys);
 
-		IQueryable<T> FindBy(Expression<Func<T, bool>> expression);
+        IQueryable<T> GetList();
+        Task<IEnumerable<T>> GetListAsync();
+
+		Task<IEnumerable<T>> FindByAsync(Func<T, bool> expression);
 	}
 }

@@ -4,5 +4,5 @@
 	[EventAreaId] INT NOT NULL,
 	[Row] INT NOT NULL,
 	[Number] INT NOT NULL,
-	[State] INT NOT NULL
+	[State] TINYINT NOT NULL DEFAULT 0 
 )

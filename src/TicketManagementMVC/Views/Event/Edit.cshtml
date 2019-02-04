@@ -1,5 +1,5 @@
 ﻿@{
-    ViewBag.Title = Resource.EditEventTitle;
+    ViewBag.Title = EventResource.Edit;
 }
 <script type="text/javascript">
     $(window).ready(function () {
@@ -8,15 +8,15 @@
 </script>
 
 <div id="eventPlaceHolder">
-    <h2 class="text-center">@Resource.EditEventTitle</h2>
+    <h2 class="text-center">@EventResource.Edit</h2>
     <div class="form-group col-sm-10 offset-sm-1">
-        <label>@Resource.EventSelectVenueDropDownLabel</label>
-        @Html.DropDownList("venue", new SelectList(ViewBag.VenueList, "Id", "Name", "0"),
+        <label>@EventResource.EventSelectVenueDropDownLabel</label>
+        @Html.DropDownList("venue", new SelectList(ViewBag.VenueList, "Id", "NameWithOffset", "0"),
        new { @class = "form-control", onchange = "GetEventsByVenue();", @id = "venueListToSortEvents" })
     </div>
 
     <div class="form-group col-sm-10 offset-sm-1">
-        <label>@Resource.EditEventSelectEventDropDownLabel</label>
+        <label>@EventResource.EditEventSelectDropDown</label>
         <select class="form-control required" id="eventListOnEdit" onchange="GetEventToEdit()"></select>
     </div>
     <div class="short-devider"></div>

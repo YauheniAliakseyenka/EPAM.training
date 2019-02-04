@@ -7,7 +7,8 @@ using System.Configuration;
 using System.Reflection;
 using System.Web.Mvc;
 using TicketManagementMVC.Infrastructure.Authentication;
-using TicketManagementMVC.Infrastructure.BackgroundWorker;
+using TicketManagementMVC.Infrastructure.WebServices.Interfaces;
+using TicketManagementMVC.Infrastructure.WebServices.Servcies;
 
 namespace TicketManagementMVC.App_Start
 {
@@ -18,9 +19,10 @@ namespace TicketManagementMVC.App_Start
 			var builder = new ContainerBuilder();
 			builder.RegisterControllers(Assembly.GetExecutingAssembly());
 
-			builder.RegisterType<UserStore>().As<IUserStore<User, string>>().InstancePerLifetimeScope();
+			builder.RegisterType<UserStore>().As<IUserStore<User, int>>().InstancePerLifetimeScope();
 			builder.RegisterType<ApplicationUserManager>().AsSelf().InstancePerLifetimeScope();
 			builder.RegisterType<SeatLocker>().As<ISeatLocker>().InstancePerLifetimeScope();
+			builder.RegisterType<EmailService>().As<IEmailService>().InstancePerLifetimeScope();
 
 			builder.RegisterModule(new WebModule()
             {

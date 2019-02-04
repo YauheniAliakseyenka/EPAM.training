@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
 using DataAccess.Entities;
 using DataAccess;
 using BusinessLogic.Exceptions.EventExceptions;
@@ -24,53 +23,47 @@ namespace BusinessLogic.Services.EventServices
 			if (entity == null)
 				throw new ArgumentNullException();
 
-			if (entity.LayoutId == 0)
-				throw new EventException("LayoutId equals zero");
+			if (entity.LayoutId <= 0)
+				throw new EventException("LayoutId is invalid");
 
-			if (!isDateValid(entity, true))
+			if (!IsDateValid(entity, true))
 				throw new EventException("Invalid date");
-
-			if (isPastDate(entity.Date))
+			
+			if (IsPastDate(entity))
 				throw new EventException("Attempt of creating event with a date in the past");
 
-			var addEvent = mapToEventDAL(entity);
-            _context.EventRepository.Create(addEvent);
+			var addEvent = MapToEventDAL(entity);
+			_context.EventRepository.Create(addEvent);
 			await _context.SaveAsync();
 			entity.Id = addEvent.Id;
         }
 
 		public async Task Delete(int id)
 		{
+			if (id <= 0)
+				throw new ArgumentException();
+
+			var delete = await _context.EventRepository.GetAsync(id);
+
 			if (HasLockedSeats(id))
 				throw new EventException("Not allowed to delete. Event has locked seat");
 
-			_context.EventRepository.Delete(id);
+			_context.EventRepository.Delete(delete);
 			await _context.SaveAsync();
-		}
-
-		public Task<IEnumerable<EventDto>> FindBy(Expression<Func<EventDto, bool>> expression)
-		{
-			Expression<Func<Event, bool>> predicate = x => expression.Compile().Invoke(mapToEventDto(x));
-			var list = _context.EventRepository.FindBy(predicate);
-
-			return Task.FromResult(list.Select(x => mapToEventDto(x)).AsEnumerable());
 		}
 
 		public async Task<EventDto> Get(int id)
 		{
 			var tempEvent = await _context.EventRepository.GetAsync(id);
 
-			if (tempEvent == null)
-				return null;
-
-			return mapToEventDto(tempEvent);
+			return tempEvent == null ? null : MapToEventDto(tempEvent);
 		}	
 
 		public async Task<IEnumerable<EventDto>> GetList()
 		{
 			var list = await _context.EventRepository.GetListAsync();
 
-			return list.Select(x => mapToEventDto(x));
+			return list.Select(x => MapToEventDto(x));
 		}
 
 		public async Task Update(EventDto entity)
@@ -78,13 +71,13 @@ namespace BusinessLogic.Services.EventServices
 			if (entity == null)
 				throw new ArgumentNullException();
 
-			if (entity.LayoutId == 0)
-				throw new EventException("Layout equals zero");
+			if (entity.LayoutId <= 0)
+				throw new EventException("LayoutId is invalid");
 
-			if (!isDateValid(entity, false))
+			if (!IsDateValid(entity, false))
 				throw new EventException("Invalid date");
 
-			if (isPastDate(entity.Date))
+			if (IsPastDate(entity))
 				throw new EventException("Attempt of updating event with a date in the past");
 
 			var update = await _context.EventRepository.GetAsync(entity.Id);
@@ -101,7 +94,7 @@ namespace BusinessLogic.Services.EventServices
 			await _context.SaveAsync();
 		}
 
-		private Event mapToEventDAL(EventDto from)
+		private Event MapToEventDAL(EventDto from)
 		{
 			return new Event
 			{
@@ -115,9 +108,9 @@ namespace BusinessLogic.Services.EventServices
 			};
 		}
 
-		private EventDto mapToEventDto(Event from)
+		private EventDto MapToEventDto(Event from)
 		{
-			return new EventDto
+            return new EventDto
 			{
 				CreatedBy = from.CreatedBy,
 				Date = from.Date,
@@ -129,20 +122,25 @@ namespace BusinessLogic.Services.EventServices
 			};
 		}
 
-		private bool isPastDate(DateTime date)
+		private bool IsPastDate(EventDto entity)
 		{
-			return date <= DateTime.Now;
+			//getting venue's local time
+			var venueLocalTime = TimeZoneInfo.ConvertTimeBySystemTimeZoneId(DateTime.UtcNow, VenueTimezoneByLayoutId(entity.LayoutId));
+
+			return entity.Date <= venueLocalTime;
 		}
 
-		private bool isDateValid(EventDto entity, bool isCreating)
+		private bool IsDateValid(EventDto entity, bool isCreating)
 		{
-			return isCreating ?
-				!(from events in _context.EventRepository.GetList()
-				 where events.LayoutId == entity.LayoutId & events.Date == entity.Date
-				 select events).Any() :
-				!(from events in _context.EventRepository.GetList()
-				 where events.Id != entity.Id && (events.LayoutId == entity.LayoutId & events.Date == entity.Date)
-				 select events).Any();
+			var data = from events in _context.EventRepository.GetList()
+						 where events.LayoutId == entity.LayoutId & events.Date == entity.Date
+						 select events;
+
+			return isCreating ? 
+				!data.Any() :
+				!(from events in data
+				  where events.Id != entity.Id
+				  select events).Any();
 		}
 	}
 }

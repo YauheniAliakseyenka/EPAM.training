@@ -1,15 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DataAccess.Entities
 {
 	[Table(name: "EventSeat")]
 	public class EventSeat
 	{
+		[Key]
 		[Column(name: "Id")]
 		public int Id { get; set; }
 		[Column(name: "EventAreaId")]
@@ -19,6 +16,6 @@ namespace DataAccess.Entities
 		[Column(name: "Number")]
 		public int Number { get; set; }
 		[Column(name: "State")]
-		public int State { get; set; }
-	}
+		public byte State { get; set; }
+    }
 }

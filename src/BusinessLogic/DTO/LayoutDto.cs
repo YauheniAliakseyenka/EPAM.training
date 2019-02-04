@@ -17,9 +17,7 @@ namespace BusinessLogic.DTO
 
 		public override bool Equals(object obj)
 		{
-			var entity = obj as LayoutDto;
-
-			if (entity == null)
+			if (!(obj is LayoutDto entity))
 				return false;
 
 			if (Id == entity.Id &&

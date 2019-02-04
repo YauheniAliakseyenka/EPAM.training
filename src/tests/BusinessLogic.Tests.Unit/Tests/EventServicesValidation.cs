@@ -2,7 +2,6 @@
 using BusinessLogic.DTO;
 using BusinessLogic.Exceptions.EventExceptions;
 using BusinessLogic.Services;
-using BusinessLogic.Services.EventServices;
 using BusinessLogic.Tests.Unit.DiContainer;
 using NUnit.Framework;
 using System;
@@ -65,13 +64,16 @@ namespace BusinessLogin.Unit.Tests
 		}
 
 		[Test, TestCaseSource(typeof(TestingData), "EventsValid")]
-		public void Event_is_valid(EventDto e)
+		public async Task Event_is_valid(EventDto e)
 		{
 			//Arrange
 			var eventService = _container.Resolve<IEventService>();
 
+            //Act
+            await eventService.Create(e);
+
             //Assert
-            Assert.DoesNotThrowAsync(async () => await eventService.Create(e));
+            Assert.AreEqual(e, await eventService.Get(e.Id));
 		}
 
 		[Test, TestCaseSource(typeof(TestingData), "EventsDateIsNotValid")]
@@ -124,13 +126,16 @@ namespace BusinessLogin.Unit.Tests
 		}
 
 		[Test]
-		public void Delete_event_without_locked_seats()
+		public async Task Delete_event_without_locked_seats()
 		{
             //Arrange
             var eventService = _container.Resolve<IEventService>();
 
+            //Act
+            await eventService.Delete(3);
+
             //Assert
-            Assert.DoesNotThrowAsync(async () => await eventService.Delete(3));
+            Assert.IsNull(await eventService.Get(3));
 		}
 
 		[Test]
@@ -139,7 +144,7 @@ namespace BusinessLogin.Unit.Tests
             //Arrange
             var eventService = _container.Resolve<IEventService>();
             var update = await eventService.Get(1);
-			update.LayoutId = 2;
+			update.LayoutId = 3;
 
 			//Act
 			var exception = Assert.CatchAsync<EventException>(async () => await eventService.Update(update));
@@ -209,13 +214,16 @@ namespace BusinessLogin.Unit.Tests
 		}
 
 		[Test]
-		public void Delete_event_area()
+		public async Task Delete_event_area()
 		{
             //Arrange
             var eventAreaService = _container.Resolve<IStoreService<EventAreaDto, int>>();
 
+            //Act
+            await eventAreaService.Delete(3);
+
             //Assert
-            Assert.DoesNotThrowAsync(async () => await eventAreaService.Delete(3));
+            Assert.IsNull(await eventAreaService.Get(3));
 		}
 
 		[Test]
@@ -240,7 +248,8 @@ namespace BusinessLogin.Unit.Tests
             var eventSeatService = _container.Resolve<IStoreService<EventSeatDto, int>>();
             var eventAreaService = _container.Resolve<IStoreService<EventAreaDto, int>>();
             var update = await eventAreaService.Get(1);
-			update.Seats = (await eventSeatService.FindBy(x => x.EventAreaId == update.Id)).ToList();
+			var seats = await eventSeatService.GetList();
+			update.Seats = seats.Where(x => x.EventAreaId == update.Id).ToList();
 			update.Seats.Add(new EventSeatDto { Row = 3, Number = 1, State = 0, EventAreaId = 1 });
 
 			//Assert
@@ -254,7 +263,8 @@ namespace BusinessLogin.Unit.Tests
             var eventSeatService = _container.Resolve<IStoreService<EventSeatDto, int>>();
             var eventAreaService = _container.Resolve<IStoreService<EventAreaDto, int>>();
             var update = await eventAreaService.Get(1);
-            update.Seats = (await eventSeatService.FindBy(x => x.EventAreaId == update.Id)).ToList();
+			var seats = await eventSeatService.GetList();
+			update.Seats = seats.Where(x => x.EventAreaId == update.Id).ToList();
             update.Seats.RemoveAt(1);
 
             //Assert

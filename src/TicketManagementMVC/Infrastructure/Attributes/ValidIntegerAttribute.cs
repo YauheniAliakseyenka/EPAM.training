@@ -28,7 +28,7 @@ namespace TicketManagementMVC.Infrastructure.Attributes
 			{
 				var propertyName = metadata.PropertyName;
 				context.Controller.ViewData.ModelState[propertyName].Errors.Clear();
-				context.Controller.ViewData.ModelState[propertyName].Errors.Add(string.Format(I18N.ResourceErrors.NumericError, propertyName));
+				context.Controller.ViewData.ModelState[propertyName].Errors.Add(string.Format(ProjectResources.ResourceErrors.NumericError, propertyName));
 			}
 		}
 	}

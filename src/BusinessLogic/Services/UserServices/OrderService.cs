@@ -25,15 +25,15 @@ namespace BusinessLogic.Services.UserServices
 			_userService = userService;
 		}
 
-		public async Task Create(string userId)
+		public async Task Create(int userId)
 		{
-            if (string.IsNullOrEmpty(userId))
-                throw new ArgumentNullException();
+			if (userId <= 0)
+				throw new ArgumentException();
 
 			var orderedSeats = await _cartService.GetOrderedSeats(userId);
 
 			if (!orderedSeats.Any())
-				return;
+				throw new OrderException("User has no ordered seats");
 
 			using (var transaction = _context.CreateTransaction())
             {
@@ -47,30 +47,33 @@ namespace BusinessLogic.Services.UserServices
 
 					var order = new Order
 					{
-						Date = DateTime.Now,
+						Date = TimeZoneInfo.ConvertTimeBySystemTimeZoneId(DateTimeOffset.Now, user.Timezone),
 						UserId = userId
 					};
 					_context.OrderRepository.Create(order);
 					await _context.SaveAsync();
 
-					orderedSeats.ToList().ForEach(x =>
+					foreach(var seat in orderedSeats)
 					{
 						_context.PurchasedSeatRepository.Create(new PurchasedSeat
 						{
-							SeatId = x.Seat.Id,
+							SeatId = seat.Seat.Id,
 							OrderId = order.Id,
-							Price = x.Area.Price
+							Price = seat.Area.Price
 						});
-					});
+
+						var updateSeat = await _context.EventSeatRepository.GetAsync(seat.Seat.Id);
+						updateSeat.State = (byte)SeatState.Purchased;
+					}
                     await _context.SaveAsync();
 					
 					user.Amount -= orderTotal;
 					await _userService.Update(user);
 
-					notify(user, order.Id);
-
 					await _cartService.DeleteUserCart(userId);
 					transaction.Commit();
+
+					Notify(user, order.Id);
 				}
 				catch(Exception)
 				{
@@ -80,21 +83,20 @@ namespace BusinessLogic.Services.UserServices
             }
 		}
 
-		public Task<IEnumerable<OrderModel>> GetPurchaseHistory(string userId)
+		public Task<IEnumerable<OrderModel>> GetPurchaseHistory(int userId)
 		{
-            if (string.IsNullOrEmpty(userId))
-                throw new ArgumentNullException();
-
             var result = new List<OrderModel>();
-			var data = (from orders in _context.OrderRepository.GetList()
-						join purchasedSeats in _context.PurchasedSeatRepository.GetList() on orders.Id equals purchasedSeats.OrderId
+			var data = (from users in _context.UserRepository.GetList()
+                        join orders in _context.OrderRepository.GetList() on users.Id equals orders.UserId
+                        join purchasedSeats in _context.PurchasedSeatRepository.GetList() on orders.Id equals purchasedSeats.OrderId
 						join seats in _context.EventSeatRepository.GetList() on purchasedSeats.SeatId equals seats.Id
 						join eventAreas in _context.EventAreaRepository.GetList() on seats.EventAreaId equals eventAreas.Id
 						join events in _context.EventRepository.GetList() on eventAreas.EventId equals events.Id
 						join layouts in _context.LayoutRepository.GetList() on events.LayoutId equals layouts.Id
 						join venues in _context.VenueRepository.GetList() on layouts.VenueId equals venues.Id
-						where orders.UserId.Equals(userId, StringComparison.Ordinal)
-						select new { order = orders, seat = seats, area = eventAreas, currentEvent = events, layout = layouts, venue = venues }).ToList();
+						where orders.UserId == userId
+						select new { order = orders, seat = seats, area = eventAreas, currentEvent = events, layout = layouts,
+                            venue = venues, user = users }).ToList();
 
 			if (!data.Any())
 				return Task.FromResult(result.AsEnumerable());
@@ -107,7 +109,7 @@ namespace BusinessLogic.Services.UserServices
 				{
 					Seat = new EventSeatDto
 					{
-						State = x.seat.State,
+						State = (SeatState)x.seat.State,
 						EventAreaId = x.seat.EventAreaId,
 						Id = x.seat.Id,
 						Number = x.seat.Number,
@@ -148,41 +150,83 @@ namespace BusinessLogic.Services.UserServices
 						Id = x.venue.Id,
 						LayoutList = new List<LayoutDto>(),
 						Name = x.venue.Name,
-						Phone = x.venue.Phone
+						Phone = x.venue.Phone,
+						Timezone = x.venue.Timezone
 					}
 				};
 
 				if (order == null)
 				{
-					result.Add(new OrderModel
+                    result.Add(new OrderModel
 					{
-						Order = mapToOrderDto(x.order),
+						Order = MapToOrderDtoWithTimezone(x.order, x.user.Timezone),
 						PurchasedSeats = new List<SeatModel>() { seatRow }
 					});
 				}
 				else
 					order.PurchasedSeats.Add(seatRow);
 			});
+			result.OrderBy(x => x.Order.Date);
 
 			return Task.FromResult(result.AsEnumerable());
 		}
 
-		private OrderDto mapToOrderDto(Order from)
+		private OrderDto MapToOrderDtoWithTimezone(Order from, string timezone)
 		{
+			var timezoneInfo = TimeZoneInfo.FindSystemTimeZoneById(timezone);
 			return new OrderDto
 			{
-				Date = from.Date,
+				Date = TimeZoneInfo.ConvertTimeFromUtc(from.Date.UtcDateTime, timezoneInfo),
 				Id = from.Id,
 				UserId = from.UserId
 			};
 		}
 
-		private async void notify(UserDto user, int orderId)
+		private async void Notify(UserDto user, int orderId)
 		{
 			var puchases = await GetPurchaseHistory(user.Id);
 			var args = new OrderEventArgs(user, puchases.FirstOrDefault(x => x.Order.Id == orderId));
-
 			Ordered?.Invoke(this, args);
+		}
+
+		public async Task CancelOrderAndRefund(int orderId)
+		{
+			var order = await _context.OrderRepository.GetAsync(orderId);
+
+			if (order == null)
+				throw new OrderException("Order does not exist");
+
+			using (var transaction = _context.CreateTransaction())
+			{
+				try
+				{
+					var data = (from areas in _context.EventAreaRepository.GetList()
+								join eventSeats in _context.EventSeatRepository.GetList() on areas.Id equals eventSeats.EventAreaId
+								join purchasedSeats in _context.PurchasedSeatRepository.GetList() on eventSeats.Id equals purchasedSeats.SeatId
+								where purchasedSeats.OrderId == orderId
+								select new { eventSeats, price = areas.Price }).ToList();
+					
+					var amount = data.Sum(x => x.price);
+					var percent = 10;
+					var user = await _userService.Get(order.UserId);
+
+					data.ForEach(x =>
+					{
+						x.eventSeats.State = (byte)SeatState.Available;
+					});
+
+					_context.OrderRepository.Delete(order);
+					user.Amount += amount - ((amount * percent) / 100);
+					await _userService.Update(user);
+					await _context.SaveAsync();
+					transaction.Commit();
+				}
+				catch(Exception)
+				{
+					transaction.Rollback();
+					throw;
+				}
+			}
 		}
 	}
 }

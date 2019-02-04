@@ -3,7 +3,7 @@
 	@Description NVARCHAR(MAX),
 	@ImageURL NVARCHAR(MAX),
 	@LayoutId INT,
-	@Date DATETIME,
+	@Date DATETIMEOFFSET(7),
 	@CreatedBy nvarchar(128),
 	@EventInsertedID INT = 0,
 	@layoutChanged INT = 0
@@ -45,7 +45,7 @@ BEGIN TRY
 		[EventArea].[Price],
 		[EventArea].[AreaDefaultId]
 		)
-		(SELECT @EventInsertedID, [Area].[Description], [Area].[CoordX], [Area].[CoordY], '0', [Area].[Id] FROM [Area]
+		(SELECT @EventInsertedID, [Area].[Description], [Area].[CoordX], [Area].[CoordY], 0, [Area].[Id] FROM [Area]
 		WHERE [Area].[LayoutId] = @LayoutId)
 	END
 
@@ -57,7 +57,7 @@ BEGIN TRY
 		[EventSeat].[Row],
 		[EventSeat].[State]
 		)
-		(SELECT [EventArea].[Id], [Seat].[Number], [Seat].[Row], '0' FROM [Seat]
+		(SELECT [EventArea].[Id], [Seat].[Number], [Seat].[Row], 0 FROM [Seat]
 		JOIN [EventArea] ON [EventArea].[AreaDefaultId] = [Seat].[AreaId]
 		WHERE [EventArea].EventId = @EventInsertedID)
 	END

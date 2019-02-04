@@ -1,29 +1,43 @@
 ﻿@model BusinessLogic.BusinessModels.EventModel
 @{
-    ViewBag.Title = Resource.EventInformation;
+    ViewBag.Title = EventResource.EventInformation;
 
 }
 
 <div class="row">
     <div class="w-25">
-        <img id="event-image" class="img-border" src="@Url.Content(Model.Event.ImageURL)" style="width:260px; height:260px; margin-left:4px;" class="border" />
+        <img id="event-image" class="img-border border" src="@Url.Content(Model.Event.ImageURL)" style="width:260px; height:260px; margin-left:4px;" />
         <div class="pt-3 m-auto d-table">
             @Model.Venue.Name (@Model.LayoutName)
         </div>
         <div class="pt-3 m-auto d-table">
-            @Resource.Date: @Model.Event.Date.ToShortDateString() (@Model.Event.Date.ToShortTimeString())
-        </div>
-    </div>
-        <div class="row w-75">
-            <div class="pl-4">
-                <div class="title-event">@Model.Event.Title</div>
-                <div class="description-event">@Resource.DescriptionLabel:  @Model.Event.Description</div>
+            @EventResource.Date: @Model.Event.Date.ToShortDateString() (@Model.Event.Date.ToShortTimeString() @Html.OffsetDisplay(Model.Venue.Timezone))
+            <div class="seatmap-legend border mt-2 d-table m-auto">
+                <div class="row m-auto">
+                    <div class="color seat-available mb-1 border"></div>
+                    <div class="pl-2">@ProjectResources.CommonResource.Available</div>
+                </div>
+                <div class="row m-auto">
+                    <div class="color seat-ordered mb-1 border"></div>
+                    <div class="pl-2">@ProjectResources.CommonResource.Ordered</div>
+                </div>
+                <div class="row m-auto">
+                    <div class="color seat-purchased mb-1 border"></div>
+                    <div class="pl-2">@ProjectResources.CommonResource.Purchased</div>
+                </div>
             </div>
         </div>
+    </div>
+    <div class="row w-75">
+        <div class="pl-4">
+            <div class="title-event">@Model.Event.Title</div>
+            <div class="description-event">@EventResource.Description:  @Model.Event.Description</div>
+        </div>
+    </div>
 </div>
 
 <br />
 <div id="seatMap" class="d-table m-auto">
-    @Html.Partial("~/Views/Home/Partial/SeatMap.cshtml", Model)
+    @Html.Partial("~/Views/Home/Partial/_SeatMap.cshtml", Model)
 </div>
 <br />

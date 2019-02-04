@@ -12,7 +12,6 @@ using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
-using TicketManagementMVC.Helpers;
 using TicketManagementMVC.Infrastructure.Attributes;
 using TicketManagementMVC.Infrastructure.Authentication;
 using TicketManagementMVC.Models.Event;
@@ -24,7 +23,7 @@ namespace TicketManagementMVC.Controllers
     {
         private ApplicationUserManager _userManager;
         private IStoreService<VenueDto, int> _venueService;
-        private IStoreService<LayoutDto, int> _layoutService;
+        private ILayoutService _layoutService;
         private IEventService _eventService;
 		private IStoreService<EventAreaDto, int> _eventAreaService;
 		private IStoreService<EventSeatDto, int> _eventSeatService;
@@ -36,13 +35,13 @@ namespace TicketManagementMVC.Controllers
 			if (identity.IsAuthenticated)
 			{
 				var user = await _userManager.FindByNameAsync(identity.GetUserName());
-				ViewData["Balance"] = DisplayBalance.Get(user.Amount);
+				ViewData["Balance"] = user.Amount;
 			}
 		}
 
         public EventController(IStoreService<VenueDto, int> venueService,
 			ApplicationUserManager userManager,
-			IStoreService<LayoutDto, int> layoutService,
+			ILayoutService layoutService,
             IEventService eventService,
 			IStoreService<EventAreaDto, int> eventAreaService,
 			IStoreService<EventSeatDto, int> eventSeatService)
@@ -68,7 +67,7 @@ namespace TicketManagementMVC.Controllers
 		[ValidateAntiForgeryToken]
 		public async Task<ActionResult> Create(EventViewModel model, HttpPostedFileBase image)
         {
-            if (!ModelState.IsValid)
+			if (!ModelState.IsValid)
             {
 				return Json(new
 				{
@@ -81,8 +80,7 @@ namespace TicketManagementMVC.Controllers
             try
             {
                 string url;
-                string path;
-				url = getImageUrl(image, out path);
+				url = GetImageUrl(image, out string path);
 
 				await _eventService.Create(new EventDto
 				{
@@ -91,7 +89,7 @@ namespace TicketManagementMVC.Controllers
 					ImageURL = url,
 					LayoutId = model.LayoutId,
 					Title = model.Title,
-					CreatedBy = User.Identity.GetUserId()
+					CreatedBy = User.Identity.GetUserId<int>()
 				});
 
 				if (!string.IsNullOrEmpty(path))
@@ -102,21 +100,15 @@ namespace TicketManagementMVC.Controllers
                 string error = string.Empty;
 
                 if (exception.Message.Equals("Invalid date", StringComparison.OrdinalIgnoreCase))
-                    error = I18N.ResourceErrors.EventInvalidDateError;
+                    error = ProjectResources.ResourceErrors.EventInvalidDateError;
 
                 if (exception.Message.Equals("Attempt of creating event with a date in the past", StringComparison.OrdinalIgnoreCase))
-                    error = I18N.ResourceErrors.PastDateError;
+                    error = ProjectResources.ResourceErrors.PastDateError;
 
-                ModelState.AddModelError(string.Empty, error);
-            }
-
-            if (ModelState.Values.Where(x => x.Errors.Any()).Any())
-            {
 				return Json(new
 				{
 					success = false,
-					errors = ModelState.Keys.SelectMany(k => ModelState[k].Errors)
-								   .Select(m => m.ErrorMessage).ToArray()
+					errors = new string[] { error }
 				});
 			}
 
@@ -130,10 +122,10 @@ namespace TicketManagementMVC.Controllers
 		[NoDirectAccess]
 		public async Task<ActionResult> GetLayouts(int venueId)
         {
-			var list = await _layoutService.FindBy(x => x.VenueId == venueId);
+			var list = await _layoutService.GetLayoutsByVenue(venueId);
 
 			return Json(new {
-                layouts = list.Select(x => new { Id = x.Id, Display = x.Description }).ToList()
+                layouts = list.Select(x => new { x.Id, Display = x.Description }).ToList()
             }, JsonRequestBehavior.AllowGet);
         }
 
@@ -141,13 +133,13 @@ namespace TicketManagementMVC.Controllers
         [NoDirectAccess]
 		public async Task<ActionResult> GetEventsByVenue(int venueId)
         {
-			var list = await _eventService.GetEventManagerEvents(venueId, User.Identity.GetUserId());
+			var list = await _eventService.GetEventManagerEvents(venueId, User.Identity.GetUserId<int>());
 
 			return Json(new
 			{
 				events = list.Select(x => new
 				{
-					Id = x.Id,
+					x.Id,
 					Display = x.Title + " (" + x.Date.ToShortDateString() + ", " + x.Date.ToShortTimeString() + ")"
 				}).ToList()
 			}, JsonRequestBehavior.AllowGet);
@@ -156,7 +148,7 @@ namespace TicketManagementMVC.Controllers
 		//GET: edit area view
 		[HttpGet]
 		public async Task<ActionResult> EditArea(int areaId, int eventId)
-        {
+		{
 			var data = await _eventService.GetEventInformation(eventId);
 			var area = data.Areas.Where(x => x.Id == areaId).FirstOrDefault();
 
@@ -170,10 +162,10 @@ namespace TicketManagementMVC.Controllers
 				Price = area.Price
 			};
 
-			ViewBag.Title = I18N.Resource.EditAreaTitle;
+			ViewBag.Title = ProjectResources.EventResource.Edit;
 			ViewBag.Action = "EditArea";
-			return PartialView("~/Views/Event/Partial/EventArea.cshtml", model);
-        }
+			return PartialView("~/Views/Event/Partial/_EventArea.cshtml", model);
+		}
 
 		//POST: edit area
 		[HttpPost]
@@ -185,7 +177,7 @@ namespace TicketManagementMVC.Controllers
 				return Json(new
 				{
 					success = false,
-					errors = new string[] { I18N.ResourceErrors.SeatListError }
+					errors = new string[] { ProjectResources.ResourceErrors.SeatListError }
 				});
 			}
 
@@ -212,7 +204,7 @@ namespace TicketManagementMVC.Controllers
 				string error = string.Empty;
 
 				if (exception.Message.Equals("Seat already exists", StringComparison.OrdinalIgnoreCase))
-					error = I18N.ResourceErrors.SeatExistsError;
+					error = ProjectResources.ResourceErrors.SeatExistsError;
 
 				return Json(new
 				{
@@ -225,7 +217,7 @@ namespace TicketManagementMVC.Controllers
 				string error = string.Empty;
 
 				if (exception.Message.Equals("Area description isn't unique", StringComparison.OrdinalIgnoreCase))
-					error = I18N.ResourceErrors.AreaDescriptionError;
+					error = ProjectResources.ResourceErrors.AreaDescriptionError;
 
 				return Json(new
 				{
@@ -250,7 +242,7 @@ namespace TicketManagementMVC.Controllers
 				return Json(new
 				{
 					success = false,
-					errors = new string[] { I18N.ResourceErrors.SeatListError }
+					errors = new string[] { ProjectResources.ResourceErrors.SeatListError }
 				});
 			}
 
@@ -280,7 +272,7 @@ namespace TicketManagementMVC.Controllers
 				string error = string.Empty;
 
 				if (exception.Message.Equals("Seat already exists", StringComparison.OrdinalIgnoreCase))
-					error = I18N.ResourceErrors.SeatExistsError;
+					error = ProjectResources.ResourceErrors.SeatExistsError;
 
 				return Json(new
 				{
@@ -293,7 +285,7 @@ namespace TicketManagementMVC.Controllers
                 string error = string.Empty;
 
                 if (exception.Message.Equals("Area description isn't unique", StringComparison.OrdinalIgnoreCase))
-                    error = I18N.ResourceErrors.AreaDescriptionError;
+                    error = ProjectResources.ResourceErrors.AreaDescriptionError;
 
 				return Json(new
 				{
@@ -312,9 +304,9 @@ namespace TicketManagementMVC.Controllers
         [HttpGet]
         public ActionResult CreateArea(int eventId)
         {
-			ViewBag.Title = I18N.Resource.CreateAreaTitle;
+			ViewBag.Title = ProjectResources.EventResource.Create;
 			ViewBag.Action = "CreateArea";
-			return PartialView("~/Views/Event/Partial/EventArea.cshtml", new EventAreaViewModel
+			return PartialView("~/Views/Event/Partial/_EventArea.cshtml", new EventAreaViewModel
             {
                 SeatList = new List<EventSeatDto>(),
                 EventId = eventId
@@ -354,7 +346,7 @@ namespace TicketManagementMVC.Controllers
 
 				if (image != null && image.ContentLength > 0)
 				{
-					newImageUrl = getImageUrl(image, out newImagePath);
+					newImageUrl = GetImageUrl(image, out newImagePath);
 					oldImageUrl = update.ImageURL;
 				}
 
@@ -365,31 +357,21 @@ namespace TicketManagementMVC.Controllers
 				update.Title = model.Event.Title;
 				await _eventService.Update(update);
 
-				if (!string.IsNullOrEmpty(newImageUrl))
-				{
-					image.SaveAs(newImagePath);
-
-					//delete old image
-					string fileName = Path.GetFileName(oldImageUrl);
-					if (!fileName.Equals("default", StringComparison.OrdinalIgnoreCase))
-					{
-						string fullPath = Server.MapPath(ConfigurationManager.AppSettings["Uploads"] + fileName);
-						System.IO.File.Delete(fullPath);
-					}
-				}
+                if (!string.IsNullOrEmpty(newImageUrl))
+                    image.SaveAs(newImagePath);
 			}
 			catch (EventException exception)
 			{
 				string error = string.Empty;
 
 				if (exception.Message.Equals("Invalid date", StringComparison.OrdinalIgnoreCase))
-					error = I18N.ResourceErrors.EventInvalidDateError;
+					error = ProjectResources.ResourceErrors.EventInvalidDateError;
 
 				if (exception.Message.Equals("Attempt of updating event with a date in the past", StringComparison.OrdinalIgnoreCase))
-					error = I18N.ResourceErrors.PastDateError;
+					error = ProjectResources.ResourceErrors.PastDateError;
 
 				if (exception.Message.Equals("Not allowed to update layout. Event has locked seats", StringComparison.OrdinalIgnoreCase))
-					error = I18N.ResourceErrors.EventLayoutChangeError;
+					error = ProjectResources.ResourceErrors.EventLayoutChangeError;
 
 				return Json(new
 				{
@@ -422,7 +404,7 @@ namespace TicketManagementMVC.Controllers
 			};
 
 			ViewBag.VenueList = await _venueService.GetList();
-			return PartialView("~/Views/Event/Partial/GetEventToEdit.cshtml", new EditEventViewModel
+			return PartialView("~/Views/Event/Partial/_GetEventToEdit.cshtml", new EditEventViewModel
             {
                 Event = edit,
                 EventAreas = data.Areas.ToList()
@@ -445,7 +427,7 @@ namespace TicketManagementMVC.Controllers
 				return Json(new
 				{
 					success = false,
-					error = I18N.ResourceErrors.SeatLockedError
+					error = ProjectResources.ResourceErrors.SeatLockedError
 				});
 			}
 		}
@@ -462,7 +444,7 @@ namespace TicketManagementMVC.Controllers
 				string error = string.Empty;
 
 				if (exception.Message.Equals("Not allowed to delete. Event has locked seat", StringComparison.OrdinalIgnoreCase))
-					error = I18N.ResourceErrors.DeleteEventError;
+					error = ProjectResources.ResourceErrors.DeleteEventError;
 
 				return Json(new
 				{
@@ -478,15 +460,20 @@ namespace TicketManagementMVC.Controllers
 		}
 
         //get url of loaded image  and  path to save
-        private string getImageUrl(HttpPostedFileBase image, out string path)
+        private string GetImageUrl(HttpPostedFileBase image, out string path)
 		{
-			var uploadsPath = ConfigurationManager.AppSettings["Uploads"];
+            var serverPath = ConfigurationManager.AppSettings["Uploads"];
+            var directory = Server.MapPath(serverPath);
+            
+            if (!Directory.Exists(directory))
+                Directory.CreateDirectory(directory);
+
 			string url;
 			if (image != null && image.ContentLength > 0)
 			{
 				var fileName = Path.GetFileName(image.FileName);
-				path = Path.Combine(Server.MapPath(uploadsPath), fileName);
-				url = new Uri(Request.Url, Url.Content(uploadsPath + image.FileName)).ToString();
+				path = Path.Combine(directory, fileName);
+				url = new Uri(Request.Url, Url.Content(serverPath + image.FileName)).ToString();
 				return url;
 			}
 			else

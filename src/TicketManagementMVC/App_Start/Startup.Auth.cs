@@ -12,18 +12,19 @@ namespace TicketManagementMVC
     {
         public void ConfigureAuth(IAppBuilder app)
         {
-            app.UseCookieAuthentication(new CookieAuthenticationOptions
-            {
-                AuthenticationType = DefaultAuthenticationTypes.ApplicationCookie,
-                LoginPath = new PathString("/"),
-                Provider = new CookieAuthenticationProvider
-                {
-                    OnValidateIdentity = SecurityStampValidator.
-                    OnValidateIdentity<UserManager<User, string>, User>(
-                        validateInterval: TimeSpan.FromMinutes(30),
-                        regenerateIdentity: (manager, user) => manager.CreateIdentityAsync(user, DefaultAuthenticationTypes.ApplicationCookie))
-                }
-            });
+			app.UseCookieAuthentication(new CookieAuthenticationOptions
+			{
+				AuthenticationType = DefaultAuthenticationTypes.ApplicationCookie,
+				LoginPath = new PathString("/"),
+				Provider = new CookieAuthenticationProvider
+				{
+					OnValidateIdentity = SecurityStampValidator.
+					OnValidateIdentity<ApplicationUserManager, User, int>(
+						validateInterval: TimeSpan.FromMinutes(30),
+						regenerateIdentityCallback: (manager, user) => manager.CreateIdentityAsync(user, DefaultAuthenticationTypes.ApplicationCookie),
+						getUserIdCallback: (id) => id.GetUserId<int>())
+				}
+			});
         }
     }
 }

@@ -5,7 +5,6 @@ using DataAccess.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Threading.Tasks;
 
 namespace BusinessLogic.Services
@@ -24,13 +23,13 @@ namespace BusinessLogic.Services
 			if (entity == null)
 				throw new ArgumentNullException();
 
-			if (entity.AreaId == 0)
-				throw new SeatException("AreaId equals zero");
+			if (entity.AreaId <= 0)
+				throw new SeatException("AreaId is invalid");
 
 			if (!IsSeatUnique(entity, true))
 				throw new SeatException("Seat already exists");
 
-			var seatAdd = mapToSeat(entity);
+			var seatAdd = MapToSeat(entity);
 			_context.SeatRepository.Create(seatAdd);
 			await _context.SaveAsync();
 			entity.Id = seatAdd.Id;
@@ -38,34 +37,27 @@ namespace BusinessLogic.Services
 
 		public async Task Delete(int id)
 		{
-			_context.SeatRepository.Delete(id);
+			var delete = await _context.SeatRepository.GetAsync(id);
+
+			if (delete == null)
+				return;
+
+			_context.SeatRepository.Delete(delete);
 			await _context.SaveAsync();
-		}
-
-		public Task<IEnumerable<SeatDto>> FindBy(Expression<Func<SeatDto, bool>> expression)
-		{
-			var result = new List<SeatDto>();
-			Expression<Func<Seat, bool>> predicate = x => expression.Compile().Invoke(mapToSeatDto(x));
-			var list = _context.SeatRepository.FindBy(predicate);
-
-			return Task.FromResult(list.Select(x => mapToSeatDto(x)).AsEnumerable());
 		}
 
 		public async Task<SeatDto> Get(int id)
 		{
 			var seat = await _context.SeatRepository.GetAsync(id);
 
-			if (seat == null)
-				return null;
-
-			return mapToSeatDto(seat);
+			return seat == null? null : MapToSeatDto(seat);
 		}
 
 		public async Task<IEnumerable<SeatDto>> GetList()
 		{
 			var list = await _context.SeatRepository.GetListAsync();
 
-			return list.Select(x => mapToSeatDto(x));
+			return list.Select(x => MapToSeatDto(x));
 		}
 
 		public async Task Update(SeatDto entity)
@@ -73,8 +65,8 @@ namespace BusinessLogic.Services
 			if (entity == null)
 				throw new ArgumentNullException();
 
-			if (entity.AreaId == 0)
-				throw new SeatException("AreaId equals zero");
+			if (entity.AreaId <= 0)
+				throw new SeatException("AreaId is invalid");
 
 			if (!IsSeatUnique(entity, false))
 				throw new SeatException("Area description isn't unique");
@@ -86,7 +78,7 @@ namespace BusinessLogic.Services
 			await _context.SaveAsync();
 		}
 
-		private SeatDto mapToSeatDto(Seat from)
+		private SeatDto MapToSeatDto(Seat from)
 		{
 			return new SeatDto
 			{
@@ -97,7 +89,7 @@ namespace BusinessLogic.Services
 			};
 		}
 
-		private Seat mapToSeat(SeatDto from)
+		private Seat MapToSeat(SeatDto from)
 		{
 			return new Seat
 			{
@@ -110,11 +102,15 @@ namespace BusinessLogic.Services
 
         private bool IsSeatUnique(SeatDto entity, bool isCreating)
         {
-            return isCreating ?
-                !_context.SeatRepository.FindBy(c => c.AreaId == entity.AreaId &&
-            (c.Row == entity.Row && c.Number == entity.Number)).Any() :
-            !_context.SeatRepository.FindBy(c => c.Id != entity.Id &&
-            (c.AreaId == entity.AreaId && (c.Row == entity.Row && c.Number == entity.Number))).Any();
+			var data = from seats in _context.SeatRepository.GetList()
+					   where seats.AreaId == entity.AreaId && seats.Row == entity.Row && seats.Number == entity.Number
+					   select seats;
+
+			return isCreating ?
+				!data.Any() :
+				!(from seats in data
+				  where seats.Id != entity.Id
+				  select seats).Any();
         }
 	}
 }

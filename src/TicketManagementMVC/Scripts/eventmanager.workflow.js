@@ -3,7 +3,6 @@
 
     let dropdown = $('#layoutList');
     dropdown.empty();
-    //dropdown.append('<option selected="true">Select layout</option>');
     dropdown.prop('SelectedIndex', 0);
     if (id !== undefined && id !== "") {
         $.get('/Event/GetLayouts?venueId=' + id, function (data) {
@@ -43,7 +42,6 @@ function GetEventsByVenue() {
             GetEventToEdit();
         });
     }
-    
 }
 
 function GetEventToEdit() {
@@ -62,6 +60,9 @@ function GetEventToEdit() {
                     })
                     $("#layoutList option[value='" + $('#currentLayout').val() + "']").prop('selected', true);
                 });            
+            },
+            error: function () {
+                ShowNotify('danger', 'server error');
             }
         }); 
     }
@@ -71,8 +72,6 @@ function GetEventToEdit() {
 }
 
 function SaveEventChanges() {
-    $('#errorMessagesEditEvent').hide();
-
     //Serialize form
     var data = new FormData($('#editEventForm')[0]);
 
@@ -85,14 +84,12 @@ function SaveEventChanges() {
         cache: false,
         success: function (result) {
             if (!result.success) {
-                $('#errorMessagesEditEvent').hide();
                 $('.text-success').hide();
                 var errors = '';
                 $.each(result.errors, function (index, value) {
                     errors += value + ' <br />';
                 });
                 $('#errorMessagesEditEvent').html(errors + ' <br />');
-                $('#errorMessagesEditEvent').show();
             }
             else {
                 let title = $("#eventListOnEdit option:selected").text();
@@ -101,6 +98,9 @@ function SaveEventChanges() {
                 $('.text-success').show();
                
             }
+        },
+        error: function () {
+            ShowNotify('danger', 'server error');
         }
     });
 }
@@ -133,9 +133,13 @@ function CreateEvent() {
                     .not(':button, :submit, :reset, :hidden')
                     .val('')
                     .prop('checked', false);
-                $('#event-image').attr('src', '@Url.Content("~/Content/Images/default.jpg")');
+                var url = '/Content/Images/default.jpg';
+                $("#event-image").prop('src', url);
                 $('.text-success').show();
             }
+        },
+        error: function () {
+            ShowNotify('danger', 'server error');
         }
     });
 }
@@ -152,6 +156,9 @@ function DeleteArea(areaId) {
                 else {
                     $('#areaTable #' + areaId).remove();
                 }
+            },
+            error: function () {
+                ShowNotify('danger', 'server error');
             }
         });
     }  
@@ -168,7 +175,9 @@ function GetAreaToEdit(areaId) {
                 $('.text-success').hide();
                 $('#eventPlaceHolder').hide();
                 $('#editAreaPlaceHolder').show();
-                $("html, body").animate({ scrollTop: 0 }, 250);
+            },
+            error: function () {
+                ShowNotify('danger', 'server error');
             }
         });
     } 
@@ -186,6 +195,9 @@ function CreateArea() {
                 $('#eventPlaceHolder').hide();
                 $('#editAreaPlaceHolder').show();
                 $("html, body").animate({ scrollTop: 0 }, "slow");
+            },
+            error: function () {
+                ShowNotify('danger', 'server error');
             }
         });
     }
@@ -234,18 +246,19 @@ function SaveArea(actionName) {
         data: $('#eventAreaForm').serialize(),
         success: function (result) {
             if (!result.success) {
-                $('#errorMessagesEditEventArea').hide();
                 var errors = '';
                 $.each(result.errors, function (index, value) {
                     errors += value + ' <br />';
                 });
                 $('#errorMessagesEditEventArea').html(errors + ' <br />');
-                $('#errorMessagesEditEventArea').show();
             }
             else {
                 $('#errorMessagesEditEventArea').hide();
                 $('.text-success').show();
             }
+        },
+        error: function () {
+            ShowNotify('danger', 'server error');
         }
     });
 }
@@ -265,7 +278,7 @@ function AddSeatToTable() {
     var inputRow = '<tr id="seatRow_' + index + '">' +
         '<th class="pt-1 pb-1"><input autocomplete="off" class="form-control" type="text" name="SeatList[' + index + '].Row"></th>' +
         '<td class="pt-1 pb-1"><input autocomplete="off" class="form-control" type="text" name="SeatList[' + index + '].Number"></td>' +
-        '<td class="pt-1 pb-1"><input autocomplete="off" value="0" class="form-control" disabled="disabled" name="SeatList[' + index + '].State" type="text"></td>' +
+        '<td class="pt-1 pb-1"></td>' +
         '<td class="pt-1 pb-1"><input type="button" value="X" style="width:45px;" onclick="DeleteSeat(null, this)" class="btn btn-primary" name="button"></td>'
     '</tr >'
 
@@ -284,12 +297,14 @@ function DeleteEvent(eventId) {
             url: '/Event/DeleteEvent?eventId=' + eventId,
             success: function (result) {
                 if (!result.success) {
-                    $('#errorMessagesEditEvent').show();
                     $('#errorMessagesEditEvent').html(result.error + ' <br />');
                 }
                 else {
                     location.href = "/Home/Index";
                 }
+            },
+            error: function () {
+                ShowNotify('danger', 'server error');
             }
         });
     }  

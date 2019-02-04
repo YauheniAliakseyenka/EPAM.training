@@ -182,39 +182,76 @@
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="App_GlobalResources\InvalidValueError.be.designer.cs">
+    <Compile Include="App_GlobalResources\account\AccountResource.be.designer.cs">
+      <DependentUpon>AccountResource.be.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="App_GlobalResources\account\AccountResource.ru.designer.cs">
+      <DependentUpon>AccountResource.ru.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="App_GlobalResources\account\AccountResource.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>AccountResource.resx</DependentUpon>
+    </Compile>
+    <Compile Include="App_GlobalResources\common\CommonResource.be.designer.cs">
+      <DependentUpon>CommonResource.be.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="App_GlobalResources\common\CommonResource.ru.designer.cs">
+      <DependentUpon>CommonResource.ru.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="App_GlobalResources\common\CommonResource.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>CommonResource.resx</DependentUpon>
+    </Compile>
+    <Compile Include="App_GlobalResources\event\EventResource.be.designer.cs">
+      <DependentUpon>EventResource.be.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="App_GlobalResources\event\EventResource.ru.designer.cs">
+      <DependentUpon>EventResource.ru.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="App_GlobalResources\event\EventResource.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>EventResource.resx</DependentUpon>
+    </Compile>
+    <Compile Include="App_GlobalResources\common\InvalidValueError.be.designer.cs">
       <DependentUpon>InvalidValueError.be.resx</DependentUpon>
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
     </Compile>
-    <Compile Include="App_GlobalResources\InvalidValueError.ru.designer.cs">
+    <Compile Include="App_GlobalResources\common\InvalidValueError.ru.designer.cs">
       <DependentUpon>InvalidValueError.ru.resx</DependentUpon>
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
     </Compile>
-    <Compile Include="App_GlobalResources\InvalidValueError.designer.cs">
+    <Compile Include="App_GlobalResources\common\InvalidValueError.designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>InvalidValueError.resx</DependentUpon>
     </Compile>
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\Startup.Hangfire.cs" />
+    <Compile Include="Infrastructure\Helpers\CustomHtmlExtensions.cs" />
     <Compile Include="Infrastructure\Helpers\CultureSetter.cs" />
-    <Compile Include="Infrastructure\Helpers\DispalyBalance.cs" />
     <Compile Include="Infrastructure\Authentication\ApplicationUserManager.cs" />
-    <Compile Include="Infrastructure\BackgroundWorker\ISeatLocker.cs" />
-    <Compile Include="Infrastructure\BackgroundWorker\SeatLocker.cs" />
+    <Compile Include="Infrastructure\WebServices\Interfaces\ISeatLocker.cs" />
+    <Compile Include="Infrastructure\WebServices\Services\SeatLocker.cs" />
+    <Compile Include="Infrastructure\WebServices\Services\EmailService.cs" />
+    <Compile Include="Infrastructure\WebServices\Interfaces\IEmailService.cs" />
     <Compile Include="Models\Account\BalanceReplenishmentViewModel.cs" />
-    <Compile Include="App_GlobalResources\Resource.be.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Resource.be.resx</DependentUpon>
-    </Compile>
-    <Compile Include="App_GlobalResources\Resource.ru.designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Resource.ru.resx</DependentUpon>
-    </Compile>
     <Compile Include="App_Start\ContainerConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
@@ -229,6 +266,7 @@
     <Compile Include="Infrastructure\Authentication\UserStore.cs" />
     <Compile Include="Infrastructure\Attributes\NoDirectAccessAttribute.cs" />
     <Compile Include="Infrastructure\Attributes\ValidIntegerAttribute.cs" />
+    <Compile Include="Models\Account\Cultures.cs" />
     <Compile Include="Models\Event\EditEventViewModel.cs" />
     <Compile Include="Models\Event\EventAreaViewModel.cs" />
     <Compile Include="Models\Event\SeatDisplayViewModel.cs" />
@@ -237,22 +275,17 @@
     <Compile Include="Models\Account\RegistrationViewModel.cs" />
     <Compile Include="Models\Account\UserProfileViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="App_GlobalResources\Resource.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Resource.resx</DependentUpon>
-    </Compile>
-    <Compile Include="App_GlobalResources\ResourceErrors.be.Designer.cs">
+    <Compile Include="App_GlobalResources\common\ResourceErrors.be.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>ResourceErrors.be.resx</DependentUpon>
     </Compile>
-    <Compile Include="App_GlobalResources\ResourceErrors.Designer.cs">
+    <Compile Include="App_GlobalResources\common\ResourceErrors.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>ResourceErrors.resx</DependentUpon>
     </Compile>
-    <Compile Include="App_GlobalResources\ResourceErrors.ru.Designer.cs">
+    <Compile Include="App_GlobalResources\common\ResourceErrors.ru.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>ResourceErrors.ru.resx</DependentUpon>
@@ -267,19 +300,18 @@
     <Content Include="Views\web.config" />
     <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Views\Home\EventInfo.cshtml" />
-    <Content Include="Views\Home\Partial\SeatMap.cshtml" />
+    <Content Include="Views\Home\Partial\_SeatMap.cshtml" />
     <Content Include="Views\Account\PurchaseHistory.cshtml" />
     <Content Include="Views\Account\Cart.cshtml" />
-    <Content Include="Views\Account\Partial\OrderedSeatsList.cshtml" />
-    <Content Include="Views\Home\Partial\Menu.cshtml" />
+    <Content Include="Views\Home\Partial\_Menu.cshtml" />
     <Content Include="Scripts\jquery-3.3.1.min.map" />
-    <Content Include="Views\Home\Partial\EventList.cshtml" />
+    <Content Include="Views\Home\Partial\_EventList.cshtml" />
     <Content Include="Views\Account\UserProfile.cshtml" />
     <Content Include="Views\Account\BalanceReplenishment.cshtml" />
     <Content Include="Views\Event\Create.cshtml" />
     <Content Include="Views\Event\Edit.cshtml" />
-    <Content Include="Views\Event\Partial\GetEventToEdit.cshtml" />
-    <Content Include="Views\Event\Partial\EventArea.cshtml" />
+    <Content Include="Views\Event\Partial\_GetEventToEdit.cshtml" />
+    <Content Include="Views\Event\Partial\_EventArea.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -299,56 +331,80 @@
       <Project>{08660A4A-F508-4F46-8E69-7F076CBA6390}</Project>
       <Name>BusinessLogic</Name>
     </ProjectReference>
-    <ProjectReference Include="..\DataAccess\DataAccess.csproj">
-      <Project>{d0d56e1e-7eef-4d81-b5f6-b6e56b6553c6}</Project>
-      <Name>DataAccess</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="App_GlobalResources\InvalidValueError.resx">
+    <Content Include="App_GlobalResources\common\InvalidValueError.resx">
       <Generator>GlobalResourceProxyGenerator</Generator>
       <LastGenOutput>InvalidValueError.designer.cs</LastGenOutput>
     </Content>
-    <Content Include="App_GlobalResources\InvalidValueError.ru.resx">
+    <Content Include="App_GlobalResources\common\InvalidValueError.ru.resx">
       <Generator>GlobalResourceProxyGenerator</Generator>
       <LastGenOutput>InvalidValueError.ru.designer.cs</LastGenOutput>
     </Content>
-    <EmbeddedResource Include="App_GlobalResources\Resource.ru.resx">
+    <EmbeddedResource Include="App_GlobalResources\account\AccountResource.ru.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resource.ru.designer.cs</LastGenOutput>
-      <CustomToolNamespace>I18N</CustomToolNamespace>
+      <LastGenOutput>AccountResource.ru.designer.cs</LastGenOutput>
+      <CustomToolNamespace>ProjectResources</CustomToolNamespace>
     </EmbeddedResource>
-    <EmbeddedResource Include="App_GlobalResources\ResourceErrors.be.resx">
+    <EmbeddedResource Include="App_GlobalResources\account\AccountResource.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>AccountResource.Designer.cs</LastGenOutput>
+      <CustomToolNamespace>ProjectResources</CustomToolNamespace>
+    </EmbeddedResource>
+    <EmbeddedResource Include="App_GlobalResources\account\AccountResource.be.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>AccountResource.be.designer.cs</LastGenOutput>
+      <CustomToolNamespace>ProjectResources</CustomToolNamespace>
+    </EmbeddedResource>
+    <EmbeddedResource Include="App_GlobalResources\common\CommonResource.be.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>CommonResource.be.designer.cs</LastGenOutput>
+      <CustomToolNamespace>ProjectResources</CustomToolNamespace>
+    </EmbeddedResource>
+    <EmbeddedResource Include="App_GlobalResources\common\CommonResource.ru.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>CommonResource.ru.designer.cs</LastGenOutput>
+      <CustomToolNamespace>ProjectResources</CustomToolNamespace>
+    </EmbeddedResource>
+    <EmbeddedResource Include="App_GlobalResources\common\CommonResource.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>CommonResource.Designer.cs</LastGenOutput>
+      <CustomToolNamespace>ProjectResources</CustomToolNamespace>
+    </EmbeddedResource>
+    <EmbeddedResource Include="App_GlobalResources\event\EventResource.be.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>EventResource.be.designer.cs</LastGenOutput>
+      <CustomToolNamespace>ProjectResources</CustomToolNamespace>
+    </EmbeddedResource>
+    <EmbeddedResource Include="App_GlobalResources\event\EventResource.ru.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>EventResource.ru.designer.cs</LastGenOutput>
+      <CustomToolNamespace>ProjectResources</CustomToolNamespace>
+    </EmbeddedResource>
+    <EmbeddedResource Include="App_GlobalResources\event\EventResource.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>EventResource.Designer.cs</LastGenOutput>
+      <CustomToolNamespace>ProjectResources</CustomToolNamespace>
+    </EmbeddedResource>
+    <EmbeddedResource Include="App_GlobalResources\common\ResourceErrors.be.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>ResourceErrors.be.Designer.cs</LastGenOutput>
-      <CustomToolNamespace>I18N</CustomToolNamespace>
+      <CustomToolNamespace>ProjectResources</CustomToolNamespace>
     </EmbeddedResource>
-    <EmbeddedResource Include="App_GlobalResources\ResourceErrors.resx">
+    <EmbeddedResource Include="App_GlobalResources\common\ResourceErrors.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>ResourceErrors.Designer.cs</LastGenOutput>
-      <CustomToolNamespace>I18N</CustomToolNamespace>
+      <CustomToolNamespace>ProjectResources</CustomToolNamespace>
     </EmbeddedResource>
-    <EmbeddedResource Include="App_GlobalResources\ResourceErrors.ru.resx">
+    <EmbeddedResource Include="App_GlobalResources\common\ResourceErrors.ru.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>ResourceErrors.ru.Designer.cs</LastGenOutput>
-      <CustomToolNamespace>I18N</CustomToolNamespace>
+      <CustomToolNamespace>ProjectResources</CustomToolNamespace>
     </EmbeddedResource>
-    <Content Include="App_GlobalResources\InvalidValueError.be.resx">
+    <Content Include="App_GlobalResources\common\InvalidValueError.be.resx">
       <Generator>GlobalResourceProxyGenerator</Generator>
       <LastGenOutput>InvalidValueError.be.designer.cs</LastGenOutput>
     </Content>
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="App_GlobalResources\Resource.be.resx">
-      <Generator>PublicResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resource.be.Designer.cs</LastGenOutput>
-      <CustomToolNamespace>I18N</CustomToolNamespace>
-    </EmbeddedResource>
-    <EmbeddedResource Include="App_GlobalResources\Resource.resx">
-      <Generator>PublicResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resource.Designer.cs</LastGenOutput>
-      <CustomToolNamespace>I18N</CustomToolNamespace>
-    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Connected Services\" />
@@ -369,7 +425,7 @@
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>51838</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl>http://localhost:61962/</IISUrl>
+          <IISUrl>http://localhost:61963/</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>

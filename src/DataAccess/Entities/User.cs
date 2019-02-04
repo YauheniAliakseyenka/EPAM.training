@@ -1,17 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DataAccess.Entities
 {
 	[Table(name: "User")]
 	public class User
 	{
+		[Key]
 		[Column(name: "Id")]
-		public string Id { get; set; }
+		public int Id { get; set; }
 		[Column(name: "UserName")]
 		public string UserName { get; set; }
 		[Column(name: "PasswordHash")]

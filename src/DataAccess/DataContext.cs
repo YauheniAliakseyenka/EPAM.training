@@ -50,8 +50,6 @@ namespace DataAccess
 					.Parameter(p => p.Date, "Date")
 					.Parameter(p=>p.CreatedBy, "CreatedBy")
                     .Parameter(p=>p.Id, "Id")));
-
-			modelBuilder.Entity<UserRole>().HasKey(x => new { x.UserId, x.RoleId });
 		}
     }
 }

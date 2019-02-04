@@ -37,6 +37,12 @@
     })
 });
 
+function SetCultureFromFooter() {
+    var selectedCulture = $('#footerCulture').val();
+    location.href = '/Home/SetCulture?culture=' + selectedCulture;
+}
+
+
 //// login
 function SubmitLogin() {
     $('#errorMessagesLogin').hide();
@@ -58,6 +64,9 @@ function SubmitLogin() {
             }
             else
                 location.href = '/Home/Index';
+        },
+        error: function () {
+            ShowNotify('danger', 'server error');
         }
     });
 };
@@ -79,7 +88,7 @@ function ShowNotify(type, message) {
     });
 }
 
-////cart
+////account
 function AddToCart(seatId, object) {
     $.ajax({
         type: 'POST',
@@ -90,10 +99,13 @@ function AddToCart(seatId, object) {
             }
             else {
                 $(object).addClass('locked-seat');
-                $(object).children().addClass('seat-unavailable');
+                $(object).children().addClass('seat-unavailable').addClass('seat-ordered');
 
                 ShowNotify('info', result.message);
             }
+        },
+        error: function () {
+            ShowNotify('danger', 'server error');
         }
     });
 }
@@ -125,6 +137,9 @@ function DeleteSeatFromCart(seatId, message, culture, object) {
                 $('#order-button').hide();
 
             ShowNotify('info', message);
+        },
+        error: function () {
+            ShowNotify('danger', 'server error');
         }
     });
 }
@@ -138,14 +153,91 @@ function CompleteOrder(message) {
                 ShowNotify('danger', result.error);
             }
             else {
-                ShowNotify('success', message);
+                ShowNotify('info', message);
                 $('#order-button').hide();
                 $('tbody').remove();
+            }
+        },
+        error: function () {
+            ShowNotify('danger', 'server error');
+        }
+    });
+}
+
+function BalanceReplenishment() {
+    $.ajax({
+        type: "POST",
+        url: '/Account/BalanceReplenishment',
+        data: $('#balanceReplenishment-form').serialize(),
+        success: function (result) {
+            if (!result.success) {
+                var errors = '';
+                $.each(result.errors, function (index, value) {
+                    errors += value + ' <br />';
+                });
+                $('#errorMessagesBalanceReplenishment').html(errors + ' <br />');
+            }
+            else {
+                location.href = "/Home/Index";
             }
         }
     });
 }
 
+function UserValidation(key) {
+    let url;
+    let formId;
+    let errorsId;
+
+
+    switch (key) {
+        case 'registration':
+            errorsId = '#errorMessagesRegistration';
+            url = '/Account/Registration';
+            formId = '#registration-form';
+            break;
+        case 'userProfile':
+            errorsId = '#errorMessagesUserProfile';
+            url = '/Account/UserProfile';
+            formId = '#userProfile-form';
+            break;
+    }
+
+    $.ajax({
+        type: "POST",
+        url: url,
+        data: $(formId).serialize(),
+        success: function (result) {
+            if (!result.success) {
+                var errors = '';
+                $.each(result.errors, function (index, value) {
+                    errors += value + ' <br />';
+                });
+                $(errorsId).html(errors + ' <br />');
+
+                $("input[type='password']").val('');
+            }
+            else {
+                location.href = "/Home/Index";
+            }
+        }
+    });
+}
+
+function Refund(orderId, notisfaction, alert) {
+    if (confirm(alert)) {
+        $.ajax({
+            url: '/Account/Refund?orderId=' + orderId,
+            success: function () {
+                $('#order_' + orderId).remove();
+                ShowNotify('info', notisfaction);
+            },
+            error: function () {
+                ShowNotify('danger', 'server error');
+            }
+        });
+    }
+}
 
 ////filter
 function FilterEventsBy(culture) {
@@ -165,7 +257,7 @@ function FilterEventsBy(culture) {
 function GetFiltered(filtered) {
     if (filtered == true) {
         $.ajax({
-            url: '/Home/FilterList',
+            url: '/Home/Index?isFirstLoad=false',
             data: $('#filterForm').serialize(),
             success: function (result) {
                 $('#eventListPlaceholder').html(result);
@@ -174,12 +266,24 @@ function GetFiltered(filtered) {
     }
     else
         $.ajax({
-            url: '/Home/FilterList',
+            url: '/Home/Index?isFirstLoad=false',
             success: function (result) {
+                $('#filterList').val('None').trigger('change');
                 $('#eventListPlaceholder').html(result);
             }
         });
 }
+
+function TakePageEvents(object) {
+    $.ajax({
+        url: '/Home/Index?index=' + $(object).attr("name") +'&isFirstLoad=false',
+        data: $('#filterForm').serialize(),
+        success: function (result) {
+            $('#eventListPlaceholder').html(result);
+        }
+    });
+}
+
 
 
 

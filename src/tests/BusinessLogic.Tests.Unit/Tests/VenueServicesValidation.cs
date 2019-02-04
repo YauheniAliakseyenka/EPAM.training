@@ -97,7 +97,7 @@ namespace BusinessLogin.Unit.Tests
 		{
 			//Arrange
 			var layout = new LayoutDto { Description = description, VenueId = venueId };
-            var layoutService = _container.Resolve<IStoreService<LayoutDto, int>>();
+            var layoutService = _container.Resolve<ILayoutService>();
 
             //Act
             var exception = Assert.CatchAsync(async () => await layoutService.Create(layout));
@@ -110,7 +110,7 @@ namespace BusinessLogin.Unit.Tests
 		public void Layout_is_valid()
 		{
 			//Arrange
-            var layoutService = _container.Resolve<IStoreService<LayoutDto, int>>();
+            var layoutService = _container.Resolve<ILayoutService>();
             var toVenue = 1;
 			var layout = new LayoutDto { Description = "Main hall", VenueId = toVenue, AreaList = new List<AreaDto>(), Id = 1 };
 			layout.AreaList.Add(new AreaDto { Description = "any area description", SeatList = new List<SeatDto>(), Id = 5 });
@@ -124,7 +124,7 @@ namespace BusinessLogin.Unit.Tests
 		public void Create_layout_without_area_excepted_exception()
 		{
             //Arrange
-            var layoutService = _container.Resolve<IStoreService<LayoutDto, int>>();
+            var layoutService = _container.Resolve<ILayoutService>();
             var toVenue = 1;
 			var layout = new LayoutDto { Description = "Main hall", VenueId = toVenue, AreaList = new List<AreaDto>() };
 
@@ -139,7 +139,7 @@ namespace BusinessLogin.Unit.Tests
 		public void Layout_description_is_unique_expected_exception(string description, int venueId)
 		{
             //Arrange
-            var layoutService = _container.Resolve<IStoreService<LayoutDto, int>>();
+            var layoutService = _container.Resolve<ILayoutService>();
             var layout = new LayoutDto() { Description = description, VenueId = venueId };
 			var exception = Assert.CatchAsync<LayoutException>(async () => await layoutService.Create(layout));
 
@@ -151,7 +151,7 @@ namespace BusinessLogin.Unit.Tests
 		public void Layout_is_null_throws_exception()
 		{
             //Arrange
-            var layoutService = _container.Resolve<IStoreService<LayoutDto, int>>();
+            var layoutService = _container.Resolve<ILayoutService>();
 
             //Assert
             Assert.ThrowsAsync<ArgumentNullException>(async () => await layoutService.Create(null));

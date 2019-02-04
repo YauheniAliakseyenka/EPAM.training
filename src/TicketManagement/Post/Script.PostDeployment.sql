@@ -1,15 +1,15 @@
 ﻿--- Venue
 INSERT INTO dbo.Venue
-VALUES ('Symphony Hall','Birmingham', '413 43 441 32 12', 'As public buildings, welcoming over 450,000 members of the public for performances each year at Town Hall and Symphony Hall'),
-('Royal Albert Hall','London', '231 25 121 22 12', 'The Royal Albert Hall Box Office is open to everyone daily from 9am, with tours beginning at 9.30am and Verdi opening at 12 noon (Tuesday – Sunday)')
+VALUES ('Symphony Hall','Birmingham', '413 43 441 32 12', 'As public buildings, welcoming over 450,000 members of the public for performances each year at Town Hall and Symphony Hall', 'Mountain Standard Time'),
+('Royal Albert Hall','London', '231 25 121 22 12', 'The Royal Albert Hall Box Office is open to everyone daily from 9am, with tours beginning at 9.30am and Verdi opening at 12 noon (Tuesday – Sunday)', 'Mountain Standard Time')
 --- Layout
-INSERT INTo dbo.Layout
+INSERT INTO dbo.Layout
 VALUES (1, 'The Big hall, 1t floor'),
 (1, 'The Small hall, 1t floor'),
 (2, 'The Main Hall')
 
 --- Area
-INSERT INTo dbo.Area
+INSERT INTO dbo.Area
 VALUES (1, 'The area #1', 1, 1),
 (1, 'The area #2', 1, 1),
 (2, 'Main area', 4, 4),
@@ -17,7 +17,7 @@ VALUES (1, 'The area #1', 1, 1),
 (3, 'The second area', 7, 7)
 
 --- Seat
-INSERT INTo dbo.Seat
+INSERT INTO dbo.Seat
 VALUES (1, 1, 1),
 (1, 1, 2),
 (1, 1, 3),
@@ -65,16 +65,15 @@ VALUES ('User'),
 
 --- event_manager (password: 1231231231)
 INSERT INTO dbo.[User]
-VALUES ('ee023ac2-9d96-4sda-8056-921320sd1c54', 'event_manager', 'AFm5ad5jz9VOpSkL6yUgSX8oVYZgzebM4oiK7s4jWKdADiGQv0l50xlZoAk1CG16hg==', 'manager@gmail.com', 'John', 'Smith', 'en', 'UTC', 250.25)
+VALUES ('event_manager', 'AFm5ad5jz9VOpSkL6yUgSX8oVYZgzebM4oiK7s4jWKdADiGQv0l50xlZoAk1CG16hg==', 'manager@gmail.com', 'John', 'Smith', 'en', 'UTC', 250.25)
 
 --- User roles for event manager
 INSERT INTO dbo.[UserRole]
-VALUES ('ee023ac2-9d96-4sda-8056-921320sd1c54', 1),
-('ee023ac2-9d96-4sda-8056-921320sd1c54', 2)
+VALUES (1, 1),
+(1, 2)
 
 --- Event
-EXEC AddEvent 'Parsifal', 'The highpoint of Andris Nelsons’ final season as the CBSO’s music director – a concert performance of Wagner’s final music drama of almost alarming maturity','http://localhost:61962/Content/images/default.jpg', 1, '12/8/2019', 'ee023ac2-9d96-4sda-8056-921320sd1c54'
-
+EXEC AddEvent 'Parsifal', 'The highpoint of Andris Nelsons’ final season as the CBSO’s music director – a concert performance of Wagner’s final music drama of almost alarming maturity','http://localhost:61963/Content/images/default.jpg', 1, '12/8/2022 12:00', 1
 UPDATE EventArea SET Price = '15.25'
 
 

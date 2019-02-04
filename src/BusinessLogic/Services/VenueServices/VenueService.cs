@@ -5,7 +5,6 @@ using DataAccess.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Threading.Tasks;
 
 namespace BusinessLogic.Services
@@ -13,14 +12,19 @@ namespace BusinessLogic.Services
 	internal class VenueService : IStoreService<VenueDto, int>
 	{
 		private readonly IWorkUnit _context;
-		private readonly IStoreService<LayoutDto, int> _layoutService;
+		private readonly ILayoutService _layoutService;
 
-		public VenueService(IWorkUnit context, IStoreService<LayoutDto, int> layoutService)
+		public VenueService(IWorkUnit context, ILayoutService layoutService)
 		{
 			_context = context;
 			_layoutService = layoutService;
 		}
 
+        /// <summary>
+        /// Create a venue. A venue can not be created without layouts
+        /// </summary>
+        /// <param name="entity"></param>
+        /// <returns></returns>
 		public async Task Create(VenueDto entity)
 		{
 			if (entity == null)
@@ -32,7 +36,7 @@ namespace BusinessLogic.Services
 			if(entity.LayoutList == null || !entity.LayoutList.Any())
 				throw new VenueException("Incorrect state of the venue. The venue must have at least one layout");
 
-			var venueAdd = mapToVenue(entity);	
+			var venueAdd = MapToVenue(entity);	
 			using (var transaction = CustomTransactionScope.GetTransactionScope())
 			{
 				_context.VenueRepository.Create(venueAdd);
@@ -49,34 +53,27 @@ namespace BusinessLogic.Services
 
 		public async Task Delete(int id)
 		{
-			_context.VenueRepository.Delete(id);
+			var delete = await _context.VenueRepository.GetAsync(id);
+
+			if (delete == null)
+				return;
+
+			_context.VenueRepository.Delete(delete);
 			await _context.SaveAsync();
-		}
-
-		public Task<IEnumerable<VenueDto>> FindBy(Expression<Func<VenueDto, bool>> expression)
-		{
-			var result = new List<VenueDto>();
-			Expression<Func<Venue, bool>> predicate = x => expression.Compile().Invoke(mapToVenueDto(x));
-			var list = _context.VenueRepository.FindBy(predicate);
-
-			return Task.FromResult(list.Select(x => mapToVenueDto(x)).AsEnumerable());
 		}
 
 		public async Task<VenueDto> Get(int id)
 		{
 			var venue = await _context.VenueRepository.GetAsync(id);
 
-			if(venue == null)
-				return null;
-
-			return mapToVenueDto(venue);
+            return venue == null ? null : MapToVenueDto(venue);
 		}
 
 		public async Task<IEnumerable<VenueDto>> GetList()
 		{
 			var list = await _context.VenueRepository.GetListAsync();
 
-			return list.Select(x => mapToVenueDto(x));
+			return list.Select(x => MapToVenueDto(x));
 		}
 
         public async Task Update(VenueDto entity)
@@ -92,11 +89,12 @@ namespace BusinessLogic.Services
 			update.Phone = entity.Phone;
 			update.Description = entity.Description;
 			update.Address = entity.Address;
+			update.Timezone = entity.Timezone;
 			_context.VenueRepository.Update(update);
 			await _context.SaveAsync();
 		}
 
-		private VenueDto mapToVenueDto(Venue from)
+		private VenueDto MapToVenueDto(Venue from)
 		{
 			return new VenueDto
 			{
@@ -105,11 +103,12 @@ namespace BusinessLogic.Services
 				Id = from.Id,
 				Name = from.Name,
 				Phone = from.Phone,
+				Timezone = from.Timezone,
 				LayoutList = new List<LayoutDto>()
 			};
 		}
 
-		private Venue mapToVenue(VenueDto from)
+		private Venue MapToVenue(VenueDto from)
 		{
 			return new Venue
 			{
@@ -117,15 +116,22 @@ namespace BusinessLogic.Services
 				Description = from.Description,
 				Id = from.Id,
 				Name = from.Name,
-				Phone = from.Phone
+				Phone = from.Phone,
+				Timezone = from.Timezone
 			};
 		}
 
 		private bool IsNameUnique(VenueDto entity, bool isCreating)
 		{
-            return isCreating ?
-                !_context.VenueRepository.FindBy(y => y.Name.Equals(entity.Name, StringComparison.OrdinalIgnoreCase)).Any() :
-                !_context.VenueRepository.FindBy(y => y.Id != entity.Id && y.Name.Equals(entity.Name, StringComparison.OrdinalIgnoreCase)).Any();
+			var data = from venues in _context.VenueRepository.GetList()
+					   where venues.Name.Equals(entity.Name, StringComparison.OrdinalIgnoreCase)
+					   select venues;
+
+			return isCreating ?
+				!data.Any() :
+				!(from venues in data
+				  where venues.Id != entity.Id
+				  select venues).Any();
 		}
 	}
 }

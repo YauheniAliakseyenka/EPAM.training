@@ -1,11 +1,8 @@
 ﻿using Autofac;
 using BusinessLogic.DTO;
-using BusinessLogic.Exceptions;
 using BusinessLogic.Exceptions.VenueExceptions;
 using BusinessLogic.Services.Tests.DiContainer;
-using DataAccess;
 using DataAccess.Entities;
-using DataAccess.Repositories;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -38,7 +35,8 @@ namespace BusinessLogic.Services.Tests
 				Address = "London",
 				Name = "New Royal Albert Hall11",
 				Description = "Royal Albert Hall",
-				Phone = "111-222-333"
+				Phone = "111-222-333",
+				Timezone = "Central Standard Time (Mexico)"
 			};
 
 			//layout

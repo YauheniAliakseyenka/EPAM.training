@@ -1,13 +1,61 @@
-﻿@model IEnumerable<BusinessLogic.BusinessModels.SeatModel>
+﻿@using System.Globalization;
+@model IEnumerable<BusinessLogic.BusinessModels.SeatModel>
 @{
-    ViewBag.Title = Resource.CartTitle;
+    ViewBag.Title = AccountResource.Cart;
 }
-<h2 class="m-auto w-75 title mb-3">@Resource.CartTitle</h2>
+<h2 class="m-auto w-75 title mb-3">@AccountResource.Cart</h2>
 <br />
 <div id="orderedSeatsList">
-    @Html.Partial("~/Views/Account/Partial/OrderedSeatsList.cshtml", Model)
+    <div id="errorMessagesOrder" class="errors-login text-danger"></div>
+    <div id="orderedList">
+        <table class="table table-striped text-center">
+            <thead>
+                <tr>
+                    <th scope="col">@EventResource.SeatRowNum</th>
+                    <th scope="col">@EventResource.Area</th>
+                    <th scope="col">@EventResource.Title</th>
+                    <th scope="col">@EventResource.Date</th>
+                    <th scope="col">@EventResource.VenueWithLayout</th>
+                    <th scope="col">@EventResource.Price</th>
+                    <th scope="col"></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr id=@item.Seat.Id style="line-height:10px;">
+                        <th scope="row" class="pt-3">@item.Seat.Row - @item.Seat.Number</th>
+                        <td class="pt-3">@item.Area.Description</td>
+                        <td class="pt-3">@item.Event.Title</td>
+                        <td class="pt-3">@item.Event.Date.ToShortDateString(), @item.Event.Date.ToShortTimeString() @Html.OffsetDisplay(item.Venue.Timezone)</td>
+                        <td class="pt-3">@item.Venue.Name (@item.Layout.Description)</td>
+                        <td class="pt-3 price">@Html.BalanceDisplay(item.Area.Price)</td>
+                        <td class="pt-1 pb-1">
+                            <input type="button" value=@CommonResource.Delete class="btn btn-primary"
+                                   onclick="DeleteSeatFromCart('@item.Seat.Id','@AccountResource.DeletedFromCartNotify', '@CultureInfo.CurrentUICulture.Name', this)" />
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        <div>
+            @if (Model.Any())
+            {
+                <div id="order-button">
+                    <div style="float:left; width:77%; padding-right:25px;">
+                        <input type="button" value=@AccountResource.Pay onclick="CompleteOrder('@AccountResource.OrderCompleteNotify')" class="btn btn-primary order-button" style="float:right;  font-size:22px;" />
+                    </div>
+                    <div style="float:left; padding-left:60px;"><b>@AccountResource.Total</b>:<p id="total">@string.Format("${0:N2}", Model.Sum(x => x.Area.Price))</p></div>
+                </div>
+            }
+            else
+            {
+                <div style="text-align:center">@AccountResource.EmptyCart</div>
+            }
+        </div>
+    </div>
+    <br />
+    <br />
 </div>
-
-
 
 

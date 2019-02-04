@@ -1,71 +1,42 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Reflection;
-using System.Web;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace TicketManagementMVC.Models
 {
 	public class RegistrationViewModel
 	{
-		[Required(ErrorMessageResourceName = "PropertyRequired", ErrorMessageResourceType = typeof(I18N.ResourceErrors))]
-		[Display(Name = "Username", ResourceType = typeof(I18N.Resource))]
+		[Required(ErrorMessageResourceName = "PropertyRequired", ErrorMessageResourceType = typeof(ProjectResources.ResourceErrors))]
+		[Display(Name = "Username", ResourceType = typeof(ProjectResources.AccountResource))]
 		public string UserName { get; set; }
 
-		[Display(Name = "Firstname", ResourceType = typeof(I18N.Resource))]
+		[Display(Name = "Firstname", ResourceType = typeof(ProjectResources.AccountResource))]
 		public string Firstname { get; set; }
 
-		[Display(Name = "Surname", ResourceType = typeof(I18N.Resource))]
+		[Display(Name = "Surname", ResourceType = typeof(ProjectResources.AccountResource))]
 		public string Surname { get; set; }
 
-		[Display(Name = "SelectLanguage", ResourceType = typeof(I18N.Resource))]
+		[Display(Name = "SelectLanguage", ResourceType = typeof(ProjectResources.AccountResource))]
 		public string Culture { get; set; }
 
-		[Display(Name = "SelectTimezone", ResourceType = typeof(I18N.Resource))]
+		[Display(Name = "SelectTimezone", ResourceType = typeof(ProjectResources.AccountResource))]
 		public string SelectedTimezone { get; set; }
 
-		[Required(ErrorMessageResourceName = "PropertyRequired", ErrorMessageResourceType = typeof(I18N.ResourceErrors))]
-		[EmailAddress(ErrorMessageResourceType = typeof(I18N.ResourceErrors), ErrorMessageResourceName = "EmailError")]
-		[Display(Name = "Email", ResourceType = typeof(I18N.Resource))]
-		public string Email { get; set; }
+		[Required(ErrorMessageResourceName = "PropertyRequired", ErrorMessageResourceType = typeof(ProjectResources.ResourceErrors))]
+        [RegularExpression(@"^[\w!#$%&'*+\-/=?\^_`{|}~]+(\.[\w!#$%&'*+\-/=?\^_`{|}~]+)*"
+                         + "@"
+                         + @"((([\-\w]+\.)+[a-zA-Z]{2,4})|(([0-9]{1,3}\.){3}[0-9]{1,3}))$",
+            ErrorMessageResourceName = "EmailError", ErrorMessageResourceType = typeof(ProjectResources.ResourceErrors))]
+        [Display(Name = "Email", ResourceType = typeof(ProjectResources.AccountResource))]
+        public string Email { get; set; }
 
-		[Required(ErrorMessageResourceName = "PropertyRequired", ErrorMessageResourceType = typeof(I18N.ResourceErrors))]
+		[Required(ErrorMessageResourceName = "PropertyRequired", ErrorMessageResourceType = typeof(ProjectResources.ResourceErrors))]
 		[DataType(DataType.Password)]
-		[Display(Name = "Password", ResourceType = typeof(I18N.Resource))]
-		[MinLength(10, ErrorMessageResourceName = "PasswordRangeError", ErrorMessageResourceType = typeof(I18N.ResourceErrors))]
+		[Display(Name = "Password", ResourceType = typeof(ProjectResources.AccountResource))]
+		[MinLength(10, ErrorMessageResourceName = "PasswordRangeError", ErrorMessageResourceType = typeof(ProjectResources.ResourceErrors))]
 		public string Password { get; set; }
 
 		[DataType(DataType.Password)]
-		[Display(Name = "ConfirmPassword", ResourceType = typeof(I18N.Resource))]
-		[Compare("Password", ErrorMessageResourceName = "ConfirmPasswordError", ErrorMessageResourceType = typeof(I18N.ResourceErrors))]
+		[Display(Name = "ConfirmPassword", ResourceType = typeof(ProjectResources.AccountResource))]
+		[Compare("Password", ErrorMessageResourceName = "ConfirmPasswordError", ErrorMessageResourceType = typeof(ProjectResources.ResourceErrors))]
 		public string ConfirmPassword { get; set; }
-	}
-
-	public enum Culture
-	{
-		[Display(Name = "English", ResourceType = typeof(I18N.Resource))]
-		en = 1,
-		[Display(Name = "Russian", ResourceType = typeof(I18N.Resource))]
-		ru,
-		[Display(Name = "Belarusian", ResourceType = typeof(I18N.Resource))]
-		be
-	}
-
-	public class CultureEnum
-	{
-		public static string GetDescription(Enum en)
-		{
-			Type type = en.GetType();
-			MemberInfo[] memInfo = type.GetMember(en.ToString());
-			if (memInfo != null && memInfo.Length > 0)
-			{
-				object[] attrs = memInfo[0].GetCustomAttributes(typeof(DisplayAttribute), false);
-				if (attrs != null && attrs.Length > 0)
-					return I18N.Resource.ResourceManager.GetString(((DisplayAttribute)attrs[0]).Name);
-			}
-			return en.ToString();
-		}
 	}
 }

@@ -1,7 +1,7 @@
 ﻿@using System.Globalization;
 @model TicketManagementMVC.Models.Event.EventViewModel
 @{
-    ViewBag.Title = Resource.CreateEventTitle;
+    ViewBag.Title = EventResource.Create;
 }
 <script>
     //set  culture
@@ -13,7 +13,7 @@
     });
 </script>
 
-<h2 class="text-center">@Resource.CreateEventTitle</h2>
+<h2 class="text-center">@EventResource.Create</h2>
 <br />
 @using (Html.BeginForm("Create", "Event", FormMethod.Post,
     new { enctype = "multipart/form-data", @class = "col-sm-10 offset-sm-1", @id = "createEventForm" }))
@@ -28,8 +28,8 @@
                 @Html.TextBoxFor(x => x.Title, new { @class = "form-control", autocomplete = "off" })
             </div>
             <div class="form-group">
-                <label>@Resource.EventSelectVenueDropDownLabel</label>
-                @Html.DropDownList("venue", new SelectList(ViewBag.VenueList, "Id", "Name", "0"),
+                <label>@EventResource.EventSelectVenueDropDownLabel</label>
+                @Html.DropDownList("venue", new SelectList(ViewBag.VenueList, "Id", "NameWithOffset", "0"),
                new { @class = "form-control", onchange = "GetLayouts();", @id = "venueList" })
             </div>
             <div class="form-group">
@@ -39,18 +39,18 @@
             <div class="row pl-3">
                     <div class="col-4 pl-0">
                         @Html.LabelFor(x => x.Date, new { @class = "required"})
-                        @Html.TextBoxFor(x => x.Date,DateTime.Now.ToShortDateString(), new { @id = "datepicker", @class = "form-control" })
+                        @Html.TextBoxFor(x => x.Date,DateTime.Now.ToShortDateString(), new { @id = "datepicker", @class = "form-control", autocomplete ="off" })
                     </div>
                     <div class="col-4 pl-0">
                         @Html.LabelFor(x => x.Time, new { @class = "required" })
-                        @Html.TextBoxFor(x => x.Time, DateTime.Now.ToShortTimeString(), new { @id = "timepicker", @class = "form-control" })
+                        @Html.TextBoxFor(x => x.Time, DateTime.Now.ToShortTimeString(), new { @id = "timepicker", @class = "form-control", autocomplete = "off" })
                     </div>
             </div>
         </div>
         <div class="float-left col-7 text-center">
             <div class="form-group">
                 <input type='file' name="image" onchange="readURL(this);" id="input-file" style="visibility:hidden; width:0px;" accept="image/*" />
-                <label for="input-file" class="btn btn-primary mb-1" style="width:360px;">@Resource.SelectImage</label>
+                <label for="input-file" class="btn btn-primary mb-1" style="width:360px;">@EventResource.SelectImage</label>
                 <img id="event-image" src="@Url.Content("~/Content/Images/default.jpg")" style="width:360px; height:360px; margin-left:4px;" />
             </div>
         </div>
@@ -62,8 +62,8 @@
     </div>
 
     <div class="form-group text-center">
-        <button type="button" class="btn btn-primary register-button col-4" onclick="CreateEvent()">@Resource.CreateEventButton</button>
-        <button type="button" class="btn btn-primary back-button col-2" onclick="location.href='@Url.Action("Index", "Home")'">@Resource.BackButton</button>
+        <button type="button" class="btn btn-primary register-button col-4" onclick="CreateEvent()">@EventResource.Create</button>
+        <button type="button" class="btn btn-primary back-button col-2" onclick="location.href='@Url.Action("Index", "Home")'">@CommonResource.Back</button>
     </div>
-    <div class="text-center text-success font-weight-bold text" style="font-size:30px;" id="success">@Resource.SuccessNotification</div>
+    <div class="text-center text-success font-weight-bold text" style="font-size:30px;" id="success">@CommonResource.Saved</div>
 }

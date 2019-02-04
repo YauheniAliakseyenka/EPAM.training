@@ -27,19 +27,14 @@ namespace TicketManagementMVC
 
 		protected void Application_BeginRequest(object sender, EventArgs e)
 		{
-			string cultureName = null;
-
 			HttpCookie cultureCookie = Request.Cookies["_culture"];
 
 			if (cultureCookie != null)
-				cultureName = cultureCookie.Value;
-			else
-				cultureName = Request.UserLanguages != null && Request.UserLanguages.Length > 0 ?
-						Request.UserLanguages[0] : null;
-
-			Thread.CurrentThread.CurrentCulture = new CultureInfo(cultureName);
-			Thread.CurrentThread.CurrentUICulture = Thread.CurrentThread.CurrentCulture;
-			
+            {
+                var cultureName = cultureCookie.Value;
+                Thread.CurrentThread.CurrentCulture = new CultureInfo(cultureName);
+                Thread.CurrentThread.CurrentUICulture = Thread.CurrentThread.CurrentCulture;
+            }
 		}
 	}
 }

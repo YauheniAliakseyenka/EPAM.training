@@ -10,13 +10,11 @@ namespace BusinessLogic.DTO
 		public string ImageURL { get; set; }
 		public int LayoutId { get; set; }
 		public DateTime Date { get; set; }
-		public string CreatedBy { get; set; }
+		public int CreatedBy { get; set; }
 
 		public override bool Equals(object obj)
 		{
-			var entity = obj as EventDto;
-
-			if (entity == null)
+			if (!(obj is EventDto entity))
 				return false;
 
 			if (Id == entity.Id &&
@@ -24,12 +22,13 @@ namespace BusinessLogic.DTO
 				Description.Equals(entity.Description, StringComparison.OrdinalIgnoreCase) &&
 				ImageURL.Equals(entity.ImageURL, StringComparison.Ordinal) &&
 				LayoutId == entity.LayoutId &&
-				Date.Equals(entity.Date))
+				Date.Equals(entity.Date) &&
+				CreatedBy == entity.CreatedBy)
 				return true;
 
 			return false;
 		}
 
-		public override int GetHashCode() => (Id, Title, Description, ImageURL, LayoutId, Date).GetHashCode();
+		public override int GetHashCode() => (Id, Title, Description, ImageURL, LayoutId, Date, CreatedBy).GetHashCode();
 	}
 }

@@ -1,6 +1,6 @@
 ﻿CREATE TABLE [dbo].[UserRole]
 (
-	[UserId] NVARCHAR(128) NOT NULL, 
+	[UserId] INT NOT NULL, 
     [RoleId] INT NOT NULL,
 	PRIMARY KEY CLUSTERED ([UserId] ASC, [RoleId] ASC),
     CONSTRAINT [FK_UserRole_User] FOREIGN KEY ([UserId]) REFERENCES [User]([Id]) ON DELETE CASCADE, 

@@ -1,10 +1,12 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace DataAccess.Entities
 {
 	[Table(name:"Area")]
 	public class Area
     {
+		[Key]
 		[Column (name:"Id")]
 	    public int Id { get; set; }
 	    [Column(name: "LayoutId")]

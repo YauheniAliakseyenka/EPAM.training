@@ -21,19 +21,17 @@ namespace BusinessLogic.Services.UserServices
 			_eventSeatService = eventSeatService;
 		}
 
-        public async Task AddSeat(int seatId, string userId)
+        public async Task AddSeat(int seatId, int userId)
         {
-            if (string.IsNullOrEmpty(userId))
-                throw new ArgumentNullException();
-
-            if (seatId <= 0)
-                throw new CartException("SeadId is invalid");
+			if (seatId <= 0 || userId <= 0)
+				throw new ArgumentException();
 
 			var seat = await _eventSeatService.Get(seatId);
-			if (seat.State == 1)
+			if (!seat.State.Equals(SeatState.Available))
                 throw new CartException("Seat is locked");
 
-			var cart = _context.CartRepository.FindBy(x => x.UserId.Equals(userId, StringComparison.Ordinal)).FirstOrDefault();
+			var findCart = await _context.CartRepository.FindByAsync(x => x.UserId == userId);
+			var cart = findCart.FirstOrDefault();
 
             using (var transaction = _context.CreateTransaction())
             {
@@ -49,15 +47,16 @@ namespace BusinessLogic.Services.UserServices
 						await _context.SaveAsync();
                         cart = newCart;
                     }
-					
+
+					seat.State = SeatState.Ordered;
+					await _eventSeatService.Update(seat);
+
 					_context.OrderedSeatsRepository.Create(new OrderedSeat
                     {
                         CartId = cart.Id,
                         SeatId = seatId
                     });
-
-					seat.State = 1;
-					await _eventSeatService.Update(seat);
+					await _context.SaveAsync();
 					transaction.Commit();
                 }
                 catch
@@ -68,7 +67,7 @@ namespace BusinessLogic.Services.UserServices
             }
         }
 
-		public Task<IEnumerable<SeatModel>> GetOrderedSeats(string userId)
+		public Task<IEnumerable<SeatModel>> GetOrderedSeats(int userId)
 		{
 			var result = new List<SeatModel>();
 
@@ -79,7 +78,7 @@ namespace BusinessLogic.Services.UserServices
 						join events in _context.EventRepository.GetList() on areas.EventId equals events.Id
 						join layouts in _context.LayoutRepository.GetList() on events.LayoutId equals layouts.Id
 						join venues in _context.VenueRepository.GetList() on layouts.VenueId equals venues.Id
-						where carts.UserId.Equals(userId,StringComparison.Ordinal)
+						where carts.UserId == userId
 						select new { seat = seats, currentEvent = events, layout = layouts, area = areas, venue = venues }).ToList();
 
 			if (!data.Any())
@@ -91,7 +90,7 @@ namespace BusinessLogic.Services.UserServices
 				{
 					Seat = new EventSeatDto
 					{
-						State = x.seat.State,
+						State = (SeatState)x.seat.State,
 						EventAreaId = x.seat.EventAreaId,
 						Id = x.seat.Id,
 						Number = x.seat.Number,
@@ -132,7 +131,8 @@ namespace BusinessLogic.Services.UserServices
 						Id = x.venue.Id,
 						LayoutList = new List<LayoutDto>(),
 						Name = x.venue.Name,
-						Phone = x.venue.Phone
+						Phone = x.venue.Phone,
+						Timezone = x.venue.Timezone
 					}
 				});
 			});
@@ -140,39 +140,31 @@ namespace BusinessLogic.Services.UserServices
 			return Task.FromResult(result.AsEnumerable());
 		}
 
-		public async Task DeleteUserCart(string userId)
+		public async Task DeleteUserCart(int userId)
 		{
-            if (string.IsNullOrEmpty(userId))
-                throw new ArgumentNullException();
+			if (userId <= 0)
+				throw new ArgumentException();
 
-			if (!isCartExist(userId))
-				throw new CartException("Cart for this user does not exists");
-
-            _context.CartRepository.DeleteBy(x => x.UserId.Equals(userId));
+			var delete = await _context.CartRepository.FindByAsync(x => x.UserId == userId);
+            _context.CartRepository.Delete(delete.FirstOrDefault());
 			await _context.SaveAsync();
 		}
 
 		public async Task DeleteSeat(int seatId)
 		{
-            if (seatId <= 0)
-                throw new CartException("SeadId is invalid");
+			if (seatId <= 0)
+				throw new ArgumentException();
 
-			var update = await _eventSeatService.Get(seatId);
+			var delete = await _context.OrderedSeatsRepository.GetAsync(seatId);
 
-			if (update == null)
+			if (delete == null)
 				return;
 
-			_context.OrderedSeatsRepository.Delete(update.Id);
-			update.State = 0;
+			var update = await _eventSeatService.Get(seatId);
+			_context.OrderedSeatsRepository.Delete(delete);
+			update.State = SeatState.Available;
 			await _eventSeatService.Update(update);
 			await _context.SaveAsync();
-		}
-
-		private bool isCartExist(string userId)
-		{
-			return (from carts in _context.CartRepository.GetList()
-					where carts.UserId.Equals(userId, StringComparison.Ordinal)
-					select carts).Any();
 		}
 	}
 }

@@ -21,12 +21,11 @@ namespace BusinessLogic.DiContainer
             builder.RegisterType<EventSeatService>().As<IStoreService<EventSeatDto, int>>().InstancePerLifetimeScope();
             builder.RegisterType<UserService>().As<IUserService>().InstancePerLifetimeScope();
             builder.RegisterType<VenueService>().As<IStoreService<VenueDto, int>>().InstancePerLifetimeScope();
-            builder.RegisterType<LayoutService>().As<IStoreService<LayoutDto, int>>().InstancePerLifetimeScope();
+            builder.RegisterType<LayoutService>().As<ILayoutService>().InstancePerLifetimeScope();
             builder.RegisterType<AreaService>().As<IStoreService<AreaDto, int>>().InstancePerLifetimeScope();
             builder.RegisterType<SeatService>().As<IStoreService<SeatDto, int>>().InstancePerLifetimeScope();
             builder.RegisterType<CartService>().As<ICartService>().InstancePerLifetimeScope();
             builder.RegisterType<OrderService>().As<IOrderService>().InstancePerLifetimeScope();
-            builder.RegisterType<EmailService>().As<IEmailService>().InstancePerLifetimeScope();
         }
     }
 }

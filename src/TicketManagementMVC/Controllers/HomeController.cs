@@ -1,13 +1,10 @@
 ﻿using BusinessLogic.Services;
-using BusinessLogic.Services.EventServices;
 using Microsoft.AspNet.Identity;
-using System.Globalization;
-using System.Threading;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Mvc;
 using System.Web.Routing;
 using TicketManagementMVC.Helpers;
-using TicketManagementMVC.Infrastructure.Attributes;
 using TicketManagementMVC.Infrastructure.Authentication;
 
 namespace TicketManagementMVC.Controllers
@@ -16,7 +13,8 @@ namespace TicketManagementMVC.Controllers
     {
 		private ApplicationUserManager _userManager;
 		private IEventService _eventService;
-        private ICartService _cartService;
+
+		private static int _eventPageSize;
 
 		protected override async void Initialize(RequestContext requestContext)
 		{
@@ -25,28 +23,32 @@ namespace TicketManagementMVC.Controllers
 			if (identity.IsAuthenticated)
 			{
 				var user = await _userManager.FindByNameAsync(identity.GetUserName());
-				ViewData["Balance"] = DisplayBalance.Get(user.Amount);
+				ViewData["Balance"] = user.Amount;
 			}
 		}
 
-		public HomeController(IEventService eventService, ICartService cartService, ApplicationUserManager userManager)
+		public HomeController(IEventService eventService, ApplicationUserManager userManager)
 		{
 			_eventService = eventService;
-            _cartService = cartService;
 			_userManager = userManager;
+			_eventPageSize = 10;
 		}
 
 		[HttpGet]
 		[AllowAnonymous]
-		public async Task<ActionResult> Index()
-        {
-            return View(await _eventService.GetPublishedEvents(FilterEventOptions.None));
-        }
-
-		[NoDirectAccess]
-		public async Task<ActionResult> FilterList(string filterText, FilterEventOptions filterBy = FilterEventOptions.None)
+		public async Task<ActionResult> Index(string filterText, int index = 0, FilterEventOptions filterBy = FilterEventOptions.None, bool isFirstLoad = true)
 		{
-			return PartialView("~/Views/Home/Partial/EventList.cshtml", await _eventService.GetPublishedEvents(filterBy, filterText));
+			var data = await _eventService.GetPublishedEvents(filterBy, filterText);
+			ViewBag.Count = data.Count();
+			ViewBag.PageSize = _eventPageSize;
+			ViewBag.CurrentIndex = index;
+			ViewBag.FilterOption = filterBy;
+			ViewBag.FilterText = filterText;
+
+			if (isFirstLoad)
+				return View(data.Skip(index).Take(_eventPageSize));
+			else
+				return PartialView("~/Views/Home/Partial/_EventList.cshtml", data.Skip(index).Take(_eventPageSize));
 		}
 
 		[HttpGet]
@@ -59,6 +61,14 @@ namespace TicketManagementMVC.Controllers
 				return RedirectToAction("Index");
 
 			return View(displayEvent);
-		}		
+		}
+
+        [AllowAnonymous]
+        public ActionResult SetCulture(string culture)
+        {
+            CultureSetter.Set(culture, this);
+
+            return Redirect(Request.UrlReferrer.ToString());
+        }
     }
 }

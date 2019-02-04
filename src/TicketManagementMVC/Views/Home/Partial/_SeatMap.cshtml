@@ -1,0 +1,86 @@
+﻿@using BusinessLogic.Services;
+@model BusinessLogic.BusinessModels.EventModel
+@{
+    var currentAreaRow = Model.Areas.Any() ? Model.Areas.First().CoordY : 0;
+    int i = 0;
+}
+
+<div class="h-100 border-bottom  border-left border-right mb-3 text-center scene">@EventResource.Scene</div>
+
+<div>
+    <!--draw area-->
+    @while (i < Model.Areas.Count)
+    {
+        if (Model.Areas[i].CoordY == currentAreaRow)
+        {
+            //draw seats
+            var seatRow = Model.Areas[i].Seats.First().Row;
+            int j = 0;
+    <div class="area border">
+        <div class="float-left row-counter">@seatRow</div>
+        @while (j < Model.Areas[i].Seats.Count)
+        {
+            if (Model.Areas[i].Seats[j].Row == seatRow)
+            {
+                if (Model.Areas[i].Seats[j].State.Equals(SeatState.Available))
+                {
+                    if (User.Identity.IsAuthenticated)
+                    {
+                        <a href="#" class="text-decoration-none" onclick="AddToCart('@Model.Areas[i].Seats[j].Id', this, '@AccountResource.AddedToCartNotify'); return false;">
+                            <div class="seat-seatmap seat-available" title=@Html.BalanceDisplay(Model.Areas[i].Price)>
+                                @Model.Areas[i].Seats[j].Number
+                            </div>
+                        </a>
+                    }
+                    else
+                    {
+                        <a href="#" class="text-decoration-none locked-seat">
+                            <div class="seat-seatmap  seat-available">
+                                @Model.Areas[i].Seats[j].Number
+                            </div>
+                        </a>
+                    }
+                }
+                else
+                {
+                    string cssClasses = string.Empty;
+                    switch(Model.Areas[i].Seats[j].State)
+                    {
+                        case SeatState.Ordered:
+                            cssClasses = "seat-seatmap seat-unavailable seat-ordered"; break;
+                        case SeatState.Purchased:
+                            cssClasses = "seat-seatmap seat-unavailable seat-purchased"; break;
+                    }
+
+                    <a href="#" class="text-decoration-none locked-seat">
+                        <div class="@cssClasses">
+                            @Model.Areas[i].Seats[j].Number
+                        </div>
+                    </a>
+                }
+                j++;
+            }
+            else
+            {
+                seatRow = Model.Areas[i].Seats[j].Row;
+                <br />
+                <div class="float-left row-counter">@seatRow</div>
+            }
+
+        }
+    </div>
+            i++;
+        }
+        else
+        {
+            currentAreaRow = Model.Areas[i].CoordY;
+            <br />
+        }
+    }
+</div>
+
+
+
+
+
+

@@ -6,5 +6,5 @@
 	[LayoutId] INT NOT NULL, 
     [Date] DATETIME NOT NULL, 
     [ImageURL] NVARCHAR(MAX) NOT NULL, 
-    [CreatedBy] NVARCHAR(128) NOT NULL,
+    [CreatedBy] INT NOT NULL,
 )

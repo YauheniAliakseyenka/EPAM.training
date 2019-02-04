@@ -8,20 +8,20 @@ namespace DataAccess
 {
 	public interface IWorkUnit : IDisposable
 	{
-		IRepository<OrderedSeat, int> OrderedSeatsRepository { get; }
-		IRepository<Cart, int> CartRepository { get; }
-		IRepository<EventSeat, int> EventSeatRepository { get; }
-		IRepository<Event, int> EventRepository { get; }
-		IRepository<EventArea, int> EventAreaRepository { get; }
-		IRepository<Layout, int> LayoutRepository { get; }
-		IRepository<Venue, int> VenueRepository { get; }
-		IRepository<Order, int> OrderRepository { get; }
-		IRepository<PurchasedSeat, int> PurchasedSeatRepository { get; }
-		IRepository<User, string> UserRepository { get; }
-		IRepository<Role, int> RoleRepository { get; }
-		IRepository<UserRole, int> UserRoleRepository { get; }
-		IRepository<Area, int> AreaRepository { get; }
-		IRepository<Seat, int> SeatRepository { get; }
+		IRepository<OrderedSeat> OrderedSeatsRepository { get; }
+		IRepository<Cart> CartRepository { get; }
+		IRepository<EventSeat> EventSeatRepository { get; }
+		IRepository<Event> EventRepository { get; }
+		IRepository<EventArea> EventAreaRepository { get; }
+		IRepository<Layout> LayoutRepository { get; }
+		IRepository<Venue> VenueRepository { get; }
+		IRepository<Order> OrderRepository { get; }
+		IRepository<PurchasedSeat> PurchasedSeatRepository { get; }
+		IRepository<User> UserRepository { get; }
+		IRepository<Role> RoleRepository { get; }
+		IRepository<UserRole> UserRoleRepository { get; }
+		IRepository<Area> AreaRepository { get; }
+		IRepository<Seat> SeatRepository { get; }
 
 		void Save();
 		Task<int> SaveAsync();

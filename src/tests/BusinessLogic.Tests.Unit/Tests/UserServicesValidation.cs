@@ -5,6 +5,8 @@ using BusinessLogic.Services;
 using BusinessLogic.Tests.Unit.DiContainer;
 using NUnit.Framework;
 using System;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace BusinessLogin.Unit.Tests
 {
@@ -21,25 +23,11 @@ namespace BusinessLogin.Unit.Tests
         [Test]
         public void Add_seat_to_cart_user_id_is_null_throws_exception()
         {
-            //Arrange
-            var cartService = _container.Resolve<ICartService>();
+			//Arrange
+			var cartService = _container.Resolve<ICartService>();
 
             //Assert
-            Assert.ThrowsAsync<ArgumentNullException>(async () => await cartService.AddSeat(3, null));
-        }
-
-        [Test]
-        public void Add_seat_to_cart_seat_id_equals_zero_throws_exception()
-        {
-            //Arrange
-            var cartService = _container.Resolve<ICartService>();
-
-            //Act
-            var exception = Assert.CatchAsync<CartException>(async () => await cartService.AddSeat(0, "AL5sqo4EuA4QndxLBI76AP9qJhPKKsE4Z4BzPI9/dPfug71640OUJlF13BATwgq2ZA=="));
-
-            //Assert
-            StringAssert.AreEqualIgnoringCase(exception.Message, "SeadId is invalid");
-
+            Assert.ThrowsAsync<ArgumentException>(async () => await cartService.AddSeat(3, 0));
         }
 
         [Test]
@@ -48,8 +36,8 @@ namespace BusinessLogin.Unit.Tests
             //Arrange
             var cartService = _container.Resolve<ICartService>();
 
-            //Act
-            var exception = Assert.CatchAsync<CartException>(async () => await cartService.AddSeat(13, "c4195241-4241-se52-95a2-71dsa105cbaq"));
+			//Act
+			var exception = Assert.CatchAsync<CartException>(async () => await cartService.AddSeat(13, 3));
 
             //Assert
             StringAssert.AreEqualIgnoringCase(exception.Message, "Seat is locked");
@@ -61,41 +49,8 @@ namespace BusinessLogin.Unit.Tests
             //Arrange
             var cartService = _container.Resolve<ICartService>();
 
-            //Assert
-            Assert.DoesNotThrowAsync(async () => await cartService.AddSeat(4, "AL5sqo4EuA4QndxLBI76AP9qJhPKKsE4Z4BzPI9/dPfug71640OUJlF13BATwgq2ZA=="));
-        }
-
-        [Test]
-        public void Delete_cart_of_user_user_id_is_null_throws_exception()
-        {
-            //Arrange
-            var cartService = _container.Resolve<ICartService>();
-
-            //Assert
-            Assert.ThrowsAsync<ArgumentNullException>(async () => await cartService.DeleteUserCart(null));
-        }
-
-        [Test]
-        public void Delete_cart_of_user_cart_does_not_exists_expected_exception()
-        {
-            //Arrange
-            var cartService = _container.Resolve<ICartService>();
-
-            //Act
-            var exception = Assert.CatchAsync<CartException>(async () => await cartService.DeleteUserCart("c4195241-4241-se52-95a2-71dsa105cbaq"));
-
-            //Assert
-            StringAssert.AreEqualIgnoringCase(exception.Message, "Cart for this user does not exists");
-        }
-
-        [Test]
-        public void Delete_cart_of_user()
-        {
-            //Arrange
-            var cartService = _container.Resolve<ICartService>();
-
-            //Assert
-            Assert.DoesNotThrowAsync(async () => await cartService.DeleteUserCart("c4195241-4621-4e52-95a1-714d2f005cbb"));
+			//Assert
+			Assert.DoesNotThrowAsync(async () => await cartService.AddSeat(4, 3));
         }
 
         [Test]
@@ -103,12 +58,9 @@ namespace BusinessLogin.Unit.Tests
         {
             //Arrange
             var cartService = _container.Resolve<ICartService>();
-
-            //Act
-            var exception = Assert.CatchAsync<CartException>(async () => await cartService.DeleteSeat(-1));
-
-            //Assert
-            StringAssert.AreEqualIgnoringCase(exception.Message, "SeadId is invalid");
+			
+			//Assert
+			Assert.ThrowsAsync<ArgumentException>(async () => await cartService.DeleteSeat(-1));
         }
 
 		[Test]
@@ -127,10 +79,9 @@ namespace BusinessLogin.Unit.Tests
             //Arrange
             var orderService = _container.Resolve<IOrderService>();
 
-            //Assert
-            Assert.ThrowsAsync<ArgumentNullException>(async () => await orderService.Create(null));
+			//Assert
+			Assert.ThrowsAsync<ArgumentException>(async () => await orderService.Create(-1));
 		}
-
 
         [Test]
         public void Create_order__balance_of_account_of_user_is_less_than_total_amount_expected_exception()
@@ -139,7 +90,7 @@ namespace BusinessLogin.Unit.Tests
             var orderService = _container.Resolve<IOrderService>();
 
             //Act
-            var exception = Assert.CatchAsync<OrderException>(async () => await orderService.Create("57b9433e-78ac-4619-91eb-dd7a5c130f08"));
+            var exception = Assert.CatchAsync<OrderException>(async () => await orderService.Create(1));
 
             //Assert
             StringAssert.AreEqualIgnoringCase(exception.Message, "Balance of user is less than total amount of order");
@@ -152,7 +103,7 @@ namespace BusinessLogin.Unit.Tests
             var orderService = _container.Resolve<IOrderService>();
 
             //Assert
-            Assert.DoesNotThrowAsync(async () => await orderService.Create("c4195241-4621-4e52-95a1-714d2f005cbb"));
+            Assert.DoesNotThrowAsync(async () => await orderService.Create(2));
         }
 
 		[Test]
@@ -163,7 +114,6 @@ namespace BusinessLogin.Unit.Tests
 			var user = new UserDto
 			{
 				PasswordHash = "AL5sqo4EuA4QndxLBI76AP9qJhPKKsE4Z4BzPI9/dPfug71640OUJlF13BATwgq2ZA==",
-				Id = "57b9433e-78ac-4619-91eb-dd7a5c130f08",
 				Culture = "en",
 				Email = "superb@mail.ru",
 				UserName = "vasia93",
@@ -182,7 +132,6 @@ namespace BusinessLogin.Unit.Tests
 			var user = new UserDto
 			{
 				PasswordHash = "AL5sqo4EuA4QndxLBI76AP9qJhPKKsE4Z4BzPI9/dPfug71640OUJlF13BATwgq2ZA==",
-				Id = "57b9433e-78ac-4619-91eb-dd7a5c130f08",
 				Culture = "en",
 				Email = "admin_vasa@outlook.com",
 				UserName = "vasia93",
@@ -204,7 +153,6 @@ namespace BusinessLogin.Unit.Tests
 			var user = new UserDto
 			{
 				PasswordHash = "AL5sqo4EuA4QndxLBI76AP9qJhPKKsE4Z4BzPI9/dPfug71640OUJlF13BATwgq2ZA==",
-				Id = "57b9433e-78ac-4619-91eb-dd7a5c130f08",
 				Culture = "en",
 				Email = "superb@mail.ru",
 				UserName = "lena",
@@ -216,6 +164,33 @@ namespace BusinessLogin.Unit.Tests
 
 			//Assert
 			StringAssert.AreEqualIgnoringCase(exception.Message, "Username is already taken");
+		}
+
+		[Test]
+		public void Refund_order_expected_exception()
+		{
+			//Arrange
+			var orderService = _container.Resolve<IOrderService>();
+			var orderId = 4; //id of any order which doesn't exist
+
+			//Act
+			var exception = Assert.CatchAsync<OrderException>(async () => await orderService.CancelOrderAndRefund(orderId));
+
+			//Assert
+			StringAssert.AreEqualIgnoringCase(exception.Message, "Order does not exist");
+		}
+
+		[Test]
+		public async Task Refund_order()
+		{
+			//Arrange
+			var orderService = _container.Resolve<IOrderService>();
+			var userId = 1; //id of user from fake repositorty
+			var purchaseHistory = await orderService.GetPurchaseHistory(userId);
+			var order = purchaseHistory.FirstOrDefault();
+
+			//Assert
+			Assert.DoesNotThrowAsync(async () => await orderService.CancelOrderAndRefund(order.Order.Id));
 		}
 	}
 }

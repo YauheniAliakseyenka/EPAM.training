@@ -1,10 +1,12 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace DataAccess.Entities
 {
 	[Table(name:"Venue")]
     public class Venue
 	{
+		[Key]
 		[Column(name: "Id")]
 		public int Id { get; set; }
 		[Column(name: "Name")]
@@ -15,5 +17,7 @@ namespace DataAccess.Entities
 		public string Phone { get; set; }
 		[Column(name: "Description")]
 		public string Description { get; set; }
+		[Column(name: "Timezone")]
+		public string Timezone { get; set; }
 	}
 }

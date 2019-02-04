@@ -1,9 +1,12 @@
 ﻿using Autofac;
 using BusinessLogic.DiContainer;
-using BusinessLogin.Unit.Tests.FakeRepositories;
+using BusinessLogic.Tests.Unit.FakeRepositories;
+using BusinessLogic.Tests.Unit.FakeRepositories.Data;
 using DataAccess;
+using DataAccess.Entities;
 using Moq;
 using System.Data.Common;
+using System.Threading.Tasks;
 
 namespace BusinessLogic.Tests.Unit.DiContainer
 {
@@ -26,22 +29,23 @@ namespace BusinessLogic.Tests.Unit.DiContainer
             mockTransaction.Setup(x => x.Rollback()).Verifiable();
 
             var workUnit = new Mock<IWorkUnit>();
-            workUnit.SetupGet(x => x.VenueRepository).Returns(new VenueRepository());
-            workUnit.SetupGet(x => x.LayoutRepository).Returns(new LayoutRepository());
-            workUnit.SetupGet(x => x.AreaRepository).Returns(new AreaRepository());
-            workUnit.SetupGet(x => x.SeatRepository).Returns(new SeatRepository());
-            workUnit.SetupGet(x => x.EventRepository).Returns(new EventRepository());
-            workUnit.SetupGet(x => x.EventAreaRepository).Returns(new EventAreaRepository());
-            workUnit.SetupGet(x => x.EventSeatRepository).Returns(new EventSeatRepository());
-            workUnit.SetupGet(x => x.UserRepository).Returns(new UserRepository());
-            workUnit.SetupGet(x => x.OrderedSeatsRepository).Returns(new OrderedSeatsRepository());
-            workUnit.SetupGet(x => x.OrderRepository).Returns(new OrderRepository());
-            workUnit.SetupGet(x => x.PurchasedSeatRepository).Returns(new PurchasedSeatRepository());
-            workUnit.SetupGet(x => x.RoleRepository).Returns(new RoleRepostiroy());
-            workUnit.SetupGet(x => x.UserRoleRepository).Returns(new UserRoleRepository());
-            workUnit.SetupGet(x => x.CartRepository).Returns(new CartRepository());
+			workUnit.SetupGet(x => x.VenueRepository).Returns(new FakeRepository<Venue>(FakeVenueData.Venues()));
+			workUnit.SetupGet(x => x.LayoutRepository).Returns(new FakeRepository<Layout>(FakeVenueData.Layouts()));
+			workUnit.SetupGet(x => x.AreaRepository).Returns(new FakeRepository<Area>(FakeVenueData.Areas()));
+			workUnit.SetupGet(x => x.SeatRepository).Returns(new FakeRepository<Seat>(FakeVenueData.Seats()));
+			workUnit.SetupGet(x => x.EventRepository).Returns(new FakeRepository<Event>(FakeEventData.Events()));
+			workUnit.SetupGet(x => x.EventAreaRepository).Returns(new FakeRepository<EventArea>(FakeEventData.EventAreas()));
+			workUnit.SetupGet(x => x.EventSeatRepository).Returns(new FakeRepository<EventSeat>(FakeEventData.EventSeats()));
+			workUnit.SetupGet(x => x.UserRepository).Returns(new FakeRepository<User>(FakeUserData.Users()));
+			workUnit.SetupGet(x => x.OrderedSeatsRepository).Returns(new FakeRepository<OrderedSeat>(FakeUserData.OrderedSeats()));
+			workUnit.SetupGet(x => x.OrderRepository).Returns(new FakeRepository<Order>(FakeUserData.Orders()));
+			workUnit.SetupGet(x => x.PurchasedSeatRepository).Returns(new FakeRepository<PurchasedSeat>(FakeUserData.PurchasedSeats()));
+			workUnit.SetupGet(x => x.RoleRepository).Returns(new FakeRepository<Role>(FakeUserData.Roles()));
+			workUnit.SetupGet(x => x.UserRoleRepository).Returns(new FakeRepository<UserRole>(FakeUserData.UserRoles()));
+            workUnit.SetupGet(x => x.CartRepository).Returns(new FakeRepository<Cart>(FakeUserData.Carts()));
             workUnit.Setup(x => x.Save()).Verifiable();
-            workUnit.Setup(x => x.CreateTransaction()).Returns(mockTransaction.Object);
+			workUnit.Setup(x => x.SaveAsync()).Returns(Task.FromResult(0));
+			workUnit.Setup(x => x.CreateTransaction()).Returns(mockTransaction.Object);
 
             return workUnit;
         }

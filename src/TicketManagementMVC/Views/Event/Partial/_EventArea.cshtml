@@ -1,0 +1,110 @@
+﻿@using BusinessLogic.Services;
+@model TicketManagementMVC.Models.Event.EventAreaViewModel
+<h2 class="text-center">@ViewBag.Title</h2>
+@using (Html.BeginForm((string)ViewBag.Action, "Event", FormMethod.Post, new { @class = "d-table m-auto", @id = "eventAreaForm" }))
+{
+    @Html.AntiForgeryToken()
+    <div id="errorMessagesEditEventArea" class="errors-login text-danger d-table m-auto"></div>
+    @Html.HiddenFor(x => x.Id)
+    @Html.HiddenFor(x => x.EventId)
+
+    <div class="d-table m-auto">
+        <div class="form-group">
+            @Html.LabelFor(x => x.Description, new { @class = "required" })
+            @Html.TextBoxFor(x => x.Description, new { @class = "form-control", autocomplete = "off", @style = "width:320px;" })
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(x => x.CoordX, new { @class = "required" })
+            @Html.TextBoxFor(x => x.CoordX, new { @class = "form-control", autocomplete = "off" })
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(x => x.CoordY, new { @class = "required" })
+            @Html.TextBoxFor(x => x.CoordY, new { @class = "form-control", autocomplete = "off" })
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(x => x.Price, new { @class = "required" })
+            @if (Model.SeatList.Any(x => !x.State.Equals(SeatState.Available)))
+            {
+                @Html.TextBoxFor(x => x.Price, new { @class = "form-control", autocomplete = "off", @readonly = "true" })
+            }
+            else
+            {
+                @Html.TextBoxFor(x => x.Price, new { @class = "form-control", autocomplete = "off" })
+            }
+        </div>
+    </div>
+    <div class="text-center">
+        <button type="button" class="btn btn-primary register-button" style="width:200px;" onclick="SaveArea('@ViewBag.Action')">@CommonResource.Apply</button>
+        <button type="button" class="btn btn-primary back-button" style="width:100px;" onclick="CloseEventAreaForm()">@CommonResource.Back</button>
+    </div>
+    <div class="text-center text-success font-weight-bold text" style="font-size:30px;" id="successSaveArea">@CommonResource.Saved</div>
+
+    <!--Seat list within area-->
+    <br />
+    <h4 class="text-center">@EventResource.SeatList</h4>
+    <table class="table table-striped" id="seatTable">
+        <thead>
+            <tr>
+                <th scope="col">@EventResource.SeatRow</th>
+                <th scope="col">@EventResource.SeatNumber</th>
+                <th scope="col" class="text-center">@EventResource.SeatState</th>
+                <th scope="col"></th>
+            </tr>
+        </thead>
+        <tbody>
+            @for (int i = 0; i < Model.SeatList.Count(); i++)
+            {
+                string cssClasses = string.Empty;
+                switch (Model.SeatList[i].State)
+                {
+                    case SeatState.Ordered:
+                        cssClasses = "form-control seat-ordered text-center ml-3 mr-3"; break;
+                    case SeatState.Purchased:
+                        cssClasses = "form-control seat-purchased text-center ml-3 mr-3"; break;
+                    case SeatState.Available:
+                        cssClasses = "form-control seat-available text-center ml-3 mr-3"; break;
+                }
+
+                <tr id="seatRow_@i" style="line-height:10px;">
+                    @Html.HiddenFor(x => Model.SeatList[i].Id)
+                    @Html.HiddenFor(x => Model.SeatList[i].EventAreaId)
+                    @if (!Model.SeatList[i].State.Equals(SeatState.Available))
+                    {
+                        <th scope="row" class="pt-1 pb-1" style="vertical-align:middle;">
+                            @Html.TextBoxFor(x => Model.SeatList[i].Row, new { @class = "form-control",
+                           autocomplete = "off", @readonly = "readonly" })
+                        </th>
+                        <td class="pt-1 pb-1" style="vertical-align:middle;">
+                            @Html.TextBoxFor(x => Model.SeatList[i].Number, new { @class = "form-control",
+                           autocomplete = "off", @readonly = "readonly" })
+                        </td>
+                        <td class="pt-1 pb-1" style="vertical-align:middle;">
+                            @Html.HiddenFor(x => Model.SeatList[i].State)
+                            <label class="@cssClasses">@ProjectResources.CommonResource.ResourceManager.GetString(Model.SeatList[i].State.ToString())</label>
+                        </td>
+                        <td></td>
+                    }
+                    else
+                    {
+                        <th scope="row" class="pt-1 pb-1" style="vertical-align:middle;">
+                            @Html.TextBoxFor(x => Model.SeatList[i].Row, new { @class = "form-control", autocomplete = "off" })
+                        </th>
+                        <td class="pt-1 pb-1" style="vertical-align:middle;">
+                            @Html.TextBoxFor(x => Model.SeatList[i].Number, new { @class = "form-control", autocomplete = "off" })
+                        </td>
+                        <td class="pt-1 pb-1" style="vertical-align:middle;">
+                            @Html.HiddenFor(x => Model.SeatList[i].State)
+                            <label class="@cssClasses">@ProjectResources.CommonResource.ResourceManager.GetString(Model.SeatList[i].State.ToString())</label>
+                        </td>
+                        <td class="pt-1 pb-1" style="vertical-align:middle;">
+                            <input type="button" value="X" style="width:45px;" onclick="DeleteSeat('@Model.SeatList[i].Id', this)" class="btn btn-primary" name="button" />
+                        </td>
+                    }
+                </tr>
+            }
+        </tbody>
+
+    </table>
+    <button type="button" class="btn btn-primary register-button col-12 pt-2" onclick="AddSeatToTable()">@CommonResource.Add</button>
+}
+

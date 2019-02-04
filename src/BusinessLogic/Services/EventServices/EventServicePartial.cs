@@ -7,11 +7,6 @@ using System.Threading.Tasks;
 
 namespace BusinessLogic.Services.EventServices
 {
-	public enum  FilterEventOptions
-	{
-		None, Title, Date
-	}
-
 	internal partial class EventService
 	{
 		public Task<IEnumerable<EventModel>> GetPublishedEvents(FilterEventOptions filter, string filterText = null)
@@ -31,7 +26,6 @@ namespace BusinessLogic.Services.EventServices
 					   join events in eventsList on areaGroup.Key equals events.Id
 					   join layouts in _context.LayoutRepository.GetList() on events.LayoutId equals layouts.Id
 					   join venues in _context.VenueRepository.GetList() on layouts.VenueId equals venues.Id
-					   where events.Date >= DateTime.Today
 					   select new { venue = venues, currentEvent = events };
 
 			switch (filter)
@@ -47,39 +41,39 @@ namespace BusinessLogic.Services.EventServices
 					if (!string.IsNullOrEmpty(filterText) && DateTime.TryParse(filterText, out date))
 						data = from events in data
 							   where events.currentEvent.Date.Year == date.Date.Year &&
-							   events.currentEvent.Date.Month == date.Date.Month &&
-							   events.currentEvent.Date.Day == date.Date.Day
+									 events.currentEvent.Date.Month == date.Date.Month &&
+									 events.currentEvent.Date.Day == date.Date.Day
 							   select events;
 					break;
 			}
-			
-			if (!data.ToList().Any())
+
+			//gets events which don't happened by venue's local date
+			var list = (from events in data.AsEnumerable()
+						where !IsPastDate(events.currentEvent.Date, events.venue.Timezone)
+						select events).ToList();
+
+			if (!list.Any())
 				return Task.FromResult(result.AsEnumerable());
 
-			data.ToList().ForEach(x =>
+            list.ForEach(x =>
 			{
 				if (!result.Any(y => y.Event.Id == x.currentEvent.Id))
 				{
 					var add = new EventModel
 					{
-						Event = new EventDto
-						{
-							Date = x.currentEvent.Date,
-							Description = x.currentEvent.Description,
-							Id = x.currentEvent.Id,
-							Title = x.currentEvent.Title,
-							ImageURL = x.currentEvent.ImageURL
-						},
+						Event = MapToEventDto(x.currentEvent),
 						Venue = new VenueDto
 						{
 							Address = x.venue.Address,
 							Name = x.venue.Name,
-							Phone = x.venue.Phone
+							Phone = x.venue.Phone,
+							Timezone = x.venue.Timezone
 						}
 					};
 					result.Add(add);
 				}
 			});
+			result.OrderBy(x => x.Event.Date);
 
 			return Task.FromResult(result.AsEnumerable());
 		}
@@ -93,7 +87,7 @@ namespace BusinessLogic.Services.EventServices
 						join events in _context.EventRepository.GetList() on layouts.Id equals events.LayoutId
 						join areas in _context.EventAreaRepository.GetList() on events.Id equals areas.EventId
 						join seats in _context.EventSeatRepository.GetList() on areas.Id equals seats.EventAreaId
-						where events.Id == id
+                        where events.Id == id
 						select new { venue = venues, layoutName = layouts.Description,
                             currentEvent = events, eventArea = areas, eventSeat = seats }).ToList();
 
@@ -101,23 +95,17 @@ namespace BusinessLogic.Services.EventServices
 				return Task.FromResult(result);
 
 			bool isPublished = true;
-			result.LayoutName = data.First().layoutName;
+			var first = data.FirstOrDefault();
+			result.LayoutName = first.layoutName;
 			result.Venue = new VenueDto
 			{
-				Address = data.First().venue.Address,
-				Description = data.First().venue.Description,
-				Name = data.First().venue.Name,
-				Phone = data.First().venue.Phone
+				Address = first.venue.Address,
+				Description = first.venue.Description,
+				Name = first.venue.Name,
+				Phone = first.venue.Phone,
+				Timezone = first.venue.Timezone
 			};
-			result.Event = new EventDto
-			{
-				Date = data.First().currentEvent.Date,
-				Description = data.First().currentEvent.Description,
-				Id = data.First().currentEvent.Id,
-				Title = data.First().currentEvent.Title,
-                LayoutId  = data.First().currentEvent.LayoutId,
-                ImageURL = data.First().currentEvent.ImageURL
-			};
+			result.Event = MapToEventDto(first.currentEvent);
 
 			var areaList = new List<EventAreaDto>();
 			foreach (var area in data)
@@ -129,18 +117,18 @@ namespace BusinessLogic.Services.EventServices
 
 				if (areaFromList == null)
 				{
-					var add = new EventAreaDto
-					{
-						Seats = new List<EventSeatDto>
-						{
-							new EventSeatDto
-							{
-								EventAreaId = area.eventSeat.EventAreaId,
-								Id = area.eventSeat.Id,
-								Number = area.eventSeat.Number,
-								Row  = area.eventSeat.Row,
-								State = area.eventSeat.State
-							}
+                    var add = new EventAreaDto
+                    {
+                        Seats = new List<EventSeatDto>
+                        {
+                            new EventSeatDto
+                            {
+                                EventAreaId = area.eventSeat.EventAreaId,
+                                Id = area.eventSeat.Id,
+                                Number = area.eventSeat.Number,
+                                Row  = area.eventSeat.Row,
+                                State = (SeatState)area.eventSeat.State
+                            }
 						},
 						AreaDefaultId = area.eventArea.AreaDefaultId,
 						CoordX = area.eventArea.CoordX,
@@ -160,26 +148,26 @@ namespace BusinessLogic.Services.EventServices
 						Id = area.eventSeat.Id,
 						Number = area.eventSeat.Number,
 						Row = area.eventSeat.Row,
-						State = area.eventSeat.State
+						State = (SeatState)area.eventSeat.State
 					});
 				}
 			}
+			areaList.Sort();
+			areaList.ForEach(x => x.Seats.Sort());
 			result.Areas = areaList;
-			result.Areas.Sort();
-			result.Areas.ForEach(x => { x.Seats.Sort(); });
 			result.IsPublished = isPublished;
 
 			return Task.FromResult(result);
 		}
 
-        public Task<IEnumerable<EventDto>> GetEventManagerEvents(int venueId, string userId)
+        public Task<IEnumerable<EventDto>> GetEventManagerEvents(int venueId, int userId)
         {
             var result = new List<EventDto>();
 
             var data = (from venues in _context.VenueRepository.GetList()
                         join layouts in _context.LayoutRepository.GetList() on venues.Id equals layouts.VenueId
                         join events in _context.EventRepository.GetList() on layouts.Id equals events.LayoutId
-                        where venues.Id == venueId && events.CreatedBy.Equals(userId, StringComparison.Ordinal)
+                        where venues.Id == venueId && events.CreatedBy == userId
                         select events).ToList();
 
 			if (!data.Any())
@@ -187,11 +175,11 @@ namespace BusinessLogic.Services.EventServices
 
             data.ForEach(x =>
 			{
-				result.Add(mapToEventDto(x));
+				result.Add(MapToEventDto(x));
 			});
 			result.OrderBy(x => x.Title);
 
-            return Task.FromResult(result.AsEnumerable());
+			return Task.FromResult(result.AsEnumerable());
 		}
 
 		public bool HasLockedSeats(int eventId)
@@ -199,7 +187,7 @@ namespace BusinessLogic.Services.EventServices
 			var data = (from events in _context.EventRepository.GetList()
 						join eventAreas in _context.EventAreaRepository.GetList() on events.Id equals eventAreas.EventId
 						join eventSeats in _context.EventSeatRepository.GetList() on eventAreas.Id equals eventSeats.EventAreaId
-						where events.Id == eventId && eventSeats.State == 1
+						where events.Id == eventId && !eventSeats.State.Equals((int)SeatState.Available)
 						select eventSeats).ToList();
 
 			if (data.Any())
@@ -207,5 +195,21 @@ namespace BusinessLogic.Services.EventServices
 
 			return false;
 		}
-    }
+
+		private string VenueTimezoneByLayoutId(int layoutId)
+		{
+			return (from layouts in _context.LayoutRepository.GetList()
+					join venues in _context.VenueRepository.GetList() on layouts.VenueId equals venues.Id
+					where layouts.Id == layoutId
+					select venues.Timezone).FirstOrDefault();
+		}
+
+		private bool IsPastDate(DateTime date, string timezoneId)
+		{
+			//getting venue's local time
+			var venueLocalTime = TimeZoneInfo.ConvertTimeBySystemTimeZoneId(DateTime.UtcNow, timezoneId);
+
+			return date <= venueLocalTime;
+		}
+	}
 }

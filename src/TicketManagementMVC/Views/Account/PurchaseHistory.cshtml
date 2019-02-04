@@ -1,37 +1,80 @@
 ﻿@model IEnumerable<BusinessLogic.BusinessModels.OrderModel>
 
-    <div>
+<div id="purchaseHistoryPlaceholder">
+    
         @foreach (var order in Model)
         {
-            <div class="row" style="font-size:20px;">
-                <div>@Resource.OrderTitle #@order.Order.Id</div>
-                <div class="pl-3"  >@Resource.Date: @order.Order.Date.ToShortDateString(), @order.Order.Date.ToShortTimeString()</div>
-            </div>
+            <div id="order_@order.Order.Id">
+                <div class="row" style="font-size:20px;">
+                    <div>@AccountResource.Order #@order.Order.Id</div>
+                    <div class="pl-3">@EventResource.Date: @order.Order.Date.ToShortDateString(), @order.Order.Date.ToShortTimeString() </div>
+                </div>
 
-            <!--purchased seats table-->
-            <div class="row">
-                <table class="table table-striped text-center  m-auto" style="font-size:15px;">
-                    <thead>
-                        <tr>
-                            <th scope="col">Seat(row-number)</th>
-                            <th scope="col">Title</th>
-                            <th scope="col">Date</th>
-                            <th scope="col">Venue</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var seat in order.PurchasedSeats)
-                        {
-                            <tr style="line-height: 5px;">
-                                <th scope="row" class="pt-3">@seat.Seat.Row-@seat.Seat.Number</th>
-                                <td class="pt-3">@seat.Event.Title</td>
-                                <td class="pt-3">@seat.Event.Date.ToShortDateString(),@seat.Event.Date.ToShortTimeString()</td>
-                                <td class="pt-3">@seat.Venue.Name (@seat.Layout.Description)</td>
+                <!--purchased seats table-->
+                <div class="row">
+                    <table class="table table-striped text-center  m-auto" style="font-size:15px;">
+                        <thead>
+                            <tr>
+                                <th scope="col">@EventResource.SeatRowNum</th>
+                                <th scope="col">@EventResource.Title</th>
+                                <th scope="col">@EventResource.Date</th>
+                                <th scope="col">@EventResource.VenueWithLayout</th>
+                                <th scope="col">@EventResource.Price</th>
                             </tr>
-                        }
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            @foreach (var seat in order.PurchasedSeats)
+                            {
+                                <tr style="line-height: 5px;">
+                                    <th scope="row" class="pt-3">@seat.Seat.Row-@seat.Seat.Number</th>
+                                    <td class="pt-3">@seat.Event.Title</td>
+                                    <td class="pt-3">@seat.Event.Date.ToShortDateString(),@seat.Event.Date.ToShortTimeString() @Html.OffsetDisplay(seat.Venue.Timezone)</td>
+                                    <td class="pt-3">@seat.Venue.Name (@seat.Layout.Description)</td>
+                                    <td class="pt-3">@Html.BalanceDisplay(seat.Area.Price)</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+                <div class=" float-right pt-2">
+                    <input type="button"
+                           onclick="Refund(@order.Order.Id,
+                                       '@ProjectResources.AccountResource.RefundNotisfaction',
+                                        '@ProjectResources.AccountResource.RefundAlert')"
+                           value="@ProjectResources.AccountResource.RefundButton"
+                           class="btn btn-primary" />
+                </div>
+                <br /> 
+                <br />
             </div>
-            <br />
+        }
+   
+    <div class="row mt-2 ml-2" style="font-size:19px;">
+        <div>@ProjectResources.CommonResource.Pages: </div>
+        @{ var index = 0;}
+        @for (int i = index; i <= (ViewBag.Count / ViewBag.PageSize); i++)
+        {
+            if (index == ViewBag.CurrentIndex)
+            {
+                <a href="#" class = "text-decoration-none page-selected">
+                    <div class="page border-right">
+                        @((i + 1).ToString())
+                    </div>
+                </a>
+               
+            }
+            else
+            {
+                <a href="@Url.Action("PurchaseHistory", "Account", new { index = index })" class="text-decoration-none">
+                    <div class="page border-right">
+                        @((i + 1).ToString())
+                    </div>
+                </a>
+               
+            }
+            index += ViewBag.PageSize;
         }
     </div>
+</div>
+
+

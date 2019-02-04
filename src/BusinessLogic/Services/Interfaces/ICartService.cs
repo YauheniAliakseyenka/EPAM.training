@@ -1,5 +1,4 @@
 ﻿using BusinessLogic.BusinessModels;
-using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -7,9 +6,9 @@ namespace BusinessLogic.Services
 {
 	public interface ICartService
 	{
-		Task AddSeat(int seatId, string userId);
-		Task<IEnumerable<SeatModel>> GetOrderedSeats(string userId);
-		Task DeleteUserCart(string userId);
+		Task AddSeat(int seatId, int userId);
+		Task<IEnumerable<SeatModel>> GetOrderedSeats(int userId);
+		Task DeleteUserCart(int userId);
 		Task DeleteSeat(int seatId);
 	}
 }

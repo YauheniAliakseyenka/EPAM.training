@@ -5,7 +5,6 @@ using DataAccess.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Threading.Tasks;
 
 namespace BusinessLogic.Services.UserServices
@@ -24,13 +23,13 @@ namespace BusinessLogic.Services.UserServices
             if (entity == null)
                 throw new ArgumentNullException();
 
-			if(isUserNameTaken(entity.UserName))
+			if(IsUserNameTaken(entity.UserName))
 				throw new UserException("Username is already taken");
 
-			if (isEmailTaken(entity.Email))
+			if (IsEmailTaken(entity.Email))
 				throw new UserException("Email is already taken");
 
-			var addUser = mapToUser(entity);
+			var addUser = MapToUser(entity);
 			using (var transacrion = _context.CreateTransaction())
 			{
 				try
@@ -38,7 +37,8 @@ namespace BusinessLogic.Services.UserServices
 					_context.UserRepository.Create(addUser);
 					await _context.SaveAsync();
 
-					var role = _context.RoleRepository.FindBy(x => x.Name.Equals("user", StringComparison.OrdinalIgnoreCase)).FirstOrDefault();
+					var findRole = await _context.RoleRepository.FindByAsync(x => x.Name.Equals("user", StringComparison.OrdinalIgnoreCase));
+					var role = findRole.FirstOrDefault();
 
 					if (role == null)
 						throw new UserException("Role User does not exists");
@@ -50,6 +50,7 @@ namespace BusinessLogic.Services.UserServices
 					});
 					await _context.SaveAsync();
 					transacrion.Commit();
+					entity.Id = addUser.Id;
 				}
 				catch(Exception)
 				{
@@ -59,20 +60,12 @@ namespace BusinessLogic.Services.UserServices
 			}
 		}
 
-		public Task<IEnumerable<UserDto>> FindBy(Expression<Func<UserDto, bool>> expression)
-		{
-			Expression<Func<User, bool>> predicate = x => expression.Compile().Invoke(mapToUserDto(x));
-			var list = _context.UserRepository.FindBy(predicate);
-
-			return Task.FromResult(list.Select(x => mapToUserDto(x)).AsEnumerable());
-		}
-
 		public async Task Update(UserDto entity)
 		{
 			if (entity == null)
 				throw new ArgumentNullException();
-            
-            var update = await _context.UserRepository.GetAsync(entity.Id);
+
+			var update = await _context.UserRepository.GetAsync(entity.Id);
 
             if (update == null)
                 throw new UserException("User does not exists");
@@ -85,10 +78,11 @@ namespace BusinessLogic.Services.UserServices
 			update.Amount = entity.Amount;
 			update.Email = entity.Email;
 			_context.UserRepository.Update(update);
+
 			await _context.SaveAsync();
 		}
 
-		private UserDto mapToUserDto(User from)
+		private UserDto MapToUserDto(User from)
 		{
 			return new UserDto
 			{
@@ -104,7 +98,7 @@ namespace BusinessLogic.Services.UserServices
 			};
 		}
 
-		private User mapToUser(UserDto from)
+		private User MapToUser(UserDto from)
 		{
 			return new User
 			{
@@ -120,32 +114,36 @@ namespace BusinessLogic.Services.UserServices
 			};
 		}
 
-		public async Task Delete(string id)
+		public async Task Delete(int id)
 		{
-            if (string.IsNullOrEmpty(id))
-                throw new ArgumentNullException();
+			var delete = await _context.UserRepository.GetAsync(id);
 
-            _context.UserRepository.Delete(id);
+			if (delete == null)
+				return;
+
+            _context.UserRepository.Delete(delete);
 			await _context.SaveAsync();
 		}
 
-		public async Task<UserDto> Get(string id)
+		public async Task<UserDto> Get(int id)
 		{
-            if (string.IsNullOrEmpty(id))
-                throw new ArgumentNullException();
+			var user = await _context.UserRepository.GetAsync(id);
 
-            var user = await _context.UserRepository.GetAsync(id);
-
-			return user == null ? null : mapToUserDto(user);
+			return user == null ? null : MapToUserDto(user);
 		}
 
 		public async Task<IEnumerable<UserDto>> GetList()
 		{
 			var list = await _context.UserRepository.GetListAsync();
 
-			return list.Select(x => mapToUserDto(x));
+			return list.Select(x => MapToUserDto(x)).ToList();
 		}
 
+        /// <summary>
+        /// Get roles of user by username
+        /// </summary>
+        /// <param name="userName"></param>
+        /// <returns></returns>
 		public Task<IEnumerable<string>> GetRoles(string userName)
 		{
 			var roles = (from user in _context.UserRepository.GetList()
@@ -157,17 +155,38 @@ namespace BusinessLogic.Services.UserServices
 			return Task.FromResult(roles.AsEnumerable());
 		}
 
-		private bool isUserNameTaken(string userName)
+		private bool IsUserNameTaken(string userName)
 		{
-			return (from users in _context.UserRepository.GetList() where users.UserName.Equals(userName, StringComparison.Ordinal)
+			return (from users in _context.UserRepository.GetList()
+					where users.UserName.Equals(userName, StringComparison.Ordinal)
 					select users).Any();
 		}
 
-		private bool isEmailTaken(string email)
+        private bool IsEmailTaken(string email)
 		{
 			return (from users in _context.UserRepository.GetList()
 					where users.Email.Equals(email, StringComparison.OrdinalIgnoreCase)
 					select users).Any();
+		}
+
+		public Task<UserDto> FindByEmail(string email)
+		{
+			var user = (from users in _context.UserRepository.GetList()
+						where users.Email.Equals(email, StringComparison.OrdinalIgnoreCase)
+						select users).FirstOrDefault();
+			var result = user == null ? null : MapToUserDto(user);
+
+			return Task.FromResult(result);
+		}
+
+		public Task<UserDto> FindByUserName(string userName)
+		{
+			var user = (from users in _context.UserRepository.GetList()
+						where users.UserName.Equals(userName, StringComparison.Ordinal)
+						select users).FirstOrDefault();
+			var result = user == null ? null : MapToUserDto(user);
+
+			return Task.FromResult(result);
 		}
 	}
 }

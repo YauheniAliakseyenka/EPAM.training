@@ -74,13 +74,14 @@
     <Compile Include="Services\EventServices\EventSeatService.cs" />
     <Compile Include="Services\EventServices\EventService.cs" />
     <Compile Include="Services\EventServices\EventServicePartial.cs" />
-    <Compile Include="Services\Interfaces\IEmailService.cs" />
+    <Compile Include="Services\FilterEventOptions.cs" />
     <Compile Include="Services\Interfaces\IEventService.cs" />
     <Compile Include="Services\Interfaces\IOrderService.cs" />
     <Compile Include="Services\Interfaces\IStoreService.cs" />
     <Compile Include="Services\Interfaces\IUserService.cs" />
+    <Compile Include="Services\Interfaces\ILayoutService.cs" />
+    <Compile Include="Services\SeatState.cs" />
     <Compile Include="Services\UserServices\CartService.cs" />
-    <Compile Include="Services\UserServices\EmailService.cs" />
     <Compile Include="Services\UserServices\OrderService.cs" />
     <Compile Include="Services\UserServices\UserService.cs" />
     <Compile Include="Services\VenueServices\AreaService.cs" />

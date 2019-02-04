@@ -1,7 +1,7 @@
 ﻿CREATE TABLE [dbo].[Order]
 (
 	[Id] INT IDENTITY PRIMARY KEY, 
-    [UserId] NVARCHAR(128) NOT NULL, 
-    [Date] DATETIME NOT NULL, 
+    [UserId] INT NOT NULL, 
+    [Date] DATETIMEOFFSET NOT NULL, 
     CONSTRAINT [FK_Order_User] FOREIGN KEY ([UserId]) REFERENCES [User]([Id])
 )

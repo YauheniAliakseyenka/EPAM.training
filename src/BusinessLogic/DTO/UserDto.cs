@@ -4,7 +4,7 @@ namespace BusinessLogic.DTO
 {
 	public class UserDto
 	{
-		public string Id { get; set; }
+		public int Id { get; set; }
 		public string UserName { get; set; }
 		public string PasswordHash { get; set; }
 		public string Email { get; set; }
@@ -16,12 +16,10 @@ namespace BusinessLogic.DTO
 
         public override bool Equals(object obj)
         {
-            var entity = obj as UserDto;
+			if (!(obj is UserDto entity))
+				return false;
 
-            if (entity == null)
-                return false;
-
-			if (Id.Equals(entity.Id, StringComparison.Ordinal) &&
+			if (Id == entity.Id &&
                 UserName.Equals(entity.UserName, StringComparison.Ordinal) &&
                 PasswordHash.Equals(entity.PasswordHash, StringComparison.Ordinal) &&
                 Email.Equals(entity.Email, StringComparison.Ordinal) &&

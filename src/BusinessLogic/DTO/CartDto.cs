@@ -5,16 +5,14 @@ namespace BusinessLogic.DTO
 	public class CartDto
 	{
 		public int Id { get; set; }
-		public string UserId { get; set; }
+		public int UserId { get; set; }
 
 		public override bool Equals(object obj)
 		{
-			var entity = obj as CartDto;
-
-			if (entity == null)
+			if (!(obj is CartDto entity))
 				return false;
 
-			if (Id == entity.Id && UserId.Equals(entity.UserId, StringComparison.Ordinal))
+			if (Id == entity.Id && UserId == entity.UserId)
 				return true;
 
 			return false;

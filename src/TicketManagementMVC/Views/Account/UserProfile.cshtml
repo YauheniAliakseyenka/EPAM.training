@@ -1,6 +1,6 @@
 ﻿@model TicketManagementMVC.Models.UserProfileViewModel
 @{
-    ViewBag.Title = Resource.UserProfileTitle;
+    ViewBag.Title = AccountResource.UserProfile;
 
 }
 <script type="text/javascript">
@@ -8,14 +8,15 @@
         $('.text-success').hide();
     });
 </script>
-<h2 class="m-auto w-75 title mb-3">@Resource.UserProfileTitle</h2>
-@using (Html.BeginForm("UserProfile", "Account", FormMethod.Post, new { @class = "m-auto w-75" }))
+<h2 class="m-auto w-75 title mb-3">@AccountResource.UserProfile</h2>
+@using (Html.BeginForm("UserProfile", "Account", FormMethod.Post, new { @class = "m-auto w-75", @id="userProfile-form" }))
 {
     <div class="m-auto">
     </div>
     <div class="register-form">
         @Html.AntiForgeryToken()
-        @Html.ValidationSummary("", new { @class = "text-danger" })
+        <div id="errorMessagesUserProfile" class=" text-danger"></div>
+
         <div class="form-group">
             @Html.LabelFor(x => x.Firstname)
             @Html.TextBoxFor(x => x.Firstname, new { @class = "form-control", autocomplete = "off" })
@@ -30,13 +31,13 @@
         </div>
         <div class="form-group">
             @Html.LabelFor(x => x.Culture)
-            @Html.DropDownListFor(x => x.Culture, Enum.GetValues(typeof(TicketManagementMVC.Models.Culture)).Cast<TicketManagementMVC.Models.Culture>().
-           Select(x=>new SelectListItem { Text = TicketManagementMVC.Models.CultureEnum.GetDescription(x), Value  = x.ToString()}),
+            @Html.DropDownListFor(x => x.Culture, Enum.GetValues(typeof(Cultures)).Cast<Cultures>().
+           Select(x=>new SelectListItem { Text = Html.GetEnumDescription(x), Value  = x.ToString()}),
            new { @class = "form-control", autocomplete = "off" })
         </div>
         <div class="form-group">
             @Html.LabelFor(x => x.Timezone)
-            @Html.DropDownListFor(x => x.Timezone, new SelectList(TimeZoneInfo.GetSystemTimeZones().ToList(), "Id", "DisplayName", "UTC"),
+            @Html.DropDownListFor(x => x.Timezone, new SelectList(TimeZoneInfo.GetSystemTimeZones(), "Id", "DisplayName"),
            new { @class = "form-control select-timezone", autocomplete = "off" })
         </div>
         <br />
@@ -53,10 +54,10 @@
             @Html.PasswordFor(x => x.ConfirmNewPassword, new { @class = "form-control", autocomplete = "off" })
         </div>
         <div class="form-group">
-            <button type="submit" class="btn btn-primary register-button">@Resource.SaveChangesButton</button>
-            <button type="button" class="btn btn-primary back-button" onclick="location.href='@Url.Action("Index", "Home")'">@Resource.BackButton</button>
+            <button type="button" class="btn btn-primary register-button" onclick="UserValidation('userProfile')">@EventResource.SaveChanges</button>
+            <button type="button" class="btn btn-primary back-button" onclick="location.href='@Url.Action("Index", "Home")'">@CommonResource.Back</button>
         </div>
-        <div class="text-center text-success font-weight-bold text" style="font-size:30px;" id="success">@Resource.SuccessNotification</div>
+        <div class="text-center text-success font-weight-bold text" style="font-size:30px;" id="success">@CommonResource.Saved</div>
     </div>
 }
 <br />

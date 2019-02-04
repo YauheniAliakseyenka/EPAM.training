@@ -5,7 +5,6 @@ using DataAccess.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Threading.Tasks;
 
 namespace BusinessLogic.Services
@@ -21,21 +20,26 @@ namespace BusinessLogic.Services
 			_seatService = seatService;
 		}
 
+        /// <summary>
+        /// Create an area. An area can not be created without seats
+        /// </summary>
+        /// <param name="entity"></param>
+        /// <returns></returns>
 		public async Task Create(AreaDto entity)
 		{
 			if (entity == null)
 				throw new ArgumentNullException();
 
-			if (entity.LayoutId == 0)
-				throw new AreaException("LayoutId equals zero");
+			if (entity.LayoutId <= 0)
+				throw new AreaException("LayoutId is invalid");
 
-			if(!IsDescriptionUnique(entity, false))
+			if (!IsDescriptionUnique(entity, true))
 				throw new AreaException("Area description isn't unique");
 
 			if(entity.SeatList == null || !entity.SeatList.Any())
 				throw new AreaException("Incorrect state of area. An area must have atleast one seat");
 
-			var areaAdd = mapToArea(entity);
+			var areaAdd = MapToArea(entity);
 			using (var transaction = CustomTransactionScope.GetTransactionScope())
 			{
 				_context.AreaRepository.Create(areaAdd);
@@ -53,34 +57,27 @@ namespace BusinessLogic.Services
 
 		public async Task Delete(int id)
 		{
-			_context.AreaRepository.Delete(id);
+			var delete = await _context.AreaRepository.GetAsync(id);
+
+			if (delete == null)
+				return;
+
+			_context.AreaRepository.Delete(delete);
 			await _context.SaveAsync();
-		}
-
-		public Task<IEnumerable<AreaDto>> FindBy(Expression<Func<AreaDto, bool>> expression)
-		{
-			var result = new List<AreaDto>();
-			Expression<Func<Area, bool>> predicate = x => expression.Compile().Invoke(mapToAreaDto(x));
-			var list = _context.AreaRepository.FindBy(predicate);
-
-			return Task.FromResult(list.Select(x => mapToAreaDto(x)).AsEnumerable());
 		}
 
 		public async Task<AreaDto> Get(int id)
 		{
 			var area = await _context.AreaRepository.GetAsync(id);
 
-			if (area == null)
-				return null;
-
-			return mapToAreaDto(area);
+			return area == null? null: MapToAreaDto(area);
 		}
 
 		public async Task<IEnumerable<AreaDto>> GetList()
 		{
 			var temp = await _context.AreaRepository.GetListAsync();
 
-			return temp.Select(x => mapToAreaDto(x));
+			return temp.Select(x => MapToAreaDto(x));
 		}
 
 		public async Task Update(AreaDto entity)
@@ -88,8 +85,8 @@ namespace BusinessLogic.Services
 			if (entity == null)
 				throw new ArgumentNullException();
 
-			if (entity.LayoutId == 0)
-				throw new AreaException("LayoutId equals zero");
+			if (entity.LayoutId <= 0)
+				throw new AreaException("LayoutId is invalid");
 
 			if (!IsDescriptionUnique(entity, false))
 				throw new AreaException("Area description isn't unique");
@@ -102,7 +99,7 @@ namespace BusinessLogic.Services
 			await _context.SaveAsync();
 		}
 
-		private AreaDto mapToAreaDto(Area from)
+		private AreaDto MapToAreaDto(Area from)
 		{
 			return new AreaDto
 			{
@@ -115,7 +112,7 @@ namespace BusinessLogic.Services
 			};
 		}
 
-		private Area mapToArea(AreaDto from)
+		private Area MapToArea(AreaDto from)
 		{
 			return new Area
 			{
@@ -129,11 +126,16 @@ namespace BusinessLogic.Services
 
 		private bool IsDescriptionUnique(AreaDto entity, bool isCreating)
 		{
-			return isCreating? 
-               !_context.AreaRepository.FindBy(x => x.LayoutId == entity.LayoutId
-                && x.Description.Equals(entity.Description, StringComparison.OrdinalIgnoreCase)).Any() :
-               !_context.AreaRepository.FindBy(x => x.Id != entity.Id && (x.LayoutId == entity.LayoutId
-                && x.Description.Equals(entity.Description, StringComparison.OrdinalIgnoreCase))).Any();
+			var data = from areas in _context.AreaRepository.GetList()
+					   where areas.LayoutId == entity.LayoutId &&
+					   areas.Description.Equals(entity.Description, StringComparison.OrdinalIgnoreCase)
+					   select areas;
+
+			return isCreating ? 
+				!data.Any() :
+				!(from areas in data
+				 where areas.Id != entity.Id
+				 select areas).Any();
 		}
 	}
 }

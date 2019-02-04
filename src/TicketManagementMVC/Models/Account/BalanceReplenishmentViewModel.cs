@@ -1,16 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Web;
-using TicketManagementMVC.Infrastructure;
-using TicketManagementMVC.Infrastructure.Attributes;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace TicketManagementMVC.Models
 {
     public class BalanceReplenishmentViewModel
     {
-		[Display(ResourceType = typeof(I18N.Resource), Name = "AmounLabel")]
+		[Display(ResourceType = typeof(ProjectResources.AccountResource), Name = "Amount")]
 		[DataType(DataType.Currency)]
 		public decimal Amount { get; set; }
     }

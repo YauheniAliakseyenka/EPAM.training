@@ -1,18 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DataAccess.Entities
 {
 	[Table(name:"UserRole")]
 	public class UserRole 
 	{
-		[Column(name: "UserId")]
-		public string UserId { get; set; }
-		[Column(name: "RoleId")]
+		[Key]
+		[Column(name: "UserId", Order = 1)]
+		public int UserId { get; set; }
+		[Key]
+		[Column(name: "RoleId", Order = 2)]
 		public int RoleId { get; set; }
 	}
 }

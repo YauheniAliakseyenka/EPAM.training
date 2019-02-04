@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace DataAccess.Entities
@@ -6,6 +6,7 @@ namespace DataAccess.Entities
 	[Table(name:"EventArea")]
     public class EventArea
 	{
+		[Key]
 		[Column(name: "Id")]
 		public int Id { get; set; }
 		[Column(name: "EventId")]

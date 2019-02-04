@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace BusinessLogic.DTO
 {
@@ -20,9 +19,7 @@ namespace BusinessLogic.DTO
 
 		public override bool Equals(object obj)
 		{
-			var entity = obj as AreaDto;
-
-			if (entity == null)
+			if (!(obj is AreaDto entity))
 				return false;
 
 			if (Id == entity.Id &&

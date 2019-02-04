@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text;
 
 namespace BusinessLogic.DTO
 {
@@ -10,7 +11,21 @@ namespace BusinessLogic.DTO
 		public string Description { get; set; }
 		public string Address { get; set; }
 		public string Phone { get; set; }
-		public List<LayoutDto> LayoutList { get; set; }
+		public string Timezone { get; set; }
+        public List<LayoutDto> LayoutList { get; set; }
+
+		public string NameWithOffset
+		{
+			get
+			{
+				var timezone = TimeZoneInfo.FindSystemTimeZoneById(Timezone);
+				var builder = new StringBuilder(Name);
+				builder.Append(" (UTC").Append(timezone.BaseUtcOffset < TimeSpan.Zero ? "-" : "+").Append(timezone.BaseUtcOffset.ToString("hh\\:mm"))
+					.Append(")");
+
+				return builder.ToString();
+			}
+		}
 
 		public VenueDto()
 		{
@@ -19,21 +34,20 @@ namespace BusinessLogic.DTO
 
 		public override bool Equals(object obj)
 		{
-			var entity = obj as VenueDto;
-
-			if (entity == null)
+			if (!(obj is VenueDto entity))
 				return false;
 
 			if (Id == entity.Id &&
 				Name.Equals(entity.Name, StringComparison.OrdinalIgnoreCase) &&
 				Description.Equals(entity.Description, StringComparison.OrdinalIgnoreCase) &&
 				Address.Equals(entity.Address, StringComparison.OrdinalIgnoreCase) &&
-				Phone.Equals(entity.Phone, StringComparison.OrdinalIgnoreCase))
+				Phone.Equals(entity.Phone, StringComparison.OrdinalIgnoreCase) &&
+				Timezone.Equals(entity.Timezone, StringComparison.OrdinalIgnoreCase))
 				return true;
 
 			return false;
 		}
 
-		public override int GetHashCode() => (Id, Name, Description, Address, Phone).GetHashCode();
+		public override int GetHashCode() => (Id, Name, Description, Address, Phone, Timezone).GetHashCode();
 	}
 }

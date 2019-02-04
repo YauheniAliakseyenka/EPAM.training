@@ -1,0 +1,54 @@
+﻿@model IEnumerable<BusinessLogic.BusinessModels.EventModel>
+<div>
+    <div class="event-list">
+        @foreach (var item in Model)
+        {
+            var url = "/Home/EventInfo?id=" + item.Event.Id;
+            <a href=@url>
+                <div class="event-title w-75" style="float:left;">
+                    @item.Event.Title
+                </div>
+                <div class="event-venue w-25" style="float:right;">
+                    @string.Format(EventResource.EventListVenue, item.Venue.Name)
+                </div>
+                @if (item.Event.Description.Length > 325)
+                {
+                    <div class="event-description w-75" style="float:left; text-overflow: clip;">@item.Event.Description.Substring(0, 320)...</div>
+                }
+                else
+                {
+                    <div class="event-description w-75" style="float:left; text-overflow: clip;">@item.Event.Description</div>
+                }
+                <div class="event-date w-25" style="float:right; line-height:20px;">
+                    @string.Format(EventResource.EventListDate, item.Event.Date.ToShortDateString(), item.Event.Date.ToShortTimeString()) <br />
+                    @Html.OffsetDisplay(item.Venue.Timezone)
+                </div>
+            </a>
+            <div class="short-devider"></div>
+        }
+    </div>
+</div>
+<div class="row mt-2 ml-2" style="font-size:19px;">
+    <div>@ProjectResources.CommonResource.Pages: </div>
+    @{ var index = 0;}
+    @for (int i = index; i <= (ViewBag.Count / ViewBag.PageSize); i++)
+    {
+        if (index == ViewBag.CurrentIndex)
+        {
+            <a name=@((index).ToString()) class="text-decoration-none page-selected " onclick="return false;" href="#">
+                   <div class="page border-right">
+                       @((i + 1).ToString())
+                   </div>
+             </a>
+        }
+        else
+        {
+            <a name=@((index).ToString()) class="text-decoration-none" onclick="TakePageEvents(this); return false;" href="#">
+                <div class="page border-right">
+                    @((i + 1).ToString())
+                </div>
+            </a>
+        }
+        index += ViewBag.PageSize;
+    }
+</div>

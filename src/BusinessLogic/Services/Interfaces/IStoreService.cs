@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq.Expressions;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace BusinessLogic.Services
@@ -11,7 +9,6 @@ namespace BusinessLogic.Services
 		Task Update(T entity);
 		Task Delete(Tkey id);
 		Task<T> Get(Tkey id);
-		Task<IEnumerable<T>> FindBy(Expression<Func<T, bool>> expression);
 		Task<IEnumerable<T>> GetList();
 	}
 }

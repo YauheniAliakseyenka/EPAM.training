@@ -6,7 +6,6 @@ using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace BusinessLogic.Services.Tests
@@ -74,7 +73,7 @@ namespace BusinessLogic.Services.Tests
             var exception = Assert.CatchAsync<EventAreaException>(async () => await _eventAreaService.Create(area));
 
             //Assert
-            Assert.That(exception.Message, Is.EqualTo("EventId equals zero"));
+            Assert.That(exception.Message, Is.EqualTo("EventId is invalid"));
         }
 
         [Test, Order(3)]
@@ -165,7 +164,7 @@ namespace BusinessLogic.Services.Tests
             var exception = Assert.CatchAsync<EventAreaException>(async () => await _eventAreaService.Update(area));
 
             //Assert
-            Assert.That(exception.Message, Is.EqualTo("EventId equals zero"));
+            Assert.That(exception.Message, Is.EqualTo("EventId is invalid"));
         }
 
         [Test, Order(8)]

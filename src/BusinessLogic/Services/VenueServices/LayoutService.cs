@@ -5,12 +5,11 @@ using DataAccess.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Threading.Tasks;
 
 namespace BusinessLogic.Services
 {
-	internal class LayoutService : IStoreService<LayoutDto, int> 
+	internal class LayoutService : ILayoutService
 	{
 		private readonly IWorkUnit _context;
 		private readonly IStoreService<AreaDto, int> _areaService;
@@ -21,13 +20,18 @@ namespace BusinessLogic.Services
 			_areaService = areaService;
 		}
 
+        /// <summary>
+        /// Create a layout. A layout can not be created without areas
+        /// </summary>
+        /// <param name="entity"></param>
+        /// <returns></returns>
 		public async Task Create(LayoutDto entity)
 		{
 			if (entity == null)
 				throw new ArgumentNullException();
 
-			if (entity.VenueId == 0)
-				throw new LayoutException("VenueID equals zero");
+			if (entity.VenueId <= 0)
+				throw new LayoutException("VenueId is invalid");
 
 			if (!IsDescriptionUnique(entity, true))
 				throw new LayoutException("Layout description isn't unique");
@@ -35,7 +39,7 @@ namespace BusinessLogic.Services
 			if (entity.AreaList == null || !entity.AreaList.Any())
 				throw new LayoutException("Incorrect state of the layout. The layout must have at least one area");
 
-			var layoutAdd = mapToLayout(entity);
+			var layoutAdd = MapToLayout(entity);
 			using (var transaction = CustomTransactionScope.GetTransactionScope())
 			{
 				_context.LayoutRepository.Create(layoutAdd);
@@ -52,34 +56,27 @@ namespace BusinessLogic.Services
 
 		public async Task Delete(int id)
 		{
-			_context.LayoutRepository.Delete(id);
+			var delete = await _context.LayoutRepository.GetAsync(id);
+
+			if (delete == null)
+				return;
+
+			_context.LayoutRepository.Delete(delete);
 			await _context.SaveAsync();
-		}
-
-		public Task<IEnumerable<LayoutDto>> FindBy(Expression<Func<LayoutDto, bool>> expression)
-		{
-			var result = new List<LayoutDto>();
-			Expression<Func<Layout, bool>> predicate =  x =>  expression.Compile().Invoke(mapToLayoutDto(x));
-			var list = _context.LayoutRepository.FindBy(predicate);
-
-			return Task.FromResult(list.Select(x => mapToLayoutDto(x)).AsEnumerable());
 		}
 
 		public async Task<LayoutDto> Get(int id)
 		{
 			var layout = await _context.LayoutRepository.GetAsync(id);
-
-			if (layout == null)
-				return null;
-
-			return mapToLayoutDto(layout);
+            
+			return layout == null? null: MapToLayoutDto(layout);
 		}
 
 		public  async Task<IEnumerable<LayoutDto>> GetList()
 		{
 			var list = await _context.LayoutRepository.GetListAsync();
 
-			return list.Select(x => mapToLayoutDto(x));
+			return list.Select(x => MapToLayoutDto(x));
 		}
 
 		public async Task Update(LayoutDto entity)
@@ -87,8 +84,8 @@ namespace BusinessLogic.Services
 			if (entity == null)
 				throw new ArgumentNullException();
 
-			if (entity.VenueId == 0)
-				throw new LayoutException("VenueId equals zero");
+			if (entity.VenueId <= 0)
+				throw new LayoutException("VenueId is invalid");
 
 			if (!IsDescriptionUnique(entity, false))
 				throw new LayoutException("Area description isn't unique");
@@ -100,7 +97,7 @@ namespace BusinessLogic.Services
 			await _context.SaveAsync();
 		}
 
-		private LayoutDto mapToLayoutDto(Layout from)
+		private LayoutDto MapToLayoutDto(Layout from)
 		{
 			return new LayoutDto
 			{
@@ -111,7 +108,7 @@ namespace BusinessLogic.Services
 			};
 		}
 
-		private Layout mapToLayout(LayoutDto from)
+		private Layout MapToLayout(LayoutDto from)
 		{
 			return new Layout
 			{
@@ -123,11 +120,24 @@ namespace BusinessLogic.Services
 
 		private bool IsDescriptionUnique(LayoutDto entity, bool isCreating)
 		{
-            return isCreating ?
-                !_context.LayoutRepository.FindBy(x => x.VenueId == entity.VenueId &&
-                x.Description.Equals(entity.Description, StringComparison.OrdinalIgnoreCase)).Any() :
-                !_context.LayoutRepository.FindBy(x => x.Id != entity.Id && (x.VenueId == entity.VenueId &&
-                x.Description.Equals(entity.Description, StringComparison.OrdinalIgnoreCase))).Any();
+			var data = from layouts in _context.LayoutRepository.GetList()
+					   where layouts.VenueId == entity.VenueId && layouts.Description.Equals(entity.Description, StringComparison.OrdinalIgnoreCase)
+					   select layouts;
+
+			return isCreating ? 
+				!data.Any() :
+                !(from layouts in data
+				  where layouts.Id != entity.Id
+				  select layouts).Any();
+		}
+
+		public Task<IEnumerable<LayoutDto>> GetLayoutsByVenue(int venueId)
+		{
+			var data = (from layouts in _context.LayoutRepository.GetList()
+						where layouts.VenueId == venueId
+						select layouts).ToList();
+
+			return Task.FromResult(data.Select(x=>MapToLayoutDto(x)));
 		}
 	}
 }

@@ -1,25 +1,23 @@
-﻿@using BusinessLogic.Services.EventServices;
+﻿@using BusinessLogic.Services;
 @using System.Globalization;
 @model IEnumerable<BusinessLogic.BusinessModels.EventModel>
 @{
-    ViewBag.Title = Resource.HomePageTitle;
+    ViewBag.Title = CommonResource.Home;
 }
 
-@using (Html.BeginForm("Index", "Home", FormMethod.Get, new { @id = "filterForm", @class = "ml-4"}))
+@using (Html.BeginForm("Index", "Home", FormMethod.Get, new { @id = "filterForm", @class = "ml-4" }))
 {
     <div class="row">
         @Html.DropDownList("filterBy", Enum.GetValues(typeof(FilterEventOptions)).Cast<FilterEventOptions>().
-       Select(x=>new SelectListItem { Text = Resource.ResourceManager.GetString(x.ToString()), Value  = x.ToString()}),
-       new { @id = "filterList", onchange = "FilterEventsBy('"+CultureInfo.CurrentUICulture.TwoLetterISOLanguageName + "');", @class = "form-control", @style = "width:185px;" })
-         @Html.TextBox("filterText", null, new { @id = "filterInput", autocomplete = "off", @readonly = "readonly", @class = "form-control" })
-        <input type="button" value=@Resource.Search onclick="GetFiltered(true);" class="col-1 ml-3"/>
-         <input type="button" value=@Resource.Clear onclick="GetFiltered(false);" class="ml-1" id="reset"/>
+    Select(x => new SelectListItem { Text = EventResource.ResourceManager.GetString(x.ToString()), Value = x.ToString() }),
+    new { @id = "filterList", onchange = "FilterEventsBy('" + CultureInfo.CurrentUICulture.TwoLetterISOLanguageName + "');", @class = "form-control", @style = "width:185px;" })
+        @Html.TextBox("filterText", null, new { @id = "filterInput", autocomplete = "off", @readonly = "readonly", @class = "form-control" })
+        <input type="button" value=@CommonResource.Search onclick="GetFiltered(true);" class="col-1 ml-3" />
+        <input type="button" value=@CommonResource.Clear onclick="GetFiltered(false);" class="ml-1" id="reset" />
     </div>
+    <br />
 }
-<br />
-<div class="title" style="font-size:25px;">@Resource.EventListTitle</div>
+<div class="title" style="font-size:25px;">@EventResource.EventListTitle</div>
 <div id="eventListPlaceholder">
-    @Html.Partial("~/Views/Home/Partial/EventList.cshtml", Model)
+    @Html.Partial("~/Views/Home/Partial/_EventList.cshtml", Model)
 </div>
-
-

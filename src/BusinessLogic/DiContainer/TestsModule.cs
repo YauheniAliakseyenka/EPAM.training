@@ -15,12 +15,11 @@ namespace BusinessLogic.DiContainer
             builder.RegisterType<EventSeatService>().As<IStoreService<EventSeatDto, int>>();
             builder.RegisterType<UserService>().As<IUserService>();
             builder.RegisterType<VenueService>().As<IStoreService<VenueDto, int>>();
-            builder.RegisterType<LayoutService>().As<IStoreService<LayoutDto, int>>();
+            builder.RegisterType<LayoutService>().As<ILayoutService>();
             builder.RegisterType<AreaService>().As<IStoreService<AreaDto, int>>();
             builder.RegisterType<SeatService>().As<IStoreService<SeatDto, int>>();
             builder.RegisterType<CartService>().As<ICartService>();
             builder.RegisterType<OrderService>().As<IOrderService>();
-            builder.RegisterType<EmailService>().As<IEmailService>();
         }
 
     }

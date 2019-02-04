@@ -3,12 +3,11 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Threading.Tasks;
 
 namespace DataAccess.Repositories
 {
-	internal class Repository<T,  Tkey> : IRepository<T, Tkey> where T : class, new()
+	internal class Repository<T> : IRepository<T> where T : class
 	{
         private DbSet<T> _dbSet;
 		private DataContext _context;
@@ -18,25 +17,27 @@ namespace DataAccess.Repositories
 			_context = context;
 			_dbSet = context.Set<T>();
 		}
-
+      
         public void Create(T entity)
         {
 			_dbSet.Add(entity);
         }
 
-		public void Delete(Tkey id)
+		public void Delete(T entity)
 		{
-            var entity = _dbSet.Find(id);
 			_dbSet.Remove(entity);
 		}
-
-		public T Get(Tkey id)
+     
+		public T Get(params object[] keys)
 		{
-            return _dbSet.Find(id);
+            return _dbSet.Find(keys);
 		}
-
+      
 		public void Update(T entity)
 		{
+			if (_context.Entry(entity).State == EntityState.Detached)
+				_dbSet.Attach(entity);
+
 			_context.Entry(entity).State = EntityState.Modified;
 		}
         
@@ -44,20 +45,15 @@ namespace DataAccess.Repositories
 		{
             return _dbSet;
 		}
-
-		public IQueryable<T> FindBy(Expression<Func<T, bool>> expression)
+       
+		public Task<IEnumerable<T>> FindByAsync(Func<T, bool> expression)
 		{
-			return _dbSet.Where(expression.Compile()).AsQueryable();
+			return Task.FromResult(_dbSet.Where(expression));
 		}
 
-		public void DeleteBy(Expression<Func<T, bool>> expression)
+		public async Task<T> GetAsync(params object[] keys)
 		{
-			_dbSet.RemoveRange(_dbSet.Where(expression.Compile()));
-		}
-
-		public async Task<T> GetAsync(Tkey id)
-		{
-			return await _dbSet.FindAsync(id);
+			return await _dbSet.FindAsync(keys);
 		}
 
 		public async Task<IEnumerable<T>> GetListAsync()

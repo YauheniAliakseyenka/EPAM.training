@@ -4,13 +4,9 @@
 	using DataAccess.Entities;
 	using System;
 	using System.Linq;
-	using DataAccess.Repositories;
 	using System.Configuration;
 	using NUnit.Framework;
-	using BusinessLogic.Exceptions;
     using BusinessLogic.DTO;
-    using BusinessLogic.Services.EventServices;
-    using DataAccess;
     using BusinessLogic.Exceptions.EventExceptions;
     using System.Threading.Tasks;
 	using BusinessLogic.Services.Tests.DiContainer;
@@ -44,7 +40,7 @@
 				Description = "The highpoint of Andris Nelsons’ final season as the CBSO’s music director – a concert performance of Wagner’s final music drama of almost alarming maturity",
 				Title = "Parsifal",
                 ImageURL = "url",
-                CreatedBy = "ss"
+                CreatedBy = 1
 			};
 
 			//Act
@@ -66,7 +62,8 @@
 				Date = DateTime.Today.AddMonths(1).AddHours(21).AddMinutes(30),
 				Description = "The highpoint of Andris Nelsons’ final season as the CBSO’s music director – a concert performance of Wagner’s final music drama of almost alarming maturity",
 				Title = "Parsifal",
-                ImageURL = "url"
+                ImageURL = "url",
+				CreatedBy = 1
 			};
 
 			//Act
@@ -93,14 +90,15 @@
 				Date = DateTime.Today.AddMonths(1).AddHours(21).AddMinutes(30),
 				Description = "The highpoint of Andris Nelsons’ final season as the CBSO’s music director – a concert performance of Wagner’s final music drama of almost alarming maturity",
 				Title = "Parsifal",
-                ImageURL = "url"
+                ImageURL = "url",
+				CreatedBy = 1
             };
 
 			//Act
 			var exception = Assert.CatchAsync<EventException>(async () => await eventService.Create(add));
 
 			//Assert
-			Assert.That(exception.Message, Is.EqualTo("LayoutId equals zero"));
+			Assert.That(exception.Message, Is.EqualTo("LayoutId is invalid"));
 		}
 
 		[Test, Order(5)]
@@ -113,7 +111,8 @@
 				Date = DateTime.Today.AddMonths(-1).AddHours(21).AddMinutes(30),
 				Description = "The highpoint of Andris Nelsons’ final season as the CBSO’s music director – a concert performance of Wagner’s final music drama of almost alarming maturity",
 				Title = "Parsifal",
-                ImageURL = "url"
+                ImageURL = "url",
+				CreatedBy = 1
             };
 
 			//Act
@@ -171,7 +170,7 @@
 			var exception = Assert.CatchAsync<EventException>(async () => await eventService.Update(update));
 
 			//Assert
-			Assert.That(exception.Message, Is.EqualTo("Layout equals zero"));
+			Assert.That(exception.Message, Is.EqualTo("LayoutId is invalid"));
 		}
 
 		[Test, Order(10)]
@@ -211,7 +210,7 @@
 			var data = await eventService.GetEventInformation(insertedId);
 			var area = data.Areas[random.Next(data.Areas.Count)];
 			var seat = area.Seats[random.Next(area.Seats.Count)];
-			seat.State = 1;
+			seat.State = SeatState.Ordered;
 
 			//Act
 			await seatService.Update(seat);

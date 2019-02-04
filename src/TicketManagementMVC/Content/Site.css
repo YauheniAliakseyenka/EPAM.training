@@ -205,31 +205,6 @@ textarea {
 	color: #566573;
 }
 
-a.tooltips {
-    position: relative;
-    display: inline;
-}
-a.tooltips span {
-    position: absolute;
-    color: #ffffff;
-    background: #000000;
-    height: 30px;
-    line-height: 30px;
-    text-align: center;
-    visibility: hidden;
-    border-radius: 6px;
-cursor: default;
-}
-
-
-a:hover.tooltips span {
-    visibility: visible;
-    opacity: 0.8;
-    bottom: 25px;
-    left: 50%;
-    margin-left: -75px;
-    z-index: 999;
-}
 
 .seat-seatmap:hover {
 	background-color: #AED6F1;
@@ -237,12 +212,22 @@ a:hover.tooltips span {
 
 .seat-available {
 	background-color: #58D68D;
+	background: rgba(39, 174, 96, 0.5);
 }
 
 .seat-unavailable {
-	background-color: #CD6155;
 	pointer-events: none;
 	cursor: default;
+}
+
+.seat-purchased {
+	background-color: #CD6155;
+	background: rgba(230, 74, 31, 0.5);
+}
+
+.seat-ordered {
+	background-color: #C8E12E;
+	background: rgba(227, 230, 31, 0.5);
 }
 
 .locked-seat {
@@ -290,4 +275,29 @@ a:hover.tooltips span {
 
 .img-border {
 	border-radius:20px;
+}
+
+.page {
+	width:33px;
+	text-align:center;
+}
+.page-selected {
+	color: #CEBE7E;
+	pointer-events: none;
+	cursor: default;
+}
+
+.page:hover {
+	background-color: #D6EAF8;
+}
+
+.seatmap-legend {
+	font-size:15px;
+	border-radius:5px;
+	padding: 3px 10px 3px 10px;
+}
+
+.seatmap-legend .color{
+	width:25px;
+	height:25px;
 }
