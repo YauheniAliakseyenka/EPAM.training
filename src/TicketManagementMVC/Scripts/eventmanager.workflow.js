@@ -34,14 +34,19 @@ function GetEventsByVenue() {
 
     let dropdown = $('#eventListOnEdit');
     dropdown.empty();
-    dropdown.prop('SelectedIndex', 0);
     if (id !== undefined && id !== "") {
-        $.getJSON('/Event/GetEventsByVenue?venueId=' + id, function (data) {
-            $.each(data.events, function (i, entry) {
-                dropdown.append($('<option></option>').attr('value', entry.Id).text(entry.Display));
-            })
-            GetEventToEdit();
-        });
+        $.ajax({
+            url: '/Event/GetEventsByVenue?venueId=' + id,
+            success: function (data) {
+                $.each(data.events, function (i, entry) {
+                    dropdown.append($('<option></option>').attr('value', entry.Id).text(entry.Display));
+                })
+                $('#eventListOnEdit').trigger("change");
+            },
+            error: function () {
+                ShowNotify('danger', 'load event internal server error');
+            }
+        }); 
     }
 }
 
@@ -177,6 +182,7 @@ function GetAreaToEdit(areaId) {
                 $('.text-success').hide();
                 $('#eventPlaceHolder').hide();
                 $('#editAreaPlaceHolder').show();
+                $("html, body").animate({ scrollTop: 0 }, 250);
             },
             error: function () {
                 ShowNotify('danger', 'server error');

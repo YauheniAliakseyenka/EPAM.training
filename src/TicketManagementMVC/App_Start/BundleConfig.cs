@@ -6,8 +6,8 @@ namespace TicketManagementMVC.App_Start
 	{
 		public static void RegisterBundles(BundleCollection bundles)
 		{
-			bundles.Add(new ScriptBundle("~/bundles/mainJs").
-				Include("~/Scripts/jquery-{version}.js").
+            bundles.Add(new ScriptBundle("~/bundles/mainJs").
+                Include("~/Scripts/jquery-{version}.js").
 				Include("~/Scripts/eventmanager.workflow.min.js"));
 
 			bundles.Add(new ScriptBundle("~/bundles/otherJs").

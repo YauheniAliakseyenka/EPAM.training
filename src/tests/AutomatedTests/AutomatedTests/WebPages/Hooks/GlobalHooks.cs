@@ -22,7 +22,6 @@ namespace AutomatedTests.WebPages.Hooks
 		{
 			var driver = (IWebDriver)ScenarioContext.Current[DriverKey];
 			ScenarioContext.Current.Clear();
-			driver.Close();
 			driver.Quit();
 		}
 	}
