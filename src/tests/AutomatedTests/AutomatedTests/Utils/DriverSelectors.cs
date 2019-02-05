@@ -53,11 +53,28 @@ namespace AutomatedTests.Utils
 				Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(findBy));
 
 			var element = _driver.FindElement(findBy);
-			var select = new SelectElement(element);
-			select.SelectByText(selectByText, true);
+			var option = element.FindElements(By.TagName("option")).Where(opt => opt.Text.Contains(selectByText));
 
-			//find again, cuz page can be refreshed
-			return _driver.FindElement(findBy);
+			if (option.Count() != 1)
+				throw new NoSuchElementException();
+
+			if(!option.Single().Selected)
+			{
+				element.Click();
+				option.Single().Click();
+
+				//find again if page was refreshed,e.g. site's language changing
+				try
+				{
+					element.Click();
+				}
+				catch (StaleElementReferenceException)
+				{
+					return _driver.FindElement(findBy);
+				}
+			}			
+
+			return element;
 		}
 	}
 }
