@@ -6,7 +6,7 @@ namespace AutomatedTests.WebPages.Hooks
 	[Binding]
 	public sealed class RegistrationHook : GlobalHooks
 	{
-		public static string UserKey { get; } = "UserRegistration";
+		public const string UserKey = "UserRegistration";
 
 		[BeforeScenario(
 			"Registration", 

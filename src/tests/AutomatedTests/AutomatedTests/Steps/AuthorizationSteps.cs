@@ -8,31 +8,31 @@ namespace AutomatedTests.Steps
 	[Binding]
 	public class AuthorizationSteps
 	{
-		private static HomePage _homePage => PageFactory.Instance.GetPage<HomePage>();
+		private static HomePage HomePage => PageFactory.Instance.GetPage<HomePage>();
 
 		[When(@"Tries to go to url ""(.*)""")]
 		public void WhenUserGoesToUrl(string url)
 		{
-			_homePage.GoToUrl(url);
+			HomePage.GoToUrl(url);
 		}
 
 		[Then(@"User stayed on home page")]
 		public void ThenUserStayedOnHomePage()
 		{
-			StringAssert.DoesNotContain("/Event/Create", _homePage.CurrentUrl);
+			StringAssert.DoesNotContain("/Event/Create", HomePage.CurrentUrl);
 		}
 
 
 		[Then(@"User successfully moved to create event page")]
 		public void ThenUserMovedToCreateEventPage()
 		{
-			StringAssert.Contains("/Event/Create", _homePage.CurrentUrl);
+			StringAssert.Contains("/Event/Create", HomePage.CurrentUrl);
 		}
 
 		[Then(@"User successfully moved to edit event page")]
 		public void ThenUserMovedToEditEventPage()
 		{
-			StringAssert.Contains("/Event/Edit", _homePage.CurrentUrl);
+			StringAssert.Contains("/Event/Edit", HomePage.CurrentUrl);
 		}
 	}
 }

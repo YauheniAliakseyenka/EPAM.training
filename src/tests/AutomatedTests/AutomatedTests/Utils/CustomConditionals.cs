@@ -26,11 +26,12 @@ namespace AutomatedTests.Utils
 
 		public static void ClickUntil(IWebDriver driver, By clickElement, By untilElementVisible, int attempts = 3)
 		{
-			var elementToClick = new WebDriverWait(driver, TimeSpan.FromSeconds(3)).
-							Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementToBeClickable(clickElement));
+			new WebDriverWait(driver, TimeSpan.FromSeconds(3)).
+							Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(clickElement));
 
 			for (int i = 0; i < attempts; i++)
 			{
+				var elementToClick = driver.FindElement(clickElement);
 				elementToClick.Click();
 				try
 				{

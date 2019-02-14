@@ -5,11 +5,11 @@ using TechTalk.SpecFlow;
 namespace AutomatedTests.WebPages.Hooks
 {
 	[Binding]
-	public class EditEventStepsHooks : GlobalHooks
+	public class UpdateEventStepsHooks : GlobalHooks
 	{
 		[BeforeScenario(
-			"EditEvent",
-			"EditEventArea",
+			"UpdateEvent",
+			"UpdateEventArea",
 			"DeleteEvent",
 			Order = 2)]
 		public static void CreateEvent()
@@ -23,7 +23,7 @@ namespace AutomatedTests.WebPages.Hooks
 		}
 
 		[BeforeScenario(
-			"EditEventFailedWithLockedSeats",
+			"UpdateEventFailedWithLockedSeats",
 			"DeleteEventFailedWithLockedSeats",
 			Order = 2)]
 		public static void CreatePublishedEventWithLockedSeats()
@@ -39,7 +39,7 @@ namespace AutomatedTests.WebPages.Hooks
 		}
 
 		[AfterScenario(
-			"EditEventFailedWithLockedSeats",
+			"UpdateEventFailedWithLockedSeats",
 			"DeleteEventFailedWithLockedSeats",
 			Order = 1)]
 		public static void DeleteEventWithLockedSeats()
@@ -52,8 +52,8 @@ namespace AutomatedTests.WebPages.Hooks
 		}
 
 		[AfterScenario(
-			"EditEvent",
-			"EditEventArea",
+			"UpdateEvent",
+			"UpdateEventArea",
 			Order = 1)]
 		public static void DeleteEvent()
 		{

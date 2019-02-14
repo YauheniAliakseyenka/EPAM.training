@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Transactions;
+﻿using System.Transactions;
 
 namespace BusinessLogic.Services
 {
@@ -13,7 +8,7 @@ namespace BusinessLogic.Services
 		{
 			var transactionOptions = new TransactionOptions
 			{
-				IsolationLevel = IsolationLevel.ReadCommitted,
+				IsolationLevel = IsolationLevel.ReadUncommitted,
 				Timeout = TransactionManager.MaximumTimeout
 			};
 			return new TransactionScope(TransactionScopeOption.Required, transactionOptions, TransactionScopeAsyncFlowOption.Enabled);

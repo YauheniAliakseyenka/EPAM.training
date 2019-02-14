@@ -13,18 +13,18 @@ namespace AutomatedTests.Utils
 	//I have to do it with a browser
 	public class HelpersMethods
 	{
-		private static IWebDriver _driver;
+		private static IWebDriver Driver;
 		private DriverSelectors _selectors;
 
 		public HelpersMethods(IWebDriver driver)
 		{
-			_driver = driver;
+			Driver = driver;
 			_selectors = new DriverSelectors(driver);
 		}
 		
 		public void GoToUrl(string url)
 		{
-            _driver.Navigate().GoToUrl(url);
+			Driver.Navigate().GoToUrl(url);
 		}
 
 		public void DeleteTestEvent()
@@ -39,7 +39,7 @@ namespace AutomatedTests.Utils
 			SelectFromDropDown(By.XPath("//select[@id='eventListOnEdit']"), "test event");
 
 			//wait for loaded event on a form
-			new WebDriverWait(_driver, TimeSpan.FromSeconds(3)).Until<bool>((d) =>
+			new WebDriverWait(Driver, TimeSpan.FromSeconds(3)).Until<bool>((d) =>
 			{
 				var editAreaButton = FindByXPath("//*[contains(@onclick,'GetAreaToEdit')]");
 				if (editAreaButton.Displayed)
@@ -53,8 +53,8 @@ namespace AutomatedTests.Utils
 			deleteButton.Click();
 
 			//accept alert
-			CustomConditionals.WaitForAlert(_driver);
-			_driver.SwitchTo().Alert().Accept();
+			CustomConditionals.WaitForAlert(Driver);
+			Driver.SwitchTo().Alert().Accept();
 		}
 
 		public void CreateTestEvent()
@@ -74,16 +74,16 @@ namespace AutomatedTests.Utils
 			//select create event menu
 			GoToUrl(ConfigurationManager.AppSettings["SiteUrl"] + "Event/Create");
 
-			CustomConditionals.SendedToField(_driver, By.Id("Title"), title);
+			CustomConditionals.SendedToField(Driver, By.Id("Title"), title);
 
             //select venue
 			SelectFromDropDown(By.XPath("//*[@id='venueList']"), "Royal Albert Hall");
 
-			CustomConditionals.SendedToField(_driver, By.Id("datepicker"), date);
+			CustomConditionals.SendedToField(Driver, By.Id("datepicker"), date);
 
-			CustomConditionals.SendedToField(_driver, By.Id("timepicker"), time);
+			CustomConditionals.SendedToField(Driver, By.Id("timepicker"), time);
 
-			CustomConditionals.SendedToField(_driver, By.Id("description"), description);
+			CustomConditionals.SendedToField(Driver, By.Id("description"), description);
 
 			FindByCss(".register-button").Click();
 		}
@@ -103,10 +103,10 @@ namespace AutomatedTests.Utils
 			SelectFromDropDown(By.XPath("//select[@id='eventListOnEdit']"), "test event");
 
 			//wait for loaded event on a form
-			new WebDriverWait(_driver, TimeSpan.FromSeconds(3)).Until<bool>((d) =>
+			new WebDriverWait(Driver, TimeSpan.FromSeconds(3)).Until<bool>((d) =>
 			{
-				var editAreaButton = FindByXPath("//*[contains(@onclick,'GetAreaToEdit')]"); 
-				if (editAreaButton.Displayed)
+				var titleInput = FindByXPath("//*[contains(text(),'test event')]"); 
+				if (titleInput.Displayed)
 					return true;
 
 				return false;
@@ -119,8 +119,8 @@ namespace AutomatedTests.Utils
 			{
                 var buttons = FindElementsByXpath(areasEditButtonsXPath).ToList();
                 buttons[i].Click();
-                CustomConditionals.SendedToField(_driver, By.Id("Price"), "5.25");
-				CustomConditionals.ClickUntil(_driver, By.XPath("//*[contains(@onclick,'SaveArea')]"), By.Id("successSaveArea"));
+                CustomConditionals.SendedToField(Driver, By.Id("Price"), "5.25");
+				CustomConditionals.ClickUntil(Driver, By.XPath("//*[contains(@onclick,'SaveArea')]"), By.Id("successSaveArea"));
 				FindByXPath("//*[contains(@onclick,'CloseEventAreaForm')]").Click();
 			}
 		}
@@ -131,7 +131,7 @@ namespace AutomatedTests.Utils
 			GoToUrl(ConfigurationManager.AppSettings["SiteUrl"]);
             var filterOption = FindByXPath("//select[@id='filterList']//option[contains(@value,'Title')]");
 			filterOption.Click();
-			CustomConditionals.SendedToField(_driver, By.Id("filterInput"), "test event");
+			CustomConditionals.SendedToField(Driver, By.Id("filterInput"), "test event");
 			FindByXPath("//*[contains(@value, 'Search')]").Click();
 
 			//lock a seat
@@ -139,17 +139,25 @@ namespace AutomatedTests.Utils
             GoToUrl(selectEvent.GetAttribute("href"));
 			var firstSeat = FindByXPath("//*[contains(@class,'seat-available') and contains(@class, 'seat-seatmap')]");
             firstSeat.Click();
-			CustomConditionals.WaitForNotisfaction(_driver);
+			CustomConditionals.WaitForNotisfaction(Driver);
 		}
 
 		public void SignOut()
 		{
 			GoToUrl(ConfigurationManager.AppSettings["SiteUrl"]);
-			var userMenu = FindByCss(".profile-right");
+			string cssProfileSelectror = ".profile-right";
+			try
+			{
+				new WebDriverWait(Driver, TimeSpan.FromMilliseconds(1)).
+				   Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(By.CssSelector(cssProfileSelectror)));
+			}
+			catch (WebDriverTimeoutException) { return; }
+
+			var userMenu = FindByCss(cssProfileSelectror);
 			userMenu.Click();
 
 			var signOutId = "SignOut";
-			new WebDriverWait(_driver, TimeSpan.FromSeconds(5)).
+			new WebDriverWait(Driver, TimeSpan.FromSeconds(5)).
 				Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(By.Id(signOutId)));
 			FindById(signOutId).Click();
 		}
@@ -159,16 +167,16 @@ namespace AutomatedTests.Utils
 			FindById("SignIn").Click();
 
             var usernameInputXpath = "//*[contains(@class,'login-form')]//*[@id='username']";
-            CustomConditionals.SendedToField(_driver, By.XPath(usernameInputXpath), username);
+            CustomConditionals.SendedToField(Driver, By.XPath(usernameInputXpath), username);
 
             var passwordInputXPath = "//*[contains(@class,'login-form')]//*[@id='password']";
-			CustomConditionals.SendedToField(_driver, By.XPath(passwordInputXPath), password);
+			CustomConditionals.SendedToField(Driver, By.XPath(passwordInputXPath), password);
 
 			var loginButton = FindByXPath("//*[contains(@class, 'login-button')]");
 			loginButton.Click();
 			try
 			{
-				CustomConditionals.WaitForLoggedIn(_driver);
+				CustomConditionals.WaitForLoggedIn(Driver);
 			}
 			catch (WebDriverTimeoutException) { }
 		}
@@ -181,7 +189,7 @@ namespace AutomatedTests.Utils
 			deleteButtons.ToList().ForEach(x =>
 			{
 				x.Click();
-				CustomConditionals.WaitForNotisfaction(_driver);
+				CustomConditionals.WaitForNotisfaction(Driver);
 			});
 		}
 
@@ -189,18 +197,18 @@ namespace AutomatedTests.Utils
 		{
             GoToUrl(ConfigurationManager.AppSettings["SiteUrl"] + "Account/Registration");
 			
-			CustomConditionals.SendedToField(_driver, By.Id("UserName"), user.Username);
+			CustomConditionals.SendedToField(Driver, By.Id("UserName"), user.Username);
 
-			CustomConditionals.SendedToField(_driver, By.Id("Email"), user.Email);
+			CustomConditionals.SendedToField(Driver, By.Id("Email"), user.Email);
 
-			CustomConditionals.SendedToField(_driver, By.Id("Password"), user.Password);
+			CustomConditionals.SendedToField(Driver, By.Id("Password"), user.Password);
 
-			CustomConditionals.SendedToField(_driver, By.Id("ConfirmPassword"), user.Password);
+			CustomConditionals.SendedToField(Driver, By.Id("ConfirmPassword"), user.Password);
 
 			var registerButton = FindByCss(".register-button");
 			registerButton.Click();
 
-			CustomConditionals.WaitForLoggedIn(_driver);
+			CustomConditionals.WaitForLoggedIn(Driver);
 			SignOut();
 		}
 
@@ -212,8 +220,8 @@ namespace AutomatedTests.Utils
 			refundButtons.ToList().ForEach(x =>
 			{
 				x.Click();
-				CustomConditionals.WaitForAlert(_driver);
-				_driver.SwitchTo().Alert().Accept();
+				CustomConditionals.WaitForAlert(Driver);
+				Driver.SwitchTo().Alert().Accept();
 			});
 		}
 

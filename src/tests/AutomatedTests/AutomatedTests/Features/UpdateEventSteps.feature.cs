@@ -18,20 +18,20 @@ namespace AutomatedTests.Features
     [System.CodeDom.Compiler.GeneratedCodeAttribute("TechTalk.SpecFlow", "2.4.0.0")]
     [System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     [NUnit.Framework.TestFixtureAttribute()]
-    [NUnit.Framework.DescriptionAttribute("EditEventSteps")]
-    public partial class EditEventStepsFeature
+    [NUnit.Framework.DescriptionAttribute("UpdateEventSteps")]
+    public partial class UpdateEventStepsFeature
     {
         
         private TechTalk.SpecFlow.ITestRunner testRunner;
         
-#line 1 "EditEventSteps.feature"
+#line 1 "UpdateEventSteps.feature"
 #line hidden
         
         [NUnit.Framework.OneTimeSetUpAttribute()]
         public virtual void FeatureSetup()
         {
             testRunner = TechTalk.SpecFlow.TestRunnerManager.GetTestRunner();
-            TechTalk.SpecFlow.FeatureInfo featureInfo = new TechTalk.SpecFlow.FeatureInfo(new System.Globalization.CultureInfo("en-US"), "EditEventSteps", "\tDescription: The purpose of this feature is to test ability to edit event", ProgrammingLanguage.CSharp, ((string[])(null)));
+            TechTalk.SpecFlow.FeatureInfo featureInfo = new TechTalk.SpecFlow.FeatureInfo(new System.Globalization.CultureInfo("en-US"), "UpdateEventSteps", "\tDescription: The purpose of this feature is to test ability to edit event", ProgrammingLanguage.CSharp, ((string[])(null)));
             testRunner.OnFeatureStart(featureInfo);
         }
         
@@ -71,11 +71,11 @@ namespace AutomatedTests.Features
         
         [NUnit.Framework.TestAttribute()]
         [NUnit.Framework.DescriptionAttribute("Edit event information")]
-        [NUnit.Framework.CategoryAttribute("EditEvent")]
+        [NUnit.Framework.CategoryAttribute("UpdateEvent")]
         public virtual void EditEventInformation()
         {
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Edit event information", null, new string[] {
-                        "EditEvent"});
+                        "UpdateEvent"});
 #line 5
  this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
@@ -104,12 +104,12 @@ namespace AutomatedTests.Features
         }
         
         [NUnit.Framework.TestAttribute()]
-        [NUnit.Framework.DescriptionAttribute("Delete event")]
-        [NUnit.Framework.CategoryAttribute("DeleteEvent")]
-        public virtual void DeleteEvent()
+        [NUnit.Framework.DescriptionAttribute("Edit area of event")]
+        [NUnit.Framework.CategoryAttribute("UpdateEventArea")]
+        public virtual void EditAreaOfEvent()
         {
-            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Delete event", null, new string[] {
-                        "DeleteEvent"});
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Edit area of event", null, new string[] {
+                        "UpdateEventArea"});
 #line 18
  this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
@@ -118,7 +118,7 @@ namespace AutomatedTests.Features
 #line 20
  testRunner.When("User logged in as an event manager", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line 21
- testRunner.And("User sets \"English\" language of site", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+ testRunner.And("User sets \"Русский\" language of site", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 22
  testRunner.And("Goes to edit event page", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 23
@@ -126,108 +126,48 @@ namespace AutomatedTests.Features
 #line 24
  testRunner.And("Selects event \"test event\" to edit on edit event page", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 25
- testRunner.And("Clicks delete event button on edit event page", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 26
- testRunner.Then("Event is not represent in a system anymore", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
-#line hidden
-            this.ScenarioCleanup();
-        }
-        
-        [NUnit.Framework.TestAttribute()]
-        [NUnit.Framework.DescriptionAttribute("Edit area of event")]
-        [NUnit.Framework.CategoryAttribute("EditEventArea")]
-        public virtual void EditAreaOfEvent()
-        {
-            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Edit area of event", null, new string[] {
-                        "EditEventArea"});
-#line 29
- this.ScenarioInitialize(scenarioInfo);
-            this.ScenarioStart();
-#line 30
- testRunner.Given("User is on home page", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
-#line 31
- testRunner.When("User logged in as an event manager", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
-#line 32
- testRunner.And("User sets \"Русский\" language of site", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 33
- testRunner.And("Goes to edit event page", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 34
- testRunner.And("Selects venue \"Royal Albert Hall\"", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 35
- testRunner.And("Selects event \"test event\" to edit on edit event page", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 36
  testRunner.And("Selects area to edit", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 37
+#line 26
  testRunner.And("Enters \"test edit area\" to area description input", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 38
+#line 27
  testRunner.And("Enters \"15,25\" to area price input", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 39
+#line 28
  testRunner.And("Adds seat to area", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 40
+#line 29
  testRunner.And("Clicks save area button on area form", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 41
+#line 30
  testRunner.Then("User can see message \"Сохранено\" on area form", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             this.ScenarioCleanup();
         }
         
         [NUnit.Framework.TestAttribute()]
-        [NUnit.Framework.DescriptionAttribute("Delete event failed because of event has locked seats")]
-        [NUnit.Framework.CategoryAttribute("DeleteEventFailedWithLockedSeats")]
-        public virtual void DeleteEventFailedBecauseOfEventHasLockedSeats()
-        {
-            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Delete event failed because of event has locked seats", null, new string[] {
-                        "DeleteEventFailedWithLockedSeats"});
-#line 44
- this.ScenarioInitialize(scenarioInfo);
-            this.ScenarioStart();
-#line 45
- testRunner.Given("User is on home page", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
-#line 46
- testRunner.When("User logged in as an event manager", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
-#line 47
- testRunner.And("User sets \"English\" language of site", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 48
- testRunner.And("Goes to edit event page", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 49
- testRunner.And("Selects venue \"Royal Albert Hall\"", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 50
- testRunner.And("Selects event \"test event\" to edit on edit event page", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 51
- testRunner.And("Clicks delete event button on edit event page", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 52
- testRunner.Then("Edit event form has error \"Not allowed to delete event. Event has locked seats\"", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
-#line hidden
-            this.ScenarioCleanup();
-        }
-        
-        [NUnit.Framework.TestAttribute()]
         [NUnit.Framework.DescriptionAttribute("Edit event failed because of event has locked seats")]
-        [NUnit.Framework.CategoryAttribute("EditEventFailedWithLockedSeats")]
+        [NUnit.Framework.CategoryAttribute("UpdateEventFailedWithLockedSeats")]
         public virtual void EditEventFailedBecauseOfEventHasLockedSeats()
         {
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Edit event failed because of event has locked seats", null, new string[] {
-                        "EditEventFailedWithLockedSeats"});
-#line 55
+                        "UpdateEventFailedWithLockedSeats"});
+#line 33
  this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
-#line 56
+#line 34
  testRunner.Given("User is on home page", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
-#line 57
+#line 35
  testRunner.When("User logged in as an event manager", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
-#line 58
+#line 36
  testRunner.And("User sets \"Русский\" language of site", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 59
+#line 37
  testRunner.And("Goes to edit event page", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 60
+#line 38
  testRunner.And("Selects venue \"Royal Albert Hall\"", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 61
+#line 39
  testRunner.And("Selects event \"test event\" to edit on edit event page", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 62
+#line 40
  testRunner.And("Changes venue of event on \"Symphony Hall\"", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 63
+#line 41
  testRunner.And("Clicks save button on edit event page", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 64
+#line 42
  testRunner.Then("Edit event form has error \"Нельзя изменять зал событие в котором присутствуют куп" +
                     "ленные или заблокированные места\"", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden

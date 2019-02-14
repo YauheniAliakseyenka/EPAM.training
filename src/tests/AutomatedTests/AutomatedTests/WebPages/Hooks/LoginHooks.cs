@@ -7,7 +7,7 @@ namespace AutomatedTests.WebPages.Hooks
 	[Binding]
 	public class LoginHooks:GlobalHooks
 	{
-		public static string UserKey { get; } = "UserLogin";
+		public const string UserKey  = "UserLogin";
 
 		[BeforeScenario(
 			"LoginAsUser", 

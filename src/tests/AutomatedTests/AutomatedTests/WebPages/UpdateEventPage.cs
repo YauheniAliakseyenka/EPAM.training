@@ -6,9 +6,9 @@ using System.Linq;
 
 namespace AutomatedTests.WebPages
 {
-	public class EditEventPage : AbstractWebPage
+	public class UpdateEventPage : AbstractWebPage
 	{
-		public EditEventPage(IWebDriver driver) : base(driver) { }
+		public UpdateEventPage(IWebDriver driver) : base(driver) { }
 
 		public IWebElement TitleInput => FindById("title");
 		public IWebElement DatePicker => FindById("datepicker");

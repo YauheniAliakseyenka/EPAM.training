@@ -19,17 +19,15 @@ namespace AutomatedTests.WebPages
 			base.Open(url);
 		}
 
-        public void CompleteBalanceReplenishment()
-        {
-            BalanceReplenishmentButton.Click();
-
-            try
-            {
-                new WebDriverWait(Driver, TimeSpan.FromSeconds(3))
-                .Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(By.Id("eventListPlaceholder")));
-            }
-            catch (WebDriverTimeoutException) { }
-        }
-
-    }
+		public void CompleteBalanceReplenishment()
+		{
+			BalanceReplenishmentButton.Click();
+			try
+			{
+				new WebDriverWait(Driver, TimeSpan.FromSeconds(3)).
+						Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(By.CssSelector(".event-list")));
+			}
+			catch (WebDriverTimeoutException) { }
+		}
+	}
 }

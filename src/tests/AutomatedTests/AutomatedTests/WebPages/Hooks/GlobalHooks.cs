@@ -7,23 +7,32 @@ namespace AutomatedTests.WebPages.Hooks
 	[Binding]
 	public class GlobalHooks
 	{
-		public static string DriverKey { get; } = "Driver";
+		protected static HelpersMethods Helpers => new HelpersMethods(Driver);
+		public static IWebDriver Driver { get; private set; }
 
-		protected static HelpersMethods Helpers => new HelpersMethods((IWebDriver)ScenarioContext.Current[DriverKey]);
+		[BeforeTestRun]
+		public static void OneTimeSetUp()
+		{
+			Driver = WebDriverFactory.GetDriver();
+		}
+
+		[AfterTestRun]
+		public static void OneTimeTearDown()
+		{
+			Driver.Close();
+			Driver.Quit();
+		}
 
 		[BeforeScenario(Order = 1)]
 		public static void OpenBrowser()
 		{
-			ScenarioContext.Current.Add(DriverKey, WebDriverFactory.GetDriver());
+			Helpers.SignOut();
 		}
 
 		[AfterScenario]
 		public static void CloseBrowser()
 		{
-			var driver = (IWebDriver)ScenarioContext.Current[DriverKey];
 			ScenarioContext.Current.Clear();
-			driver.Close();
-			driver.Quit();
 		}
 	}
 }

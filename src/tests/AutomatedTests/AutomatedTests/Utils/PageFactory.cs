@@ -1,8 +1,6 @@
 ﻿using AutomatedTests.WebPages;
 using AutomatedTests.WebPages.Hooks;
-using OpenQA.Selenium;
 using System;
-using TechTalk.SpecFlow;
 
 namespace AutomatedTests.Utils
 {
@@ -14,7 +12,7 @@ namespace AutomatedTests.Utils
 
         public T GetPage<T>() where T: AbstractWebPage
         {
-			object[] args = { (IWebDriver)ScenarioContext.Current[GlobalHooks.DriverKey] };
+			object[] args = { GlobalHooks.Driver };
 
 			return (T)Activator.CreateInstance(typeof(T), args);
         }

@@ -11,110 +11,110 @@ namespace AutomatedTests.Steps
 	[Binding]
 	public class SeatPurchaseSteps
 	{
-		private static HomePage _homePage => PageFactory.Instance.GetPage<HomePage>();
-		private static BalanceReplenishmentPage _balanceReplenishmentPage => PageFactory.Instance.GetPage<BalanceReplenishmentPage>();
-		private static CartPage _cartPage => PageFactory.Instance.GetPage<CartPage>();
-		private static PurchaseHistoryPage _purchaseHistoryPage => PageFactory.Instance.GetPage<PurchaseHistoryPage>();
+		private static HomePage HomePage => PageFactory.Instance.GetPage<HomePage>();
+		private static BalanceReplenishmentPage BalanceReplenishmentPage => PageFactory.Instance.GetPage<BalanceReplenishmentPage>();
+		private static CartPage CartPage => PageFactory.Instance.GetPage<CartPage>();
+		private static PurchaseHistoryPage PurchaseHistoryPage => PageFactory.Instance.GetPage<PurchaseHistoryPage>();
 
 		[When(@"Goes to home page")]
 		public void WhenUserGoesToHomePage()
 		{
 			Thread.Sleep(150);
-			_homePage.Open();
+			HomePage.Open();
 		}
 
 		[When(@"Selects filter by ""(.*)""")]
 		public void WhenUserSelectsFilter(string option)
 		{
-			_homePage.SelectFilterOption(option);
+			HomePage.SelectFilterOption(option);
 		}
 
 		[When(@"Enters ""(.*)"" to filter input")]
 		public void WhenUserEntersTextToFilterInput(string filterText)
 		{
-			_homePage.FilterInput.SendKeys(filterText);
-			_homePage.SearchButton.Click();
+			HomePage.FilterInput.SendKeys(filterText);
+			HomePage.SearchButton.Click();
 		}
 
 		[When(@"Selects ""(.*)"" event")]
 		public void WhenUserSelectsEvent(string title)
 		{
-			_homePage.SelectEvent(title);
+			HomePage.SelectEvent(title);
 		}
 
 		[When(@"Adds seat to cart")]
 		public void WhenUserAddsTwoSeatToCart()
 		{
-			_homePage.LockSeat();
+			HomePage.LockSeat();
 			Thread.Sleep(300);
 		}
 
 		[When(@"Goes to balance replenishment page")]
 		public void WhenUserGoesToBalanceReplenishmentPage()
 		{
-			_balanceReplenishmentPage.Open();
+			BalanceReplenishmentPage.Open();
 		}
 
 		[When(@"Enters ""(.*)"" to amount input")]
 		public void WhenUserEntersAmountToAmountInput(string amount)
 		{
-			_balanceReplenishmentPage.AmountInput.Clear();
-			_balanceReplenishmentPage.AmountInput.SendKeys(amount);
+			BalanceReplenishmentPage.AmountInput.Clear();
+			BalanceReplenishmentPage.AmountInput.SendKeys(amount);
 		}
 
 		[When(@"Confirms balance replenishment")]
 		public void WhenUserConfirmsBalanceReplenishment()
 		{
-            _balanceReplenishmentPage.CompleteBalanceReplenishment();
+			BalanceReplenishmentPage.CompleteBalanceReplenishment();
 		}
 
 		[When(@"Goes to cart page")]
 		public void WhenUserGoesToCartPage()
 		{
-			_cartPage.Open();
+			CartPage.Open();
 		}
 
 		[When(@"Removes seat from cart")]
 		public void WhenUserRemovesOneSeatFromCart()
 		{
-			_cartPage.DeleteFirstSeatFromCart();
+			CartPage.DeleteFirstSeatFromCart();
 		}
 
 		[When(@"Confirms order")]
 		public void WhenUserConfirmsOrder()
 		{
-			_cartPage.CompleteOrder();
+			CartPage.CompleteOrder();
 		}
 
 		[Then(@"User goes to purchase history page")]
 		public void ThenUseGoesToPurchaseHistoryPage()
 		{
-			_purchaseHistoryPage.Open();
+			PurchaseHistoryPage.Open();
 		}
 
 		[Then(@"Can see created order")]
 		public void ThenUserCanUseOrder()
 		{
-			Assert.IsTrue(_purchaseHistoryPage.OrderTable.Displayed);
+			Assert.IsTrue(PurchaseHistoryPage.OrderTable.Displayed);
 		}
 
 		[Then(@"User can see added seat to cart")]
 		public void ThenUserCanSeeAddedSeatsToCart()
 		{
-			Assert.IsTrue(_cartPage.OrderedSeats().Any());
+			Assert.IsTrue(CartPage.OrderedSeats().Any());
 		}
 
 		[Then(@"User can see no seats left in the cart")]
 		public void ThenUserCanSeeOneSeatLeftInTheCart()
 		{
-			Assert.Throws<WebDriverTimeoutException>(() => _cartPage.OrderedSeats());
+			Assert.Throws<WebDriverTimeoutException>(() => CartPage.OrderedSeats());
 		}
 
 		[Then(@"User can see his cash balance ""(.*)""")]
 		public void ThenUserSeesHisBalance(string balance)
 		{
 			var currentBalance = string.Empty;
-			Assert.DoesNotThrow(() => currentBalance = _homePage.AccountBalance.Text);
+			Assert.DoesNotThrow(() => currentBalance = HomePage.AccountBalance.Text);
 			StringAssert.Contains(balance, currentBalance);
 		}
 
@@ -122,7 +122,7 @@ namespace AutomatedTests.Steps
 		public void ThenBalanceReplenishmentFormHasError(string expectedError)
 		{
 			var error = string.Empty;
-			Assert.DoesNotThrow(() => error = _balanceReplenishmentPage.Errors.Text);
+			Assert.DoesNotThrow(() => error = BalanceReplenishmentPage.Errors.Text);
 			StringAssert.Contains(expectedError, error);
 		}
 	}
