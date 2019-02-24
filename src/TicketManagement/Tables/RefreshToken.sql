@@ -1,0 +1,6 @@
+﻿CREATE TABLE [dbo].[RefreshToken]
+(
+	[UserId] INT NOT NULL PRIMARY KEY, 
+    [Token] NVARCHAR(MAX) NOT NULL,
+	CONSTRAINT [FK_RefreshTokens_User] FOREIGN KEY ([UserId]) REFERENCES [User]([Id]) ON DELETE CASCADE
+)

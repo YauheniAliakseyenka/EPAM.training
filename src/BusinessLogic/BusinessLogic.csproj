@@ -1,103 +1,15 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{08660A4A-F508-4F46-8E69-7F076CBA6390}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>BusinessLogic</RootNamespace>
-    <AssemblyName>BusinessLogic</AssemblyName>
-    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <Deterministic>true</Deterministic>
+    <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
+
   <ItemGroup>
-    <Reference Include="Autofac, Version=4.8.1.0, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
-      <HintPath>..\packages\Autofac.4.8.1\lib\net45\Autofac.dll</HintPath>
-    </Reference>
-    <Reference Include="System" />
-    <Reference Include="System.ComponentModel.DataAnnotations" />
-    <Reference Include="System.Configuration" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Transactions" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Net.Http" />
-    <Reference Include="System.Xml" />
+    <PackageReference Include="Autofac" Version="4.9.1" />
   </ItemGroup>
+
   <ItemGroup>
-    <Compile Include="BusinessModels\OrderEventArgs.cs" />
-    <Compile Include="DTO\AreaDto.cs" />
-    <Compile Include="DTO\CartDto.cs" />
-    <Compile Include="DTO\EventSeatDto.cs" />
-    <Compile Include="DTO\OrderDto.cs" />
-    <Compile Include="DTO\UserDto.cs" />
-    <Compile Include="BusinessModels\SeatModel.cs" />
-    <Compile Include="DTO\EventDto.cs" />
-    <Compile Include="DTO\EventAreaDto.cs" />
-    <Compile Include="BusinessModels\EventModel.cs" />
-    <Compile Include="DTO\LayoutDto.cs" />
-    <Compile Include="BusinessModels\OrderModel.cs" />
-    <Compile Include="DTO\SeatDto.cs" />
-    <Compile Include="DTO\VenueDto.cs" />
-    <Compile Include="Exceptions\EventExceptions.cs" />
-    <Compile Include="Exceptions\CartException.cs" />
-    <Compile Include="Exceptions\OrderException.cs" />
-    <Compile Include="Exceptions\UserException.cs" />
-    <Compile Include="Exceptions\VenueExceptions.cs" />
-    <Compile Include="DiContainer\TestsModule.cs" />
-    <Compile Include="DiContainer\WebModule.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Services\CustomTransactionScope.cs" />
-    <Compile Include="Services\EventServices\EventAreaService.cs" />
-    <Compile Include="Services\EventServices\EventSeatService.cs" />
-    <Compile Include="Services\EventServices\EventService.cs" />
-    <Compile Include="Services\EventServices\EventServicePartial.cs" />
-    <Compile Include="Services\FilterEventOptions.cs" />
-    <Compile Include="Services\Interfaces\IEventService.cs" />
-    <Compile Include="Services\Interfaces\IOrderService.cs" />
-    <Compile Include="Services\Interfaces\IStoreService.cs" />
-    <Compile Include="Services\Interfaces\IUserService.cs" />
-    <Compile Include="Services\Interfaces\ILayoutService.cs" />
-    <Compile Include="Services\SeatState.cs" />
-    <Compile Include="Services\UserServices\CartService.cs" />
-    <Compile Include="Services\UserServices\OrderService.cs" />
-    <Compile Include="Services\UserServices\UserService.cs" />
-    <Compile Include="Services\VenueServices\AreaService.cs" />
-    <Compile Include="Services\Interfaces\ICartService.cs" />
-    <Compile Include="Services\VenueServices\LayoutService.cs" />
-    <Compile Include="Services\VenueServices\SeatService.cs" />
-    <Compile Include="Services\VenueServices\VenueService.cs" />
+    <ProjectReference Include="..\DataAccess\DataAccess.csproj" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\DataAccess\DataAccess.csproj">
-      <Project>{d0d56e1e-7eef-4d81-b5f6-b6e56b6553c6}</Project>
-      <Name>DataAccess</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config" />
-  </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+
 </Project>

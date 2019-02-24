@@ -14,6 +14,8 @@ namespace BusinessLogic.Services
 		private readonly IWorkUnit _context;
 		private readonly ILayoutService _layoutService;
 
+		public bool IsValidatedToCreate { get; private set; }
+
 		public VenueService(IWorkUnit context, ILayoutService layoutService)
 		{
 			_context = context;
@@ -25,31 +27,33 @@ namespace BusinessLogic.Services
         /// </summary>
         /// <param name="entity"></param>
         /// <returns></returns>
-		public async Task Create(VenueDto entity)
-		{
-			if (entity == null)
-				throw new ArgumentNullException();
+        public async Task Create(VenueDto entity)
+        {
+            if (entity == null)
+                throw new ArgumentNullException();
 
-			if (!IsNameUnique(entity, true))
-				throw new VenueException("Such venue already exists");
+            if (!IsNameUnique(entity, true))
+                throw new VenueException("Such venue already exists");
 
-			if(entity.LayoutList == null || !entity.LayoutList.Any())
-				throw new VenueException("Incorrect state of the venue. The venue must have at least one layout");
+            if (entity.LayoutList == null || !entity.LayoutList.Any())
+                throw new VenueException("Incorrect state of the venue. The venue must have at least one layout");
 
-			var venueAdd = MapToVenue(entity);	
-			using (var transaction = CustomTransactionScope.GetTransactionScope())
-			{
-				_context.VenueRepository.Create(venueAdd);
-				await _context.SaveAsync();
-				entity.Id = venueAdd.Id;
-				foreach (var layout in entity.LayoutList)
-				{
-					layout.VenueId = venueAdd.Id;
-					await _layoutService.Create(layout);
-				}
-				transaction.Complete();
-			}
-		}
+            var venueAdd = MapToVenue(entity);
+            using (var transaction = CustomTransactionScope.GetTransactionScope())
+            {
+                _context.VenueRepository.Create(venueAdd);
+                await _context.SaveAsync();
+                entity.Id = venueAdd.Id;
+                foreach (var layout in entity.LayoutList)
+                {
+                    layout.VenueId = venueAdd.Id;
+                    await _layoutService.Create(layout);
+
+                }
+
+                transaction.Complete();
+            }
+        }
 
 		public async Task Delete(int id)
 		{
@@ -114,7 +118,6 @@ namespace BusinessLogic.Services
 			{
 				Address = from.Address,
 				Description = from.Description,
-				Id = from.Id,
 				Name = from.Name,
 				Phone = from.Phone,
 				Timezone = from.Timezone
@@ -132,6 +135,28 @@ namespace BusinessLogic.Services
 				!(from venues in data
 				  where venues.Id != entity.Id
 				  select venues).Any();
+		}
+
+		private Layout MapToLayout(LayoutDto from)
+		{
+			return new Layout
+			{
+				Description = from.Description,
+				Id = from.Id,
+				VenueId = from.VenueId
+			};
+		}
+
+		private Area MapToArea(AreaDto from)
+		{
+			return new Area
+			{
+				CoordX = from.CoordX,
+				CoordY = from.CoordY,
+				Description = from.Description,
+				Id = from.Id,
+				LayoutId = from.LayoutId
+			};
 		}
 	}
 }

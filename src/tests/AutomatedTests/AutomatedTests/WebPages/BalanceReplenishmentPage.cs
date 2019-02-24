@@ -24,7 +24,7 @@ namespace AutomatedTests.WebPages
 			BalanceReplenishmentButton.Click();
 			try
 			{
-				new WebDriverWait(Driver, TimeSpan.FromSeconds(3)).
+				new WebDriverWait(Driver, TimeSpan.FromSeconds(4)).
 						Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(By.CssSelector(".event-list")));
 			}
 			catch (WebDriverTimeoutException) { }

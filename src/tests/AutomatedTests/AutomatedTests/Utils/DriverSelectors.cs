@@ -17,7 +17,7 @@ namespace AutomatedTests.Utils
 
 		public IWebElement FindByCss(string css)
 		{
-			new WebDriverWait(_driver, TimeSpan.FromSeconds(3)).
+			new WebDriverWait(_driver, TimeSpan.FromSeconds(4)).
 				Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(By.CssSelector(css)));
 
 			return _driver.FindElement(By.CssSelector(css));
@@ -25,7 +25,7 @@ namespace AutomatedTests.Utils
 
 		public IWebElement FindById(string id)
 		{
-			new WebDriverWait(_driver, TimeSpan.FromSeconds(3)).
+			new WebDriverWait(_driver, TimeSpan.FromSeconds(4)).
 				Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(By.Id(id)));
 
 			return _driver.FindElement(By.Id(id));
@@ -33,7 +33,7 @@ namespace AutomatedTests.Utils
 
 		public IWebElement FindByXPath(string xpath)
 		{
-			new WebDriverWait(_driver, TimeSpan.FromSeconds(3)).
+			new WebDriverWait(_driver, TimeSpan.FromSeconds(4)).
 				Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(By.XPath(xpath)));
 
 			return _driver.FindElement(By.XPath(xpath));
@@ -41,7 +41,7 @@ namespace AutomatedTests.Utils
 
         public IEnumerable<IWebElement> FindElementsByXpath(string xpath)
         {
-            new WebDriverWait(_driver, TimeSpan.FromSeconds(3))
+            new WebDriverWait(_driver, TimeSpan.FromSeconds(4))
                 .Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(By.XPath(xpath)));
 
             return _driver.FindElements(By.XPath(xpath));
@@ -49,7 +49,7 @@ namespace AutomatedTests.Utils
 
 		public IWebElement SelectFromDropDownByText(By findBy, string selectByText)
 		{
-			new WebDriverWait(_driver, TimeSpan.FromSeconds(3)).
+			new WebDriverWait(_driver, TimeSpan.FromSeconds(4)).
 				Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(findBy));
 
 			var element = _driver.FindElement(findBy);

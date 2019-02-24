@@ -32,7 +32,7 @@ namespace AutomatedTests.WebPages
 		{
             var xPath = "//*[@id='orderedSeatsList']//tbody//tr";
 
-            new WebDriverWait(Driver, TimeSpan.FromSeconds(3)).
+            new WebDriverWait(Driver, TimeSpan.FromSeconds(4)).
                 Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(By.XPath(xPath)));
 
             return FindElementsByXPath(xPath);

@@ -14,6 +14,8 @@ namespace BusinessLogic.Services
 		private readonly IWorkUnit _context;
 		private readonly IStoreService<AreaDto, int> _areaService;
 
+		public bool IsValidatedToCreate { get; private set; }
+
 		public LayoutService(IWorkUnit context, IStoreService<AreaDto, int> areaService)
 		{
 			_context = context;
@@ -50,6 +52,7 @@ namespace BusinessLogic.Services
 					area.LayoutId = layoutAdd.Id;
 					await _areaService.Create(area);
 				}
+
 				transaction.Complete();
 			}
 		}
@@ -113,7 +116,6 @@ namespace BusinessLogic.Services
 			return new Layout
 			{
 				Description = from.Description,
-				Id = from.Id,
 				VenueId = from.VenueId
 			};
 		}

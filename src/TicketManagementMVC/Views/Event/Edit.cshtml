@@ -1,6 +1,13 @@
 ﻿@{
     ViewBag.Title = EventResource.Edit;
 }
+
+<script type="text/javascript">
+    $(window).ready(function () {
+        $('#venueListToSortEvents').trigger("change");
+    });
+</script>
+
 <div id="eventPlaceHolder">
     <h2 class="text-center">@EventResource.Edit</h2>
     <div class="form-group col-sm-10 offset-sm-1">
@@ -17,12 +24,6 @@
     <div id="editEventPlaceHolder">
     </div>
 </div>
-
-<script type="text/javascript">
-    $(function () {
-        $('#venueListToSortEvents').trigger("change");
-    });
-</script>
 
 <div id="editAreaPlaceHolder">
 </div>

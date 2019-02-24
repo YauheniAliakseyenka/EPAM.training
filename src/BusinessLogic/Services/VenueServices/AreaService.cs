@@ -14,6 +14,8 @@ namespace BusinessLogic.Services
 		private readonly IWorkUnit _context;
 		private readonly IStoreService<SeatDto, int> _seatService;
 
+		public bool IsValidatedToCreate { get; private set; }
+
 		public AreaService(IWorkUnit context, IStoreService<SeatDto, int> seatService)
 		{
 			_context = context;
@@ -36,7 +38,7 @@ namespace BusinessLogic.Services
 			if (!IsDescriptionUnique(entity, true))
 				throw new AreaException("Area description isn't unique");
 
-			if(entity.SeatList == null || !entity.SeatList.Any())
+			if (entity.SeatList == null || !entity.SeatList.Any())
 				throw new AreaException("Incorrect state of area. An area must have atleast one seat");
 
 			var areaAdd = MapToArea(entity);
@@ -119,7 +121,6 @@ namespace BusinessLogic.Services
 				CoordX = from.CoordX,
 				CoordY = from.CoordY,
 				Description = from.Description,
-				Id = from.Id,
 				LayoutId = from.LayoutId
 			};
 		}

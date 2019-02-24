@@ -3,9 +3,9 @@
 	@Description NVARCHAR(MAX),
 	@ImageURL NVARCHAR(MAX),
 	@LayoutId INT,
-	@Date DATETIMEOFFSET(7),
-	@CreatedBy nvarchar(128),
-	@EventInsertedID INT = 0,
+	@Date DATETIME,
+	@CreatedBy INT,
+	@EventInsertedID INT = 0 OUTPUT,
 	@layoutChanged INT = 0
 AS
 BEGIN TRAN

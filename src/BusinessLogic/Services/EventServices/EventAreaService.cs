@@ -34,9 +34,9 @@ namespace BusinessLogic.Services.EventServices
 			if (entity.Seats == null || !entity.Seats.Any())
 				throw new EventAreaException("Invalid state of event area. Seat list is empty");
 
+			var add = MapToEventArea(entity);
 			using (var transaction = CustomTransactionScope.GetTransactionScope())
 			{
-				var add = MapToEventArea(entity);
 				_context.EventAreaRepository.Create(add);
 				await _context.SaveAsync();
 				foreach (var seat in entity.Seats)
@@ -44,10 +44,10 @@ namespace BusinessLogic.Services.EventServices
 					seat.EventAreaId = add.Id;
 					await _seatService.Create(seat);
 				}					
-
-				entity.Id = add.Id;
+				
 				transaction.Complete();
 			}
+            entity.Id = add.Id;
 		}
 
 		public async Task Delete(int id)

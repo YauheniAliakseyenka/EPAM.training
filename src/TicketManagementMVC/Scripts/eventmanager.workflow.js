@@ -182,7 +182,6 @@ function GetAreaToEdit(areaId) {
                 $('.text-success').hide();
                 $('#eventPlaceHolder').hide();
                 $('#editAreaPlaceHolder').show();
-                $("html, body").animate({ scrollTop: 0 }, 250);
             },
             error: function () {
                 ShowNotify('danger', 'server error');

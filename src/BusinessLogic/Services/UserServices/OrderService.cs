@@ -25,7 +25,7 @@ namespace BusinessLogic.Services.UserServices
 			_userService = userService;
 		}
 
-		public async Task Create(int userId)
+		public async Task<decimal> Create(int userId)
 		{
 			if (userId <= 0)
 				throw new ArgumentException();
@@ -74,6 +74,8 @@ namespace BusinessLogic.Services.UserServices
 					transaction.Commit();
 
 					Notify(user, order.Id);
+
+					return orderTotal;
 				}
 				catch(Exception)
 				{
@@ -189,7 +191,7 @@ namespace BusinessLogic.Services.UserServices
 			Ordered?.Invoke(this, args);
 		}
 
-		public async Task CancelOrderAndRefund(int orderId)
+		public async Task<decimal> CancelOrderAndRefund(int orderId)
 		{
 			var order = await _context.OrderRepository.GetAsync(orderId);
 
@@ -216,10 +218,13 @@ namespace BusinessLogic.Services.UserServices
 					});
 
 					_context.OrderRepository.Delete(order);
-					user.Amount += amount - ((amount * percent) / 100);
+					var refundAmount = amount - ((amount * percent) / 100);
+					user.Amount += refundAmount;
 					await _userService.Update(user);
 					await _context.SaveAsync();
 					transaction.Commit();
+
+					return refundAmount;
 				}
 				catch(Exception)
 				{

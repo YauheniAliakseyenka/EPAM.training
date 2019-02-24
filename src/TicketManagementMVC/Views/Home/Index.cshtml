@@ -1,10 +1,8 @@
-﻿@using BusinessLogic.Services;
-@using System.Globalization;
-@model IEnumerable<BusinessLogic.BusinessModels.EventModel>
+﻿@using System.Globalization;
+@model IEnumerable<EventModel>
 @{
     ViewBag.Title = CommonResource.Home;
 }
-
 @using (Html.BeginForm("Index", "Home", FormMethod.Get, new { @id = "filterForm", @class = "ml-4" }))
 {
     <div class="row">

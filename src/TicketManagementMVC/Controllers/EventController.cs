@@ -1,64 +1,57 @@
-﻿using BusinessLogic.DTO;
-using BusinessLogic.Exceptions.EventExceptions;
-using BusinessLogic.Services;
-using Microsoft.AspNet.Identity;
+﻿using Microsoft.AspNet.Identity;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
-using System.Data.Entity.Infrastructure;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
+using TicketManagementMVC.EventService;
 using TicketManagementMVC.Infrastructure.Attributes;
 using TicketManagementMVC.Infrastructure.Authentication;
 using TicketManagementMVC.Models.Event;
+using TicketManagementMVC.EventAreaService;
+using System.ServiceModel;
+using TicketManagementMVC.LayoutService;
+using TicketManagementMVC.VenueService;
 
 namespace TicketManagementMVC.Controllers
 {
     [Authorize(Roles = "Event manager")]
     public class EventController : Controller
     {
-        private ApplicationUserManager _userManager;
-        private IStoreService<VenueDto, int> _venueService;
-        private ILayoutService _layoutService;
-        private IEventService _eventService;
-		private IStoreService<EventAreaDto, int> _eventAreaService;
-		private IStoreService<EventSeatDto, int> _eventSeatService;
+        private IWcfVenueService _venueService;
+        private IWcfLayoutService _layoutService;
+        private IWcfEventService _eventService;
+		private IWcfEventAreaService _eventAreaService;
+		private AuthManager _authManager => new AuthManager(this.HttpContext);
 
-		protected override async void Initialize(RequestContext requestContext)
+		protected override void Initialize(RequestContext requestContext)
 		{
 			base.Initialize(requestContext);
 			var identity = HttpContext.User.Identity;
 			if (identity.IsAuthenticated)
-			{
-				var user = await _userManager.FindByNameAsync(identity.GetUserName());
-				ViewData["Balance"] = user.Amount;
-			}
+				ViewData["Balance"] = _authManager.GetAccountBalance();
 		}
 
-        public EventController(IStoreService<VenueDto, int> venueService,
-			ApplicationUserManager userManager,
-			ILayoutService layoutService,
-            IEventService eventService,
-			IStoreService<EventAreaDto, int> eventAreaService,
-			IStoreService<EventSeatDto, int> eventSeatService)
+        public EventController(IWcfVenueService venueService,
+			IWcfLayoutService layoutService,
+			IWcfEventService eventService,
+			IWcfEventAreaService eventAreaService)
         {
             _venueService = venueService;
-            _userManager = userManager;
             _layoutService = layoutService;
             _eventService = eventService;
 			_eventAreaService = eventAreaService;
-			_eventSeatService = eventSeatService;
         }
 
         //GET: create new event view
         [HttpGet]
         public async Task<ActionResult> Create()
         {
-			ViewBag.VenueList = await _venueService.GetList();
+			ViewBag.VenueList = await _venueService.ToListAsync();
 			return View(new EventViewModel());
         }
 
@@ -82,22 +75,23 @@ namespace TicketManagementMVC.Controllers
                 string url;
 				url = GetImageUrl(image, out string path);
 
-				await _eventService.Create(new EventDto
+				var create = new Event
 				{
-					Date = model.Date.Date + model.Time.TimeOfDay,
-					Description = model.Description,
-					ImageURL = url,
-					LayoutId = model.LayoutId,
+					CreatedBy = User.Identity.GetUserId<int>(),
 					Title = model.Title,
-					CreatedBy = User.Identity.GetUserId<int>()
-				});
+					LayoutId = model.LayoutId,
+					ImageURL = url,
+					Date = model.Date.Date + model.Time.TimeOfDay,
+					Description = model.Description
+				};
+				await _eventService.CreateAsync(create);
 
 				if (!string.IsNullOrEmpty(path))
 					image.SaveAs(path);
             }
-            catch (EventException exception)
+            catch (FaultException<EventService.ServiceValidationFaultDetails> exception)
             {
-                string error = string.Empty;
+				string error = exception.Message;
 
                 if (exception.Message.Equals("Invalid date", StringComparison.OrdinalIgnoreCase))
                     error = ProjectResources.ResourceErrors.EventInvalidDateError;
@@ -111,6 +105,14 @@ namespace TicketManagementMVC.Controllers
 					errors = new string[] { error }
 				});
 			}
+			catch (FaultException exception)
+			{
+				return Json(new
+				{
+					success = false,
+					error = exception.Message
+				});
+			}
 
 			return Json(new
 			{
@@ -122,7 +124,7 @@ namespace TicketManagementMVC.Controllers
 		[NoDirectAccess]
 		public async Task<ActionResult> GetLayouts(int venueId)
         {
-			var list = await _layoutService.GetLayoutsByVenue(venueId);
+			var list = await _layoutService.GetLayoutsByVenueAsync(venueId);
 
 			return Json(new {
                 layouts = list.Select(x => new { x.Id, Display = x.Description }).ToList()
@@ -133,7 +135,7 @@ namespace TicketManagementMVC.Controllers
         [NoDirectAccess]
 		public async Task<ActionResult> GetEventsByVenue(int venueId)
         {
-			var list = await _eventService.GetEventManagerEvents(venueId, User.Identity.GetUserId<int>());
+			var list = await _eventService.GetEventManagerEventsAsync(venueId, User.Identity.GetUserId<int>());
 
 			return Json(new
 			{
@@ -149,12 +151,19 @@ namespace TicketManagementMVC.Controllers
 		[HttpGet]
 		public async Task<ActionResult> EditArea(int areaId, int eventId)
 		{
-			var data = await _eventService.GetEventInformation(eventId);
+			var data = await _eventService.GetEventInformationAsync(eventId);
 			var area = data.Areas.Where(x => x.Id == areaId).FirstOrDefault();
 
 			var model = new EventAreaViewModel
 			{
-				SeatList = area.Seats,
+				SeatList = area.Seats.Select(x => new EventAreaService.EventSeat
+				{
+					State = (EventAreaService.SeatState)x.State,
+					EventAreaId = x.EventAreaId,
+					Id = x.Id,
+					Number = x.Number,
+					Row = x.Row
+				}).ToList(),
 				CoordX = area.CoordX,
 				CoordY = area.CoordY,
 				Description = area.Description,
@@ -188,33 +197,23 @@ namespace TicketManagementMVC.Controllers
 					errors = ModelState.Keys.SelectMany(k => ModelState[k].Errors)
 								 .Select(m => m.ErrorMessage).ToArray()
 				});
-			
-            try
-            {
-				var area = await _eventAreaService.Get(model.Id);
+
+			try
+			{
+				var area = await _eventAreaService.GetAsync(model.Id);
 				area.CoordX = model.CoordX;
 				area.CoordY = model.CoordY;
 				area.Description = model.Description;
 				area.Price = model.Price;
-                area.Seats = model.SeatList;
-				await _eventAreaService.Update(area);
+				area.Seats = model.SeatList.ToArray();
+				await _eventAreaService.UpdateAsync(area);
 			}
-			catch (EventSeatException exception)
+			catch (FaultException<EventAreaService.ServiceValidationFaultDetails> exception)
 			{
 				string error = string.Empty;
 
 				if (exception.Message.Equals("Seat already exists", StringComparison.OrdinalIgnoreCase))
 					error = ProjectResources.ResourceErrors.SeatExistsError;
-
-				return Json(new
-				{
-					success = false,
-					errors = new string[] { error }
-				});
-			}
-			catch (EventAreaException exception)
-			{
-				string error = string.Empty;
 
 				if (exception.Message.Equals("Area description isn't unique", StringComparison.OrdinalIgnoreCase))
 					error = ProjectResources.ResourceErrors.AreaDescriptionError;
@@ -225,8 +224,16 @@ namespace TicketManagementMVC.Controllers
 					errors = new string[] { error }
 				});
 			}
+			catch (FaultException exception)
+			{
+				return Json(new
+				{
+					success = false,
+					error = exception.Message
+				});
+			}
 
-            return Json(new
+			return Json(new
 			{
 				success = true
 			});
@@ -256,36 +263,26 @@ namespace TicketManagementMVC.Controllers
 			
             try
             {
-                var area = new EventAreaDto
+                var area = new EventAreaService.EventArea
                 {
                     CoordX = model.CoordX,
                     CoordY = model.CoordY,
                     Description = model.Description,
                     Price = model.Price,
-                    Seats = model.SeatList,
+                    Seats = model.SeatList.ToArray(),
                     EventId = model.EventId
                 };
-                await _eventAreaService.Create(area);
+                await _eventAreaService.CreateAsync(area);
             }
-			catch(EventSeatException exception)
+			catch(FaultException<EventAreaService.ServiceValidationFaultDetails> exception)
 			{
 				string error = string.Empty;
 
 				if (exception.Message.Equals("Seat already exists", StringComparison.OrdinalIgnoreCase))
 					error = ProjectResources.ResourceErrors.SeatExistsError;
 
-				return Json(new
-				{
-					success = false,
-					errors = new string[] { error }
-				});
-			}
-            catch (EventAreaException exception)
-            {
-                string error = string.Empty;
-
-                if (exception.Message.Equals("Area description isn't unique", StringComparison.OrdinalIgnoreCase))
-                    error = ProjectResources.ResourceErrors.AreaDescriptionError;
+				if (exception.Message.Equals("Area description isn't unique", StringComparison.OrdinalIgnoreCase))
+					error = ProjectResources.ResourceErrors.AreaDescriptionError;
 
 				return Json(new
 				{
@@ -293,8 +290,16 @@ namespace TicketManagementMVC.Controllers
 					errors = new string[] { error }
 				});
 			}
+			catch (FaultException exception)
+			{
+				return Json(new
+				{
+					success = false,
+					error = exception.Message
+				});
+			}
 
-            return Json(new
+			return Json(new
             {
                 success = true
             });
@@ -308,7 +313,7 @@ namespace TicketManagementMVC.Controllers
 			ViewBag.Action = "CreateArea";
 			return PartialView("~/Views/Event/Partial/_EventArea.cshtml", new EventAreaViewModel
             {
-                SeatList = new List<EventSeatDto>(),
+                SeatList = new List<EventAreaService.EventSeat>(),
                 EventId = eventId
             });
         }
@@ -317,7 +322,7 @@ namespace TicketManagementMVC.Controllers
         [HttpGet]
         public async Task<ActionResult> Edit()
         {
-            ViewBag.VenueList = await _venueService.GetList();
+            ViewBag.VenueList = await _venueService.ToListAsync();
             return View();
         }
 
@@ -342,7 +347,7 @@ namespace TicketManagementMVC.Controllers
 				string newImageUrl = string.Empty;
 				string oldImageUrl = string.Empty;
 				
-				var update = await _eventService.Get(model.Event.Id);
+				var update = await _eventService.GetAsync(model.Event.Id);
 
 				if (image != null && image.ContentLength > 0)
 				{
@@ -355,12 +360,12 @@ namespace TicketManagementMVC.Controllers
 				update.ImageURL = string.IsNullOrEmpty(newImageUrl) ? update.ImageURL : newImageUrl;
 				update.LayoutId = model.Event.LayoutId;
 				update.Title = model.Event.Title;
-				await _eventService.Update(update);
+				await _eventService.UpdateAsync(update);
 
                 if (!string.IsNullOrEmpty(newImageUrl))
                     image.SaveAs(newImagePath);
 			}
-			catch (EventException exception)
+			catch (FaultException<EventService.ServiceValidationFaultDetails> exception)
 			{
 				string error = string.Empty;
 
@@ -379,6 +384,14 @@ namespace TicketManagementMVC.Controllers
 					errors = new string[] { error }
 				});
 			}
+			catch (FaultException exception)
+			{
+				return Json(new
+				{
+					success = false,
+					error = exception.Message
+				});
+			}
 
 			return Json(new
 			{
@@ -390,7 +403,7 @@ namespace TicketManagementMVC.Controllers
 		[NoDirectAccess]
 		public async Task<ActionResult> GetEventToEdit(int eventId)
         {
-            var data = await _eventService.GetEventInformation(eventId);
+            var data = await _eventService.GetEventInformationAsync(eventId);
 
 			var edit = new EventViewModel
 			{
@@ -403,7 +416,7 @@ namespace TicketManagementMVC.Controllers
 				Id = data.Event.Id
 			};
 
-			ViewBag.VenueList = await _venueService.GetList();
+			ViewBag.VenueList = await _venueService.ToListAsync();
 			return PartialView("~/Views/Event/Partial/_GetEventToEdit.cshtml", new EditEventViewModel
             {
                 Event = edit,
@@ -414,20 +427,32 @@ namespace TicketManagementMVC.Controllers
         [NoDirectAccess]
 		public async Task<ActionResult> DeleteArea(int areaId)
 		{
-			try
-			{
-				await _eventAreaService.Delete(areaId);
+            try
+            {
+                await _eventAreaService.DeleteAsync(areaId);
 				return Json(new
 				{
 					success = true
 				});
-			}
-			catch(DbUpdateException)
+            }
+            catch (FaultException<EventAreaService.ServiceValidationFaultDetails> exception)
+            {
+                string error = string.Empty;
+                if (exception.Message.Equals("Not allowed to delete. Area has locked seat", StringComparison.OrdinalIgnoreCase))
+                    error = ProjectResources.ResourceErrors.SeatLockedError;
+
+                return Json(new
+                {
+                    success = false,
+                    error
+                });
+            }
+			catch (FaultException exception)
 			{
 				return Json(new
 				{
 					success = false,
-					error = ProjectResources.ResourceErrors.SeatLockedError
+					error = exception.Message
 				});
 			}
 		}
@@ -437,9 +462,9 @@ namespace TicketManagementMVC.Controllers
 		{
 			try
 			{
-				await _eventService.Delete(eventId);
+				await _eventService.DeleteAsync(eventId);
 			}
-			catch (EventException exception)
+			catch (FaultException<EventService.ServiceValidationFaultDetails> exception)
 			{
 				string error = string.Empty;
 
@@ -450,6 +475,14 @@ namespace TicketManagementMVC.Controllers
 				{
 					success = false,
 					error
+				});
+			}
+			catch (FaultException exception)
+			{
+				return Json(new
+				{
+					success = false,
+					error = exception.Message
 				});
 			}
 

@@ -1,51 +1,40 @@
-﻿using BusinessLogic.Exceptions;
-using BusinessLogic.Services;
-using Microsoft.AspNet.Identity;
-using Microsoft.Owin.Security;
+﻿using Microsoft.AspNet.Identity;
 using System;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
-using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
 using TicketManagementMVC.Helpers;
 using TicketManagementMVC.Infrastructure.Attributes;
 using TicketManagementMVC.Infrastructure.Authentication;
-using TicketManagementMVC.Infrastructure.WebServices.Interfaces;
 using TicketManagementMVC.Models;
+using TicketManagementMVC.PurchaseService;
+using TicketManagementMVC.Infrastructure.Helpers.Parsers;
+using System.ServiceModel;
+using System.Globalization;
 
 namespace TicketManagementMVC.Controllers
 {
 	public class AccountController : Controller
     {
-		private IAuthenticationManager _authManager => HttpContext.GetOwinContext().Authentication;
-		private ApplicationUserManager _userManager;
-		private ICartService _cartService;
-		private IOrderService _orderService;
-		private IEmailService _emailService;
-		private ISeatLocker _seatLocker;
+		private AuthManager _authManager => new AuthManager(this.HttpContext);
+		private IWcfPurchaseService _purchaseService;
+		private CustomUserManager _userManager => new CustomUserManager();
 
-		private static int _purchaseHistoryPageSize;
+		private readonly int _purchaseHistoryPageSize;
 
-		protected override async void Initialize(RequestContext requestContext)
+		protected override void Initialize(RequestContext requestContext)
 		{
 			base.Initialize(requestContext);
-			var identity = HttpContext.User.Identity;
-			if (identity.IsAuthenticated)
-			{
-				var user = await _userManager.FindByNameAsync(identity.GetUserName());
-				ViewData["Balance"] = user.Amount;
-			}
+			var identity = requestContext.HttpContext.User;
+			if (identity.Identity.IsAuthenticated)
+				ViewData["Balance"] = _authManager.GetAccountBalance();		
 		}
 
-		public AccountController(ApplicationUserManager userManager, ICartService cartService,  
-			IOrderService orderService, IEmailService emailService, ISeatLocker seatLocker)
+		public AccountController(IWcfPurchaseService purchaseService)
 		{
-			_userManager = userManager;
-			_cartService = cartService;
-			_orderService = orderService;
-			_emailService = emailService;
-			_seatLocker = seatLocker;
+			_purchaseService = purchaseService;
 			_purchaseHistoryPageSize = 5;
 		}
 
@@ -63,54 +52,40 @@ namespace TicketManagementMVC.Controllers
         //POST: login
         [HttpPost]
         [AllowAnonymous]
-		[ValidateAntiForgeryToken]
+        [ValidateAntiForgeryToken]
         public async Task<ActionResult> Login(LoginViewModel model)
-		{
-			if(string.IsNullOrEmpty(model.UserName) || string.IsNullOrEmpty(model.Password))
-			{
-				ModelState.AddModelError(string.Empty, ProjectResources.ResourceErrors.LoginError);
-				return Json(new
-				{
-					success = false,
-					errors = ModelState.Keys.SelectMany(k => ModelState[k].Errors)
-								.Select(m => m.ErrorMessage).ToArray()
-				});
-			}
+        {
+            if (string.IsNullOrEmpty(model.UserName) || string.IsNullOrEmpty(model.Password))
+            {
+                ModelState.AddModelError(string.Empty, ProjectResources.ResourceErrors.LoginError);
+                return Json(new
+                {
+                    success = false,
+                    errors = ModelState.Keys.SelectMany(k => ModelState[k].Errors)
+                                .Select(m => m.ErrorMessage).ToArray()
+                });
+            }
 
-			var login = await SignIn(model.UserName, model.Password);
-			if (!login.IsValid)
-				return Json(new
-				{
-					success = false,
-					errors = login.Keys.SelectMany(k => ModelState[k].Errors)
-									.Select(m => m.ErrorMessage).ToArray()
-				});
+			var response = await _userManager.CreateIdentity(model);
 
+            if(response.IsSuccess)
+            {
+                _authManager.SignOut();
+                _authManager.SignIn((ClaimsIdentity)response.Object, out var culture);
+				CultureSetter.Set(culture, this);
 
-			return Json(new
-			{
-				success = true
-			});
-		}
+                return Json(new
+                {
+                    success = true
+                });
+            }
 
-		//create identity to login
-		private async Task<ModelStateDictionary> SignIn(string userName, string password)
-		{
-			var user = await _userManager.FindAsync(userName, password);
-
-			if (user == null)
-			{
-				ModelState.AddModelError(string.Empty, ProjectResources.ResourceErrors.LoginError);
-				return ModelState;
-			}
-
-			var identity = await _userManager.CreateIdentityAsync(user, DefaultAuthenticationTypes.ApplicationCookie);
-
-			CultureSetter.Set(user.Culture, this);
-			_authManager.SignOut();
-			_authManager.SignIn(identity);
-			return ModelState;
-		}
+            return Json(new
+            {
+                success = false,
+                errors = new string[] { ProjectResources.ResourceErrors.LoginError }
+            });
+        }
 
 		[Authorize]
 		public ActionResult Logout()
@@ -136,46 +111,32 @@ namespace TicketManagementMVC.Controllers
                 });
             }
 
-			var user = new User
-			{
-				UserName = model.UserName,
-				PasswordHash = model.Password,
-				Surname = model.Surname,
-				Culture = model.Culture,
-				Email = model.Email,
-				Firstname = model.Firstname,
-				Timezone = model.SelectedTimezone
-			};
+			var user = UserParser.RegistrationViewModelToUser(model);
+			var response = await _userManager.CreateIdentity(user);
 
-			var insert = await _userManager.CreateAsync(user, model.Password);
+            if (response.IsSuccess)
+            {
+                _authManager.SignIn((ClaimsIdentity)response.Object);
+				CultureSetter.Set(model.Culture, this);
 
-			if (insert.Errors.Any())
-			{
-				foreach (var error in insert.Errors)
-				{
-					string errorMessage = error;
-					if (error.StartsWith("Name") && error.EndsWith("taken."))
-						errorMessage = ProjectResources.ResourceErrors.UserNameIsTaken;
-
-					if (error.StartsWith("Email") && error.EndsWith("taken."))
-						errorMessage = ProjectResources.ResourceErrors.EmailIsTaken;
-
-					ModelState.AddModelError(string.Empty, errorMessage);
-				}
-
-                return Json(new
+				return Json(new
                 {
-                    success = false,
-                    errors = ModelState.Keys.SelectMany(k => ModelState[k].Errors)
-                                  .Select(m => m.ErrorMessage).ToArray()
+                    success = true
                 });
-			}
+            }
 
-			await SignIn(model.UserName, model.Password);
+            string error = string.Empty;
+            if (response.Message.Equals("Username is already taken", StringComparison.OrdinalIgnoreCase))
+                error = ProjectResources.ResourceErrors.UserNameIsTaken;
+
+            if (response.Message.Equals("Email is already taken", StringComparison.OrdinalIgnoreCase))
+                error = ProjectResources.ResourceErrors.EmailIsTaken;
+
 
             return Json(new
             {
-                success = true
+                success = false,
+                errors = new string[] { error }
             });
         }
 
@@ -184,14 +145,14 @@ namespace TicketManagementMVC.Controllers
 		[HttpGet]
 		public async Task<ActionResult> Cart()
 		{
-			return View(await _cartService.GetOrderedSeats(User.Identity.GetUserId<int>()));
+			return View(await _purchaseService.GetOrderedSeatsAsync(User.Identity.GetUserId<int>()));
 		}
 
-        //seat's deleting from cart 
-        [NoDirectAccess]
+		//seat's deleting from cart 
+		[NoDirectAccess]
 		public async Task DeleteFromCart(int seatId)
 		{
-			await _seatLocker.UnlockSeat(seatId);
+			await _purchaseService.DeleteSeatFromCartAsync(seatId);
 		}
 
         //seat's adding to cart 
@@ -200,11 +161,11 @@ namespace TicketManagementMVC.Controllers
 		{
 			try
 			{
-				await _seatLocker.LockSeat(seatId, User.Identity.GetUserId<int>());
+				await _purchaseService.AddSeatToCartAsync(seatId, User.Identity.GetUserId<int>());
 			}
-			catch (CartException exception)
+			catch (FaultException<ServiceValidationFaultDetails> exception)
 			{
-				string error = string.Empty;
+				string error = exception.Message;
 
 				if (exception.Message.Equals("Seat is locked", StringComparison.OrdinalIgnoreCase))
 					error = ProjectResources.ResourceErrors.SeatLocked;
@@ -213,6 +174,14 @@ namespace TicketManagementMVC.Controllers
 				{
 					success = false,
 					error
+				});
+			}
+			catch(FaultException exception)
+			{
+				return Json(new
+				{
+					success = false,
+					error = exception.Message
 				});
 			}
 
@@ -229,11 +198,16 @@ namespace TicketManagementMVC.Controllers
 		{
 			try
 			{
-				_orderService.Ordered += _emailService.Send;
-				_orderService.Ordered += _seatLocker.OrderCompleted;
-				await _orderService.Create(User.Identity.GetUserId<int>());		
+				var amountString = await _purchaseService.CreateOrderAsync(User.Identity.GetUserId<int>());
+				var currentBalance = _authManager.GetAccountBalance();
+
+				if (!decimal.TryParse(amountString, NumberStyles.Currency, CultureInfo.InvariantCulture, out var amount))
+					throw new InvalidCastException();
+
+				currentBalance -= amount;
+				_authManager.SetAccountBalance(currentBalance.ToString(CultureInfo.InvariantCulture));
 			}
-			catch (OrderException exception)
+			catch (FaultException<ServiceValidationFaultDetails> exception)
 			{
 				string error = exception.Message;
 
@@ -249,6 +223,14 @@ namespace TicketManagementMVC.Controllers
 					error
 				});
 			}
+			catch (FaultException exception)
+			{
+				return Json(new
+				{
+					success = false,
+					error = exception.Message
+				});
+			}
 
 			return Json(new
 			{
@@ -261,7 +243,7 @@ namespace TicketManagementMVC.Controllers
 		[Authorize]
 		public async Task<ActionResult> PurchaseHistory(int index = 0)
 		{
-			var data = await _orderService.GetPurchaseHistory(User.Identity.GetUserId<int>());
+			var data = await _purchaseService.GetPurchaseHistoryAsync(User.Identity.GetUserId<int>());
 			ViewBag.Count = data.Count();
 			ViewBag.PageSize = _purchaseHistoryPageSize;
 			ViewBag.CurrentIndex = index;
@@ -276,7 +258,8 @@ namespace TicketManagementMVC.Controllers
 			if (!User.Identity.IsAuthenticated)
 				return RedirectToAction("Registration", "Account");
 
-			var user = await _userManager.FindByNameAsync(User.Identity.GetUserName());
+            var response = await _userManager.GetUser(this.User.Identity as ClaimsIdentity);
+            var user = (User)response.Object;
 
             return View(new UserProfileViewModel
 			{
@@ -294,65 +277,57 @@ namespace TicketManagementMVC.Controllers
 		[ValidateAntiForgeryToken]
 		public async Task<ActionResult> UserProfile(UserProfileViewModel model)
 		{
-			var user = await _userManager.FindByNameAsync(User.Identity.GetUserName());
+			var user = UserParser.UserProfileViewModelToUser(model);
+			user.Amount = _authManager.GetAccountBalance();
 
-            if (!string.IsNullOrEmpty(model.Password))
-            {
-                //check current password
-                if (_userManager.PasswordHasher.VerifyHashedPassword(user.PasswordHash, model.Password).Equals(PasswordVerificationResult.Failed))
-                    return Json(new
-                    {
-                        success = false,
-                        errors = new string[] { ProjectResources.ResourceErrors.ChangePasswordError }
-                    });
-
-                if ((string.IsNullOrEmpty(model.NewPassword) | string.IsNullOrEmpty(model.ConfirmNewPassword)) || !ModelState.IsValid)
-                    return Json(new
-                    {
-                        success = false,
-                        errors = ModelState.Keys.SelectMany(k => ModelState[k].Errors)
-                                 .Select(m => m.ErrorMessage).ToArray()
-                    });
-
-                user.PasswordHash = _userManager.PasswordHasher.HashPassword(model.NewPassword);
-            }
-            else
-            {
-                if (!ModelState.IsValid)
-                    return Json(new
-                    {
-                        success = false,
-                        errors = ModelState.Keys.SelectMany(k => ModelState[k].Errors)
-                                 .Select(m => m.ErrorMessage).ToArray()
-                    });
-            }
-
-			user.Surname = model.Surname;
-			user.Culture = model.Culture;
-			user.Email = model.Email;
-			user.Firstname = model.Firstname;
-			user.Timezone = model.Timezone;			
-			var update = await _userManager.UpdateAsync(user);
-
-			if (update.Errors.Any())
+			if (!string.IsNullOrEmpty(model.Password))
 			{
-				update.Errors.ToList().ForEach(x =>
-				{
-					ModelState.AddModelError(string.Empty, x);
-				});
+
+				if ((string.IsNullOrEmpty(model.NewPassword) | string.IsNullOrEmpty(model.ConfirmNewPassword)) || !ModelState.IsValid)
+					return Json(new
+					{
+						success = false,
+						errors = ModelState.Keys.SelectMany(k => ModelState[k].Errors)
+								 .Select(m => m.ErrorMessage).ToArray()
+					});
+
+				user.Password = model.Password;
+				user.NewPassword = model.NewPassword;
+			}
+			else
+			{
+				if (!ModelState.IsValid)
+					return Json(new
+					{
+						success = false,
+						errors = ModelState.Keys.SelectMany(k => ModelState[k].Errors)
+								 .Select(m => m.ErrorMessage).ToArray()
+					});
+			}
+			
+			var response = await _userManager.Update(user, (ClaimsIdentity)this.User.Identity);
+
+            if(response.IsSuccess)
+            {
+                CultureSetter.Set(model.Culture, this);
 
                 return Json(new
                 {
-                    success = false,
-                    errors = ModelState.Keys.SelectMany(k => ModelState[k].Errors)
-                                 .Select(m => m.ErrorMessage).ToArray()
+                    success = true
                 });
             }
-			CultureSetter.Set(user.Culture, this);
+
+			if (response.Message.Equals("Wrong current password", StringComparison.OrdinalIgnoreCase))
+				return Json(new
+				{
+					success = false,
+					errors = new string[] { ProjectResources.ResourceErrors.ChangePasswordError }
+				});
 
             return Json(new
             {
-                success = true
+                success = false,
+                errors = new string[] { response.Message }
             });
         }
 
@@ -378,31 +353,49 @@ namespace TicketManagementMVC.Controllers
                                   .Select(m => m.ErrorMessage).ToArray()
                 });
 
-            var user = await _userManager.FindByIdAsync(User.Identity.GetUserId<int>());
-			user.Amount += model.Amount;
-			var update = await _userManager.UpdateAsync(user);
+            var response = await _userManager.GetUser(this.User.Identity as ClaimsIdentity);
 
-			if (update.Errors.Any())
-			{
+            if(response.IsSuccess)
+            {
+                var user = response.Object as User;
+
+				if(user is null)
+					return Json(new
+					{
+						success = false,
+						errors = new string[] { "Response error" }
+					});
+
+				user.Amount += model.Amount;
+                var update = await _userManager.Update(user, (ClaimsIdentity)this.User.Identity);
+                _authManager.SetAccountBalance(user.Amount.ToString());
+
                 return Json(new
                 {
-                    success = false,
-                    errors = update.Errors.Select(x=>x).ToArray()
+                    success = true
                 });
             }
 
-			return Json(new
-			{
-				success = true
-			});
-		}
+            return Json(new
+            {
+                success = false,
+                errors = new string[] { response.Message }
+            });
+        }
 
 		//cancel order and refund money
 		[Authorize]
 		[NoDirectAccess]
 		public async Task Refund(int orderId)
 		{
-			await _orderService.CancelOrderAndRefund(orderId);
+			var amountString = await _purchaseService.CancelOrderAndRefundAsync(orderId);
+			var currentBalance = _authManager.GetAccountBalance();
+
+			if(!decimal.TryParse(amountString, NumberStyles.Currency, CultureInfo.InvariantCulture, out var amount))
+				throw new InvalidCastException();
+
+			currentBalance += amount;
+			_authManager.SetAccountBalance(currentBalance.ToString(CultureInfo.InvariantCulture));
 		}
 	}
 }

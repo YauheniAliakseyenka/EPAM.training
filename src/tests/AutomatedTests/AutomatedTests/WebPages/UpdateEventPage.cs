@@ -39,7 +39,7 @@ namespace AutomatedTests.WebPages
 		{
 			SelectFromDropDownByText(By.Id("eventListOnEdit"), title);
 
-			new WebDriverWait(Driver, TimeSpan.FromSeconds(3)).Until<bool>((d) =>
+			new WebDriverWait(Driver, TimeSpan.FromSeconds(4)).Until<bool>((d) =>
 			{
 				if (TitleInput.GetAttribute("value").Equals(title, StringComparison.Ordinal))
 					return true;

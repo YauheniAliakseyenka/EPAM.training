@@ -1,7 +1,6 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
-using System.Data;
-using System.Data.Entity;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -17,11 +16,14 @@ namespace DataAccess.Repositories
 			_context = context;
 			_dbSet = context.Set<T>();
 		}
-      
-        public void Create(T entity)
-        {
+
+		public void Create(T entity)
+		{
+			if (_context.CreateEventStorePtocedure(entity))
+				return;
+
 			_dbSet.Add(entity);
-        }
+		}
 
 		public void Delete(T entity)
 		{
@@ -35,6 +37,9 @@ namespace DataAccess.Repositories
       
 		public void Update(T entity)
 		{
+			if (_context.UpdateEventStorePtocedure(entity))
+				return;
+
 			if (_context.Entry(entity).State == EntityState.Detached)
 				_dbSet.Attach(entity);
 

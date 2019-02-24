@@ -26,7 +26,7 @@ namespace AutomatedTests.Utils
 
 		public static void ClickUntil(IWebDriver driver, By clickElement, By untilElementVisible, int attempts = 3)
 		{
-			new WebDriverWait(driver, TimeSpan.FromSeconds(3)).
+			new WebDriverWait(driver, TimeSpan.FromSeconds(4)).
 							Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(clickElement));
 
 			for (int i = 0; i < attempts; i++)
@@ -35,7 +35,7 @@ namespace AutomatedTests.Utils
 				elementToClick.Click();
 				try
 				{
-					new WebDriverWait(driver, TimeSpan.FromSeconds(3)).
+					new WebDriverWait(driver, TimeSpan.FromSeconds(4)).
 						Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(untilElementVisible));
 					break;
 				}
@@ -45,19 +45,19 @@ namespace AutomatedTests.Utils
 
 		public static void WaitForAlert(IWebDriver driver)
 		{
-			new WebDriverWait(driver, TimeSpan.FromSeconds(3)).
+			new WebDriverWait(driver, TimeSpan.FromSeconds(4)).
 							Until(SeleniumExtras.WaitHelpers.ExpectedConditions.AlertIsPresent());
 		}
 
 		public static void WaitForLoggedIn(IWebDriver driver)
 		{
-			new WebDriverWait(driver, TimeSpan.FromSeconds(3)).
+			new WebDriverWait(driver, TimeSpan.FromSeconds(4)).
 				Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(By.CssSelector(".profile-right")));
 		}
 
 		public static void WaitForNotisfaction(IWebDriver driver)
 		{
-			new WebDriverWait(driver, TimeSpan.FromSeconds(3)).
+			new WebDriverWait(driver, TimeSpan.FromSeconds(4)).
 			   Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible
 			   (By.XPath("//*[@data-notify='container']")));
 		}

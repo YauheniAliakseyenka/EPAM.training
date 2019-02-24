@@ -2,6 +2,7 @@
 using BusinessLogic.DTO;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -9,7 +10,7 @@ namespace BusinessLogic.Services.EventServices
 {
 	internal partial class EventService
 	{
-		public Task<IEnumerable<EventModel>> GetPublishedEvents(FilterEventOptions filter, string filterText = null)
+		public Task<IEnumerable<EventModel>> GetPublishedEvents(FilterEventOptions filter, string filterText = null, string dateCulture = null)
 		{
 			var result = new List<EventModel>();
 
@@ -33,17 +34,22 @@ namespace BusinessLogic.Services.EventServices
 				case FilterEventOptions.Title:
 					if (!string.IsNullOrEmpty(filterText))
 						data = from events in data
-							   where events.currentEvent.Title.Contains(filterText)
+							   where events.currentEvent.Title.IndexOf(filterText,0, StringComparison.OrdinalIgnoreCase) != -1
 							   select events;
 					break;
 				case FilterEventOptions.Date:
-					DateTime date;
-					if (!string.IsNullOrEmpty(filterText) && DateTime.TryParse(filterText, out date))
+					if (!string.IsNullOrEmpty(filterText) && !string.IsNullOrEmpty(dateCulture))
+					{
+						DateTime date;
+						try { date = DateTime.Parse(filterText, new CultureInfo(dateCulture)); }
+						catch (FormatException) { break; }
+
 						data = from events in data
 							   where events.currentEvent.Date.Year == date.Date.Year &&
 									 events.currentEvent.Date.Month == date.Date.Month &&
 									 events.currentEvent.Date.Day == date.Date.Day
 							   select events;
+					}
 					break;
 			}
 
@@ -55,7 +61,7 @@ namespace BusinessLogic.Services.EventServices
 			if (!list.Any())
 				return Task.FromResult(result.AsEnumerable());
 
-            list.ForEach(x =>
+			list.ToList().ForEach(x =>
 			{
 				if (!result.Any(y => y.Event.Id == x.currentEvent.Id))
 				{

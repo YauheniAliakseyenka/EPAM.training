@@ -121,16 +121,16 @@ namespace BusinessLogic.Services.Tests
 			Assert.ThrowsAsync<ArgumentNullException>(async () => await venueService.Create(null));
 		}
 
-		[Test, Order(4)]
-		public async Task Create_valid_venue()
-		{
-			//Act
-			await venueService.Create(venue);
-			var inserted = await venueService.Get(venue.Id);
+        [Test, Order(4)]
+        public async Task Create_valid_venue()
+        {
+            //Act
+            await venueService.Create(venue);
+            var inserted = await venueService.Get(venue.Id);
 
-			//Assert
-			Assert.IsNotNull(inserted);
-		}
+            //Assert
+            Assert.IsNotNull(inserted);
+        }
 
 		[Test, Order(5)]
 		public void Create_not_unique_by_name_venue()

@@ -9,5 +9,8 @@ namespace BusinessLogic.Services
 		Task<IEnumerable<string>> GetRoles(string userName);
 		Task<UserDto> FindByEmail(string email);
 		Task<UserDto> FindByUserName(string userName);
-	}
+		Task<UserDto> FindById(int id);
+        Task<string> GetRefreshToken(int userId);
+        Task SetRefreshToken(int userId, string token);
+    }
 }

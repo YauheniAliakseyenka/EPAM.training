@@ -4,8 +4,8 @@ using BusinessLogic.Tests.Unit.FakeRepositories;
 using BusinessLogic.Tests.Unit.FakeRepositories.Data;
 using DataAccess;
 using DataAccess.Entities;
+using Microsoft.EntityFrameworkCore.Storage;
 using Moq;
-using System.Data.Common;
 using System.Threading.Tasks;
 
 namespace BusinessLogic.Tests.Unit.DiContainer
@@ -24,7 +24,7 @@ namespace BusinessLogic.Tests.Unit.DiContainer
 
         private static Mock<IWorkUnit> GetUnit()
         {
-            var mockTransaction = new Mock<DbTransaction>();
+            var mockTransaction = new Mock<IDbContextTransaction>();
             mockTransaction.Setup(x => x.Commit()).Verifiable();
             mockTransaction.Setup(x => x.Rollback()).Verifiable();
 

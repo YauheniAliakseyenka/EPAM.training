@@ -6,6 +6,7 @@ using BusinessLogic.Tests.Unit.DiContainer;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -277,9 +278,11 @@ namespace BusinessLogin.Unit.Tests
 			//Arrange
 			var eventService = _container.Resolve<IEventService>();
             var isFiltered = true;
+			var culture = "en";
 
 			//Act
-			var events = await eventService.GetPublishedEvents(FilterEventOptions.Date, entity.Date.ToString());
+			var events = await eventService.GetPublishedEvents(FilterEventOptions.Date, 
+				entity.Date.ToString(CultureInfo.CreateSpecificCulture(culture)), culture);
 			events.ToList().ForEach(x =>
 			{
 				if (x.Event.Date.Date != entity.Date.Date)

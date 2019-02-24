@@ -74,9 +74,10 @@ namespace BusinessLogic.Services.UserServices
 			update.Firstname = entity.Firstname;
 			update.Culture = entity.Culture;
 			update.Timezone = entity.Timezone;
-			update.PasswordHash = entity.PasswordHash;
+			update.PasswordHash = string.IsNullOrEmpty(entity.PasswordHash) ? update.PasswordHash : entity.PasswordHash;
 			update.Amount = entity.Amount;
-			update.Email = entity.Email;
+			update.Email =string.IsNullOrEmpty(entity.Email) ? update.Email : entity.Email;
+			update.Salt = string.IsNullOrEmpty(entity.Salt) ? update.Salt : entity.Salt;
 			_context.UserRepository.Update(update);
 
 			await _context.SaveAsync();
@@ -94,7 +95,8 @@ namespace BusinessLogic.Services.UserServices
 				Email = from.Email,
 				Firstname = from.Firstname,
 				Id = from.Id,
-				PasswordHash = from.PasswordHash
+				PasswordHash = from.PasswordHash,
+				Salt = from.Salt
 			};
 		}
 
@@ -110,7 +112,8 @@ namespace BusinessLogic.Services.UserServices
 				Email = from.Email,
 				Firstname = from.Firstname,
 				Id = from.Id,
-				PasswordHash = from.PasswordHash
+				PasswordHash = from.PasswordHash,
+				Salt = from.Salt
 			};
 		}
 
@@ -188,5 +191,43 @@ namespace BusinessLogic.Services.UserServices
 
 			return Task.FromResult(result);
 		}
-	}
+
+		public async Task<UserDto> FindById(int id)
+		{
+			var user = await _context.UserRepository.GetAsync(id);
+
+			return MapToUserDto(user);
+		}
+
+        public async Task<string> GetRefreshToken(int userId)
+        {
+            var row = await _context.RefreshTokenRepository.GetAsync(userId);
+
+            return row?.Token;
+        }
+
+        public async Task SetRefreshToken(int userId, string token)
+        {
+            if (string.IsNullOrEmpty(token))
+                throw new ArgumentNullException();
+
+            var row = await _context.RefreshTokenRepository.GetAsync(userId);
+
+            if (row is null)
+            {
+                _context.RefreshTokenRepository.Create(new RefreshToken
+                {
+                    Token = token,
+                    UserId = userId
+                });
+                await _context.SaveAsync();
+
+                return;
+            }
+
+            row.Token = token;
+            _context.RefreshTokenRepository.Update(row);
+            await _context.SaveAsync();
+        }
+    }
 }

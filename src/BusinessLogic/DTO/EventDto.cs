@@ -1,16 +1,17 @@
 ﻿using System;
+using System.Runtime.Serialization;
 
 namespace BusinessLogic.DTO
 {
-	public class EventDto
+    public class EventDto
 	{
-		public int Id { get; set; }
-		public string Title { get; set; }
-		public string Description { get; set; }
-		public string ImageURL { get; set; }
-		public int LayoutId { get; set; }
-		public DateTime Date { get; set; }
-		public int CreatedBy { get; set; }
+        public int Id { get; set; }
+        public string Title { get; set; }
+        public string Description { get; set; }
+        public string ImageURL { get; set; }
+        public int LayoutId { get; set; }
+        public DateTime Date { get; set; }
+        public int CreatedBy { get; set; }
 
 		public override bool Equals(object obj)
 		{

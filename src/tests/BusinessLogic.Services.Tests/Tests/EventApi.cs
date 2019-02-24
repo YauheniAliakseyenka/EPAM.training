@@ -43,9 +43,9 @@
                 CreatedBy = 1
 			};
 
-			//Act
-			await eventService.Create(add);
-			insertedId = add.Id;
+            //Act
+            await eventService.Create(add);
+            insertedId = add.Id;
 			var insertedRow = await eventService.Get(insertedId);
 
             //Assert

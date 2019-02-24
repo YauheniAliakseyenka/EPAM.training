@@ -35,7 +35,7 @@ namespace BusinessLogic.Services.EventServices
 			var addEvent = MapToEventDAL(entity);
 			_context.EventRepository.Create(addEvent);
 			await _context.SaveAsync();
-			entity.Id = addEvent.Id;
+            entity.Id = addEvent.Id;
         }
 
 		public async Task Delete(int id)

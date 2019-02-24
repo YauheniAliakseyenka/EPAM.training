@@ -1,5 +1,6 @@
 ﻿using DataAccess.Entities;
 using DataAccess.Repositories;
+using Microsoft.EntityFrameworkCore.Storage;
 using System;
 using System.Data.Common;
 using System.Threading.Tasks;
@@ -22,9 +23,10 @@ namespace DataAccess
 		IRepository<UserRole> UserRoleRepository { get; }
 		IRepository<Area> AreaRepository { get; }
 		IRepository<Seat> SeatRepository { get; }
+        IRepository<RefreshToken> RefreshTokenRepository { get; }
 
-		void Save();
+        void Save();
 		Task<int> SaveAsync();
-		DbTransaction CreateTransaction();
+        IDbContextTransaction CreateTransaction();
 	}
 }

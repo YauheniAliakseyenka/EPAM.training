@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ReferenceGroup xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" ID="ff32270d-a4f8-4a6c-802d-b08919a21df9" xmlns="urn:schemas-microsoft-com:xml-wcfservicemap">
+  <ClientOptions>
+    <GenerateAsynchronousMethods>false</GenerateAsynchronousMethods>
+    <GenerateTaskBasedAsynchronousMethod>true</GenerateTaskBasedAsynchronousMethod>
+    <EnableDataBinding>true</EnableDataBinding>
+    <ExcludedTypes />
+    <ImportXmlTypes>false</ImportXmlTypes>
+    <GenerateInternalTypes>false</GenerateInternalTypes>
+    <GenerateMessageContracts>false</GenerateMessageContracts>
+    <NamespaceMappings />
+    <CollectionMappings />
+    <GenerateSerializableTypes>true</GenerateSerializableTypes>
+    <Serializer>Auto</Serializer>
+    <UseSerializerForFaults>true</UseSerializerForFaults>
+    <ReferenceAllAssemblies>true</ReferenceAllAssemblies>
+    <ReferencedAssemblies />
+    <ReferencedDataContractTypes />
+    <ServiceContractMappings />
+  </ClientOptions>
+  <MetadataSources>
+    <MetadataSource Address="http://localhost:59102/EventAreaService.svc" Protocol="http" SourceId="1" />
+  </MetadataSources>
+  <Metadata>
+    <MetadataFile FileName="WcfEventAreaService.wsdl" MetadataType="Wsdl" ID="efc7df4e-925f-4d3a-bacb-0f07f9809e5a" SourceId="1" SourceUrl="http://localhost:59102/EventAreaService.svc?wsdl" />
+    <MetadataFile FileName="EventAreaService.xsd" MetadataType="Schema" ID="2b4ba283-52be-4d59-80de-b079ae0490ff" SourceId="1" SourceUrl="http://localhost:59102/EventAreaService.svc?xsd=xsd0" />
+    <MetadataFile FileName="EventAreaService.disco" MetadataType="Disco" ID="ea008c0a-099f-43dd-8c4a-60d78b5c81b1" SourceId="1" SourceUrl="http://localhost:59102/EventAreaService.svc?disco" />
+    <MetadataFile FileName="EventAreaService1.xsd" MetadataType="Schema" ID="94f1f4b0-59f0-4c49-bb0e-a769a82d510f" SourceId="1" SourceUrl="http://localhost:59102/EventAreaService.svc?xsd=xsd3" />
+    <MetadataFile FileName="EventAreaService2.xsd" MetadataType="Schema" ID="17c3bfa9-877a-44dc-8be4-754083e81871" SourceId="1" SourceUrl="http://localhost:59102/EventAreaService.svc?xsd=xsd2" />
+    <MetadataFile FileName="EventAreaService3.xsd" MetadataType="Schema" ID="05fed4ea-d6f3-4001-bd25-0a3a6f5dc5a5" SourceId="1" SourceUrl="http://localhost:59102/EventAreaService.svc?xsd=xsd1" />
+  </Metadata>
+  <Extensions>
+    <ExtensionFile FileName="configuration91.svcinfo" Name="configuration91.svcinfo" />
+    <ExtensionFile FileName="configuration.svcinfo" Name="configuration.svcinfo" />
+  </Extensions>
+</ReferenceGroup>

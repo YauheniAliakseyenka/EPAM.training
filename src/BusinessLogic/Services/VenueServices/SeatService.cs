@@ -13,6 +13,8 @@ namespace BusinessLogic.Services
 	{
 		private IWorkUnit _context;
 
+		public bool IsValidatedToCreate { get; private set; }
+
 		public SeatService(IWorkUnit context)
 		{
 			_context = context;
@@ -28,7 +30,7 @@ namespace BusinessLogic.Services
 
 			if (!IsSeatUnique(entity, true))
 				throw new SeatException("Seat already exists");
-
+		
 			var seatAdd = MapToSeat(entity);
 			_context.SeatRepository.Create(seatAdd);
 			await _context.SaveAsync();
@@ -94,7 +96,6 @@ namespace BusinessLogic.Services
 			return new Seat
 			{
 				AreaId = from.AreaId,
-				Id = from.Id,
 				Number = from.Number,
 				Row = from.Number
 			};

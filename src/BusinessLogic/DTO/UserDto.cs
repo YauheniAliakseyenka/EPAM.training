@@ -7,6 +7,7 @@ namespace BusinessLogic.DTO
 		public int Id { get; set; }
 		public string UserName { get; set; }
 		public string PasswordHash { get; set; }
+		public string Salt { get; set; }
 		public string Email { get; set; }
 		public string Firstname { get; set; }
 		public string Surname { get; set; }
@@ -22,7 +23,8 @@ namespace BusinessLogic.DTO
 			if (Id == entity.Id &&
                 UserName.Equals(entity.UserName, StringComparison.Ordinal) &&
                 PasswordHash.Equals(entity.PasswordHash, StringComparison.Ordinal) &&
-                Email.Equals(entity.Email, StringComparison.Ordinal) &&
+				Salt.Equals(entity.Salt, StringComparison.Ordinal) &&
+				Email.Equals(entity.Email, StringComparison.Ordinal) &&
                 Firstname.Equals(entity.Firstname, StringComparison.OrdinalIgnoreCase) &&
                 Surname.Equals(entity.Surname, StringComparison.OrdinalIgnoreCase) &&
                 Culture.Equals(entity.Culture, StringComparison.OrdinalIgnoreCase) &&

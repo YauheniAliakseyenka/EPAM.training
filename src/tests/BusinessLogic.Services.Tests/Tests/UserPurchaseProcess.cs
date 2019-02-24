@@ -36,13 +36,14 @@ namespace BusinessLogic.Services.Tests
 				Culture = "en",
 				Email = "superb@mail.ru",
 				UserName = "vasia93",
-				Timezone = "UTC"
+				Timezone = "UTC",
+				Salt = "xLBI76AP9qJhPKKsE4Z="
 			};
 
 			//Assert
 			Assert.Multiple(async () =>
 			{
-				Assert.DoesNotThrowAsync(async () => await userService.Create(_user));
+				Assert.DoesNotThrowAsync(async () =>  await userService.Create(_user));
 				Assert.IsNotNull(await  userService.Get(_user.Id));
 			});
 		}

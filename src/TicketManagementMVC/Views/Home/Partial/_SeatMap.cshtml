@@ -1,5 +1,4 @@
-﻿@using BusinessLogic.Services;
-@model BusinessLogic.BusinessModels.EventModel
+﻿@model EventModel
 @{
     var currentAreaRow = Model.Areas.Any() ? Model.Areas.First().CoordY : 0;
     int i = 0;
@@ -9,7 +8,7 @@
 
 <div>
     <!--draw area-->
-    @while (i < Model.Areas.Count)
+    @while (i < Model.Areas.Count())
     {
         if (Model.Areas[i].CoordY == currentAreaRow)
         {
@@ -18,11 +17,11 @@
             int j = 0;
     <div class="area border">
         <div class="float-left row-counter">@seatRow</div>
-        @while (j < Model.Areas[i].Seats.Count)
+        @while (j < Model.Areas[i].Seats.Count())
         {
             if (Model.Areas[i].Seats[j].Row == seatRow)
             {
-                if (Model.Areas[i].Seats[j].State.Equals(SeatState.Available))
+                if (Model.Areas[i].Seats[j].State.Equals(TicketManagementMVC.EventService.SeatState.Available))
                 {
                     if (User.Identity.IsAuthenticated)
                     {
@@ -46,9 +45,9 @@
                     string cssClasses = string.Empty;
                     switch(Model.Areas[i].Seats[j].State)
                     {
-                        case SeatState.Ordered:
+                        case TicketManagementMVC.EventService.SeatState.Ordered:
                             cssClasses = "seat-seatmap seat-unavailable seat-ordered"; break;
-                        case SeatState.Purchased:
+                        case TicketManagementMVC.EventService.SeatState.Purchased:
                             cssClasses = "seat-seatmap seat-unavailable seat-purchased"; break;
                     }
 

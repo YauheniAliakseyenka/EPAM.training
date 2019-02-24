@@ -3,8 +3,8 @@
 	@Description NVARCHAR(MAX),
 	@ImageURL NVARCHAR(MAX),
 	@LayoutId INT,
-	@Date DATETIMEOFFSET(7),
-	@CreatedBy NVARCHAR(128),
+	@Date DATETIME,
+	@CreatedBy INT,
 	@Id INT
 AS
 BEGIN

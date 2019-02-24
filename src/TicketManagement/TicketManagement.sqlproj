@@ -76,7 +76,6 @@
     <Build Include="ForeignKeys\FK_Area_EventSeat.sql" />
     <Build Include="StoredProcedures\Event\UpdateEvent.sql" />
     <Build Include="StoredProcedures\Event\AddEvent.sql" />
-    <Build Include="StoredProcedures\Event\DeleteEvent.sql" />
     <Build Include="Tables\User.sql" />
     <Build Include="Tables\Role.sql" />
     <Build Include="Tables\UserRole.sql" />
@@ -84,6 +83,7 @@
     <Build Include="Tables\PurchasedSeat.sql" />
     <Build Include="Tables\Cart.sql" />
     <Build Include="Tables\OrderedSeat.sql" />
+    <Build Include="Tables\RefreshToken.sql" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="Tables\Event.sql" />

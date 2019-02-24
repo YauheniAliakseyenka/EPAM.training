@@ -1,14 +1,18 @@
 ﻿using Autofac;
 using Autofac.Integration.Mvc;
-using BusinessLogic.DiContainer;
-using Hangfire;
-using Microsoft.AspNet.Identity;
-using System.Configuration;
 using System.Reflection;
+using System.ServiceModel;
 using System.Web.Mvc;
 using TicketManagementMVC.Infrastructure.Authentication;
-using TicketManagementMVC.Infrastructure.WebServices.Interfaces;
-using TicketManagementMVC.Infrastructure.WebServices.Servcies;
+using TicketManagementMVC.EventService;
+using System.Linq;
+using Autofac.Integration.Wcf;
+using System.ServiceModel.Description;
+using TicketManagementMVC.PurchaseService;
+using TicketManagementMVC.EventAreaService;
+using TicketManagementMVC.VenueService;
+using TicketManagementMVC.LayoutService;
+using System;
 
 namespace TicketManagementMVC.App_Start
 {
@@ -18,22 +22,66 @@ namespace TicketManagementMVC.App_Start
 		{
 			var builder = new ContainerBuilder();
 			builder.RegisterControllers(Assembly.GetExecutingAssembly());
+			
+			builder.RegisterType<CustomUserManager>().AsSelf().InstancePerLifetimeScope();
 
-			builder.RegisterType<UserStore>().As<IUserStore<User, int>>().InstancePerLifetimeScope();
-			builder.RegisterType<ApplicationUserManager>().AsSelf().InstancePerLifetimeScope();
-			builder.RegisterType<SeatLocker>().As<ISeatLocker>().InstancePerLifetimeScope();
-			builder.RegisterType<EmailService>().As<IEmailService>().InstancePerLifetimeScope();
+			var wcfServicesCredentials = AuthSettings.Settings.Credentials["WcfServices"];
 
-			builder.RegisterModule(new WebModule()
-            {
-                ConnectionString = ConfigurationManager.ConnectionStrings["ConnectionString"].ConnectionString
-            });			
+			if (wcfServicesCredentials == null)
+				throw new NullReferenceException();
+
+			builder.Register(x => new ChannelFactory<IWcfEventService>("WSHttpBinding_IWcfEventService")).SingleInstance();
+			builder.Register(x =>
+			{
+				var factory = x.Resolve<ChannelFactory<IWcfEventService>>();
+				var clientCredentials = (ClientCredentials)factory.Endpoint.EndpointBehaviors.SingleOrDefault(y => y.GetType() == typeof(ClientCredentials));
+				clientCredentials.UserName.UserName = wcfServicesCredentials.Username;
+				clientCredentials.UserName.Password = wcfServicesCredentials.Password;
+				return factory.CreateChannel();
+			}).As<IWcfEventService>().UseWcfSafeRelease();
+
+			builder.Register(x => new ChannelFactory<IWcfPurchaseService>("WSHttpBinding_IWcfPurchaseService")).SingleInstance();
+			builder.Register(x =>
+			{
+				var factory = x.Resolve<ChannelFactory<IWcfPurchaseService>>();
+				var clientCredentials = (ClientCredentials)factory.Endpoint.EndpointBehaviors.SingleOrDefault(y => y.GetType() == typeof(ClientCredentials));
+				clientCredentials.UserName.UserName = wcfServicesCredentials.Username;
+				clientCredentials.UserName.Password = wcfServicesCredentials.Password;
+				return factory.CreateChannel();
+			}).As<IWcfPurchaseService>().UseWcfSafeRelease();
+
+			builder.Register(x => new ChannelFactory<IWcfEventAreaService>("WSHttpBinding_IWcfEventAreaService")).SingleInstance();
+			builder.Register(x =>
+			{
+				var factory = x.Resolve<ChannelFactory<IWcfEventAreaService>>();
+				var clientCredentials = (ClientCredentials)factory.Endpoint.EndpointBehaviors.SingleOrDefault(y => y.GetType() == typeof(ClientCredentials));
+				clientCredentials.UserName.UserName = wcfServicesCredentials.Username;
+				clientCredentials.UserName.Password = wcfServicesCredentials.Password;
+				return factory.CreateChannel();
+			}).As<IWcfEventAreaService>().UseWcfSafeRelease();
+
+			builder.Register(x => new ChannelFactory<IWcfVenueService>("WSHttpBinding_IWcfVenueService")).SingleInstance();
+			builder.Register(x =>
+			{
+				var factory = x.Resolve<ChannelFactory<IWcfVenueService>>();
+				var clientCredentials = (ClientCredentials)factory.Endpoint.EndpointBehaviors.SingleOrDefault(y => y.GetType() == typeof(ClientCredentials));
+				clientCredentials.UserName.UserName = wcfServicesCredentials.Username;
+				clientCredentials.UserName.Password = wcfServicesCredentials.Password;
+				return factory.CreateChannel();
+			}).As<IWcfVenueService>().UseWcfSafeRelease();
+
+			builder.Register(x => new ChannelFactory<IWcfLayoutService>("WSHttpBinding_IWcfLayoutService")).SingleInstance();
+			builder.Register(x =>
+			{
+				var factory = x.Resolve<ChannelFactory<IWcfLayoutService>>();
+				var clientCredentials = (ClientCredentials)factory.Endpoint.EndpointBehaviors.SingleOrDefault(y => y.GetType() == typeof(ClientCredentials));
+				clientCredentials.UserName.UserName = wcfServicesCredentials.Username;
+				clientCredentials.UserName.Password = wcfServicesCredentials.Password;
+				return factory.CreateChannel();
+			}).As<IWcfLayoutService>().UseWcfSafeRelease();
 
 			var container = builder.Build();			
 			DependencyResolver.SetResolver(new AutofacDependencyResolver(container));
-
-			//set hangfire resolver
-			GlobalConfiguration.Configuration.UseAutofacActivator(container, true);
 		}
 	}
 }

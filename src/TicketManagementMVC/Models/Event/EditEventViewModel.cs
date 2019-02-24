@@ -1,6 +1,6 @@
-﻿using BusinessLogic.DTO;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using TicketManagementMVC.EventService;
 
 namespace TicketManagementMVC.Models.Event
 {
@@ -8,6 +8,6 @@ namespace TicketManagementMVC.Models.Event
     {
 		[Required]
         public EventViewModel Event { get; set; }
-        public List<EventAreaDto> EventAreas { get; set; }
+        public List<EventArea> EventAreas { get; set; }
     }
 }

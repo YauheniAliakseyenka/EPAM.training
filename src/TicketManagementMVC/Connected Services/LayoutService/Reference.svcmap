@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ReferenceGroup xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" ID="4fb45abd-3565-43a1-811d-493c4202ab38" xmlns="urn:schemas-microsoft-com:xml-wcfservicemap">
+  <ClientOptions>
+    <GenerateAsynchronousMethods>false</GenerateAsynchronousMethods>
+    <GenerateTaskBasedAsynchronousMethod>true</GenerateTaskBasedAsynchronousMethod>
+    <EnableDataBinding>true</EnableDataBinding>
+    <ExcludedTypes />
+    <ImportXmlTypes>false</ImportXmlTypes>
+    <GenerateInternalTypes>false</GenerateInternalTypes>
+    <GenerateMessageContracts>false</GenerateMessageContracts>
+    <NamespaceMappings />
+    <CollectionMappings />
+    <GenerateSerializableTypes>true</GenerateSerializableTypes>
+    <Serializer>Auto</Serializer>
+    <UseSerializerForFaults>true</UseSerializerForFaults>
+    <ReferenceAllAssemblies>true</ReferenceAllAssemblies>
+    <ReferencedAssemblies />
+    <ReferencedDataContractTypes />
+    <ServiceContractMappings />
+  </ClientOptions>
+  <MetadataSources>
+    <MetadataSource Address="http://localhost:59102/LayoutService.svc" Protocol="http" SourceId="1" />
+  </MetadataSources>
+  <Metadata>
+    <MetadataFile FileName="LayoutService.disco" MetadataType="Disco" ID="05bce56d-b8ae-47cd-b010-8feb38e6b87e" SourceId="1" SourceUrl="http://localhost:59102/LayoutService.svc?disco" />
+    <MetadataFile FileName="LayoutService.xsd" MetadataType="Schema" ID="62714d47-5c2e-4d9c-a590-39f63b1c9698" SourceId="1" SourceUrl="http://localhost:59102/LayoutService.svc?xsd=xsd1" />
+    <MetadataFile FileName="LayoutService1.xsd" MetadataType="Schema" ID="0fc4858a-40ec-4286-9501-e719320c3757" SourceId="1" SourceUrl="http://localhost:59102/LayoutService.svc?xsd=xsd0" />
+    <MetadataFile FileName="LayoutService2.xsd" MetadataType="Schema" ID="0da3b56c-84a8-4009-be21-3f82da1a1762" SourceId="1" SourceUrl="http://localhost:59102/LayoutService.svc?xsd=xsd3" />
+    <MetadataFile FileName="LayoutService3.xsd" MetadataType="Schema" ID="b6c2f918-5c9a-441e-84a3-f23a0325d88a" SourceId="1" SourceUrl="http://localhost:59102/LayoutService.svc?xsd=xsd2" />
+    <MetadataFile FileName="WcfLayoutService.wsdl" MetadataType="Wsdl" ID="4b71225c-4a32-4090-b4bf-b497a1988cb8" SourceId="1" SourceUrl="http://localhost:59102/LayoutService.svc?wsdl" />
+  </Metadata>
+  <Extensions>
+    <ExtensionFile FileName="configuration91.svcinfo" Name="configuration91.svcinfo" />
+    <ExtensionFile FileName="configuration.svcinfo" Name="configuration.svcinfo" />
+  </Extensions>
+</ReferenceGroup>

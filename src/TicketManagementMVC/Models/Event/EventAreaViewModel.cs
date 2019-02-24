@@ -1,6 +1,6 @@
-﻿using BusinessLogic.DTO;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using TicketManagementMVC.EventAreaService;
 using TicketManagementMVC.Infrastructure.Attributes;
 
 namespace TicketManagementMVC.Models.Event
@@ -30,6 +30,6 @@ namespace TicketManagementMVC.Models.Event
 		public decimal Price { get; set; }
 
 		[Required(ErrorMessageResourceName = "SeatValdiatation", ErrorMessageResourceType = typeof(ProjectResources.ResourceErrors))]
-		public List<EventSeatDto> SeatList { get; set; }
+		public List<EventSeat> SeatList { get; set; }
 	}
 }

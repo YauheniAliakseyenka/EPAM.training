@@ -1,5 +1,4 @@
 ﻿@using System.Globalization;
-@using BusinessLogic.Services;
 @model TicketManagementMVC.Models.Event.EditEventViewModel
 <script>
     //set  culture
@@ -83,12 +82,12 @@
     <tbody>
         @foreach (var area in Model.EventAreas)
         {
-            var puchasedSeatCount = area.Seats.Where(x => !x.State.Equals(SeatState.Available)).ToList();
+            var puchasedSeatCount = area.Seats.Where(x => !x.State.Equals(TicketManagementMVC.EventService.SeatState.Available)).ToList();
             <tr id=@area.Id>
                 <th scope="row" class="pt-3">@area.Description</th>
                 <td class="pt-3">@area.CoordX - @area.CoordY</td>
                 <td class="pt-3">@string.Format("${0:N2}", area.Price)</td>
-                <td class="pt-3">@puchasedSeatCount.Count/@area.Seats.Count</td>
+                <td class="pt-3">@puchasedSeatCount.Count()/@area.Seats.Count()</td>
                 <td><input type="button" value="@EventResource.Edit" onclick="GetAreaToEdit('@area.Id')" class="btn btn-primary" /></td>
                 @if (puchasedSeatCount.Any())
                 {

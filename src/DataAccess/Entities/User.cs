@@ -13,6 +13,8 @@ namespace DataAccess.Entities
 		public string UserName { get; set; }
 		[Column(name: "PasswordHash")]
 		public string PasswordHash { get; set; }
+		[Column(name: "Salt")]
+		public string Salt { get; set; }
 		[Column(name: "Email")]
 		public string Email { get; set; }
 		[Column(name: "Firstname")]

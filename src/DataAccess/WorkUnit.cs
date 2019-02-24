@@ -1,8 +1,11 @@
 ﻿using System;
+using System.Data;
 using System.Data.Common;
 using System.Threading.Tasks;
 using DataAccess.Entities;
 using DataAccess.Repositories;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 
 namespace DataAccess
 {
@@ -22,8 +25,10 @@ namespace DataAccess
 		public IRepository<UserRole> UserRoleRepository { get; private set; }
 		public IRepository<Area> AreaRepository { get; private set; }
 		public IRepository<Seat> SeatRepository { get; private set; }
+        public IRepository<RefreshToken> RefreshTokenRepository { get; private set; }
 
-		private readonly DataContext _context;
+
+        private readonly DataContext _context;
 		private bool disposed = false;
 
 		public WorkUnit(string connectionString)
@@ -43,11 +48,12 @@ namespace DataAccess
 			UserRoleRepository = new Repository<UserRole>(_context);
 			AreaRepository = new Repository<Area>(_context);
 			SeatRepository = new Repository<Seat>(_context);
+            RefreshTokenRepository = new Repository<RefreshToken>(_context);
 		}
 
-		public DbTransaction CreateTransaction()
+		public IDbContextTransaction CreateTransaction()
 		{
-			return _context.Database.BeginTransaction().UnderlyingTransaction;
+			return _context.Database.BeginTransaction();
 		}
 
 		public void Save()

@@ -20,6 +20,7 @@ namespace BusinessLogic.Tests.Unit.FakeRepositories
 		public void Create(T entity)
 		{
 			_store.Add(entity);
+			IncrementId(entity);
 		}
 
 		public void Delete(T entity)
@@ -34,12 +35,12 @@ namespace BusinessLogic.Tests.Unit.FakeRepositories
 
 		public T Get(params object[] keys)
 		{
-			return getEntityByKeys(keys);
+			return GetEntityByKeys(keys);
 		}
 
 		public Task<T> GetAsync(params object[] keys)
 		{
-			return Task.FromResult(getEntityByKeys(keys));
+			return Task.FromResult(GetEntityByKeys(keys));
 		}
 
 		public IQueryable<T> GetList()
@@ -58,7 +59,7 @@ namespace BusinessLogic.Tests.Unit.FakeRepositories
 			return;
 		}
 
-		private T getEntityByKeys(params object[] keys)
+		private T GetEntityByKeys(params object[] keys)
 		{
 			if (keys == null)
 				return null;
@@ -86,6 +87,29 @@ namespace BusinessLogic.Tests.Unit.FakeRepositories
 
 				return isFound;
 			});
+		}
+
+		private void IncrementId(T entity)
+		{
+			var property = typeof(T).GetProperties().FirstOrDefault(x =>
+			{
+				var attribute = x.GetCustomAttributes(false).SingleOrDefault(y => y.GetType() == typeof(KeyAttribute));
+
+				if (attribute is null)
+					return false;
+
+				attribute = x.GetCustomAttributes(false).SingleOrDefault(y => y.GetType() == typeof(DatabaseGeneratedAttribute));
+
+				if (attribute is null)
+					return true;
+
+				var attributeDatabaseGenerated = attribute as DatabaseGeneratedAttribute;
+				if (attributeDatabaseGenerated.DatabaseGeneratedOption != DatabaseGeneratedOption.None)
+					return true;
+
+				return false;
+			});
+			property?.SetValue(entity, _store.Count + 1);
 		}
 	}
 }

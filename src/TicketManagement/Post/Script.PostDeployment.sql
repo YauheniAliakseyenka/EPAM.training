@@ -65,7 +65,7 @@ VALUES ('User'),
 
 --- event_manager (password: 1231231231)
 INSERT INTO dbo.[User]
-VALUES ('event_manager', 'AFm5ad5jz9VOpSkL6yUgSX8oVYZgzebM4oiK7s4jWKdADiGQv0l50xlZoAk1CG16hg==', 'manager@gmail.com', 'John', 'Smith', 'en', 'UTC', 250.25)
+VALUES ('event_manager', '0bEbr5YEmzY0tEy9afFbmHTlBNFkiRGHVF8Odx0XtOjRHV8vr20A7PsJJruF4IZnzXidZ/AyTZjBca64eTCUKWR7NF/xDbPj9wWkVSC/npCDPuRIF02uWZM2hJj2WlYMmadwNaqlU1DziSftHwg19R2n52xYTPnW5P9c61yHJ7A=', 'manager@gmail.com', 'John', 'Smith', 'en', 'UTC', 250.25, '5EN5eJkBir0MoB2fDbWkOOBSAJRmpt7wOrQH72+6jL5pxqIIdyWgCTTsDHcDcXpeRG2uUDgPJD/0XNxicUdJ1A==')
 
 --- User roles for event manager
 INSERT INTO dbo.[UserRole]
@@ -73,8 +73,9 @@ VALUES (1, 1),
 (1, 2)
 
 --- Event
+EXEC AddEvent 'Parsifal', 'The highpoint of Andris Nelsons’ final season as the CBSO’s music director – a concert performance of Wagner’s final music drama of almost alarming maturity','http://localhost:61963/Content/images/default.jpg', 3, '12/8/2022 12:00', 1
 EXEC AddEvent 'Parsifal', 'The highpoint of Andris Nelsons’ final season as the CBSO’s music director – a concert performance of Wagner’s final music drama of almost alarming maturity','http://localhost:61963/Content/images/default.jpg', 1, '12/8/2022 12:00', 1
-UPDATE EventArea SET Price = '15.25'
+UPDATE EventArea SET Price = '10.25'
 
 
 

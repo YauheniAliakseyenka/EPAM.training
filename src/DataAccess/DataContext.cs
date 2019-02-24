@@ -1,14 +1,18 @@
-﻿using System.Data.Entity;
-using DataAccess.Entities;
-using System.Data.Entity.ModelConfiguration.Conventions;
+﻿using DataAccess.Entities;
+using Microsoft.EntityFrameworkCore;
+using System;
+using System.Data;
+using System.Data.SqlClient;
 
 namespace DataAccess
 {
     internal class DataContext : DbContext
     {
-        public DataContext(string connectionStringName): base(connectionStringName)
+        private readonly string _connectionString;
+
+        public DataContext(string connectionString)
         {
-            Database.SetInitializer<DataContext>(null);
+            _connectionString = connectionString;
         }
 
         public DbSet<Area> Areas { get; set; }
@@ -25,31 +29,62 @@ namespace DataAccess
         public DbSet<PurchasedSeat> PurchasedSeats { get; set; }
         public DbSet<Cart> Carts { get; set; }
         public DbSet<OrderedSeat> OrderedSeats { get; set; }
+        public DbSet<RefreshToken> RefreshTokens { get; set; }
 
-        protected override void OnModelCreating(DbModelBuilder modelBuilder)
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Conventions.Remove<PluralizingTableNameConvention>();
+            modelBuilder.Entity<UserRole>()
+                .HasKey(x => new { x.UserId, x.RoleId});
+        }
 
-            //setting of stored procedures for event
-            modelBuilder.Entity<Event>().
-                MapToStoredProcedures(x=>
-                x.Insert(sp=>sp.HasName("AddEvent")
-                    .Parameter(p=>p.Title, "Title")
-                    .Parameter(p=>p.LayoutId, "LayoutId")
-                    .Parameter(p => p.Description, "Description")
-					.Parameter(p=>p.ImageURL, "ImageURL")
-                    .Parameter(p => p.Date, "Date")
-					.Parameter(p=>p.CreatedBy, "CreatedBy"))
-               .Delete(sp=>sp.HasName("DeleteEvent")
-                    .Parameter(p=>p.Id,"Id"))
-               .Update(sp=>sp.HasName("UpdateEvent")
-                    .Parameter(p=>p.Title, "Title")
-                    .Parameter(p => p.LayoutId, "LayoutId")
-                    .Parameter(p => p.Description, "Description")
-					.Parameter(p => p.ImageURL, "ImageURL")
-					.Parameter(p => p.Date, "Date")
-					.Parameter(p=>p.CreatedBy, "CreatedBy")
-                    .Parameter(p=>p.Id, "Id")));
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            if (!optionsBuilder.IsConfigured)
+                optionsBuilder.UseSqlServer(_connectionString);
+        }
+
+		public bool CreateEventStorePtocedure(object entity)
+		{
+			if (entity is Event eventEntity)
+			{
+				var output = new SqlParameter("@result", SqlDbType.Int) { Direction = ParameterDirection.Output };
+				this.Database.ExecuteSqlCommand("EXEC AddEvent {0}, {1}, {2}, {3}, {4}, {5}, {6} OUTPUT",
+					eventEntity.Title,
+					eventEntity.Description,
+					eventEntity.ImageURL,
+					eventEntity.LayoutId,
+					eventEntity.Date,
+					eventEntity.CreatedBy,
+					output);
+				int id;
+				if (int.TryParse(output.Value.ToString(), out id))
+					eventEntity.Id = id;
+				else
+					throw new Exception("Add event result type exception");
+
+				return true;
+			}
+
+			return false;
 		}
-    }
+
+		public bool UpdateEventStorePtocedure(object entity)
+		{
+			if (entity is Event eventEntity)
+			{
+				this.Database.ExecuteSqlCommand("EXEC UpdateEvent {0}, {1}, {2}, {3}, {4}, {5}, {6}",
+					eventEntity.Title, 
+					eventEntity.Description, 
+					eventEntity.ImageURL, 
+					eventEntity.LayoutId, 
+					eventEntity.Date, 
+					eventEntity.CreatedBy, 
+					eventEntity.Id);
+
+				return true;
+			}
+
+			return false;
+		}
+	}
 }

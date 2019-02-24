@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:tns="http://schemas.datacontract.org/2004/07/WcfBusinessLogic.Core.Contracts.Data.BusinessModels" elementFormDefault="qualified" targetNamespace="http://schemas.datacontract.org/2004/07/WcfBusinessLogic.Core.Contracts.Data.BusinessModels" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:import schemaLocation="http://localhost:59102/PurchaseService.svc?xsd=xsd4" namespace="http://schemas.datacontract.org/2004/07/WcfBusinessLogic.Core.Contracts.Data" />
+  <xs:complexType name="ArrayOfSeatModel">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="SeatModel" nillable="true" type="tns:SeatModel" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfSeatModel" nillable="true" type="tns:ArrayOfSeatModel" />
+  <xs:complexType name="SeatModel">
+    <xs:sequence>
+      <xs:element xmlns:q1="http://schemas.datacontract.org/2004/07/WcfBusinessLogic.Core.Contracts.Data" minOccurs="0" name="Area" nillable="true" type="q1:EventArea" />
+      <xs:element xmlns:q2="http://schemas.datacontract.org/2004/07/WcfBusinessLogic.Core.Contracts.Data" minOccurs="0" name="Event" nillable="true" type="q2:Event" />
+      <xs:element xmlns:q3="http://schemas.datacontract.org/2004/07/WcfBusinessLogic.Core.Contracts.Data" minOccurs="0" name="Layout" nillable="true" type="q3:Layout" />
+      <xs:element xmlns:q4="http://schemas.datacontract.org/2004/07/WcfBusinessLogic.Core.Contracts.Data" minOccurs="0" name="Seat" nillable="true" type="q4:EventSeat" />
+      <xs:element xmlns:q5="http://schemas.datacontract.org/2004/07/WcfBusinessLogic.Core.Contracts.Data" minOccurs="0" name="Venue" nillable="true" type="q5:Venue" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="SeatModel" nillable="true" type="tns:SeatModel" />
+  <xs:complexType name="ArrayOfOrderModel">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="OrderModel" nillable="true" type="tns:OrderModel" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfOrderModel" nillable="true" type="tns:ArrayOfOrderModel" />
+  <xs:complexType name="OrderModel">
+    <xs:sequence>
+      <xs:element xmlns:q6="http://schemas.datacontract.org/2004/07/WcfBusinessLogic.Core.Contracts.Data" minOccurs="0" name="Order" nillable="true" type="q6:Order" />
+      <xs:element minOccurs="0" name="PurchasedSeats" nillable="true" type="tns:ArrayOfSeatModel" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="OrderModel" nillable="true" type="tns:OrderModel" />
+</xs:schema>
