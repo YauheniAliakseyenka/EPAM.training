@@ -73,8 +73,8 @@ VALUES (1, 1),
 (1, 2)
 
 --- Event
-EXEC AddEvent 'Parsifal', 'The highpoint of Andris Nelsons’ final season as the CBSO’s music director – a concert performance of Wagner’s final music drama of almost alarming maturity','http://localhost:61963/Content/images/default.jpg', 3, '12/8/2022 12:00', 1
 EXEC AddEvent 'Parsifal', 'The highpoint of Andris Nelsons’ final season as the CBSO’s music director – a concert performance of Wagner’s final music drama of almost alarming maturity','http://localhost:61963/Content/images/default.jpg', 1, '12/8/2022 12:00', 1
+EXEC AddEvent 'Parsifal', 'The highpoint of Andris Nelsons’ final season as the CBSO’s music director – a concert performance of Wagner’s final music drama of almost alarming maturity','http://localhost:61963/Content/images/default.jpg', 3, '12/8/2020 11:00', 1
 UPDATE EventArea SET Price = '10.25'
 
 
