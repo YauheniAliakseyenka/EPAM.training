@@ -19,7 +19,7 @@
 2. Set up connection string to the database
 3. Set up special pickup directory in Web.config to keep into it emails
 4. Set up email credentials and post server settings in Web.config
-5. Install server certificate (password: "epam")
+5. Install server certificate **(password: "epam")**
    - Install it to a local machine of the Trusted Root Certificate store  
    - Add access right for a host server to a private key
 
