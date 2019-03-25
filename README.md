@@ -1,25 +1,19 @@
 ## Table of Contents
 * [User web api project](#user-web-api-project)
-  * [Running User.WebApi](#user-web-api-project)
 * [WCF web project](#wcf-web-project)
-  * [Running WcfWebHost](#running-wcfwebhost)
 * [Client MVC project](#client-mvc-project)
-  * [Running TicketManagementMVC](#running-ticketmanagementmvc)
 * [Client WPF project](#client-wpf-project)
-  * [Running TicketManagementWPF](#running-ticketmanagementwpf)
 * [Integration tests](#integration-tests)
-  * [Running integration tests](#running-integration-tests)
 * [Automated tests](#automated-tests)
-  * [Running AutomatedTests](#running-automatedtests)
 
-## User RESTful web api project
-### Running User.WebApi
+## User web api project
+### Running
 
 1. Publish TicketManagement database (if it isn't done)
 2. Set up connection string to the database
 
 ## WCF web project
-### Running WcfWebHost
+### Running
 
 1. Publish TicketManagement database (if it isn't done)
 2. Set up connection string to the database
@@ -30,25 +24,25 @@
    - Add access right for a host server to a private key
 
 ## Client MVC project
-### Running TicketManagementMVC
+### Running
 
 1. Make sure that wcf server and user web api server are running
 2. Set up user web api host url in Web.config
 3. Make sure that wcf endpoint address ports in Web.config and Wcf Web Host  port are same
 
 ## Client WPF project
-### Running TicketManagementWPF
+### Running
 
 1. Make sure that wcf server and user web api server are running
 2. Set up user web api host url in Web.config
 
 ## Integration tests
-### Running integration tests
+### Running
 
 1. Build TicketManagement database. *dacpac file is being copied automatically to a needed directory or do it  manually to a directory (ProjectFolder)\src\tests\BusinessLogic.Services.Tests
 2. Set up connection string to a database in App.config
 
 ## Automated tests
-### Running AutomatedTests
+### Running
 
 1. Set up user mvc host url in App.config
