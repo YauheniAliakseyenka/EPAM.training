@@ -20,8 +20,7 @@
 2. Set up connection string to the database
 
 ## WCF web project
-
-## Running WcfWebHost
+### Running WcfWebHost
 
 1. Publish TicketManagement database (if it isn't done)
 2. Set up connection string to the database
