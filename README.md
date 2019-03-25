@@ -23,24 +23,20 @@
 
 ## Client MVC project
 ### Running
-
 1. Make sure that wcf server and user web api server are running
 2. Set up user web api host url in Web.config
 3. Make sure that wcf endpoint address ports in Web.config and Wcf Web Host  port are same
 
 ## Client WPF project
 ### Running
-
 1. Make sure that wcf server and user web api server are running
 2. Set up user web api host url in Web.config
 
 ## Integration tests
 ### Running
-
 1. Build TicketManagement database. *dacpac file is being copied automatically to a needed directory or do it  manually to a directory (ProjectFolder)\src\tests\BusinessLogic.Services.Tests
 2. Set up connection string to a database in App.config
 
 ## Automated tests
 ### Running
-
 1. Set up user mvc host url in App.config
