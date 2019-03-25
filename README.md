@@ -17,7 +17,7 @@
 ### Running User.WebApi
 
 1. Publish TicketManagement database (if it isn't done)
-```sh
+
 2. Set up connection string to the database
 
 ## WCF web project
