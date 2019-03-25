@@ -8,7 +8,7 @@
 * [Client WPF project](#client-wpf-project)
   * [Running TicketManagementWPF](#running-ticketmanagementwpf)
 * [Integration tests](#integration-tests)
-  * [Running BusinessLogic](#running-integration-tests)
+  * [Running BusinessLogic.Tests.Unit](#running-businessLogic.tests.unit)
 * [Automated tests](#automated-tests)
   * [Running AutomatedTests](#running-automated-tests)
 
