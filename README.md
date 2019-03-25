@@ -1,6 +1,6 @@
 ## Table of Contents
 * [User web api project](#user-web-api-project)
-  * [Running User.WebApi](#running-webApi)
+  * [Running User.WebApi]
 * [WCF web project](#wcf-web-project)
   * [Running WcfWebHost](#running-wcfwebhost)
 * [Client MVC project](#client-mvc-project)
