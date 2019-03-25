@@ -21,7 +21,7 @@
 4. Set up email credentials and post server settings in Web.config
 5. Install server certificate **(password: "epam")**
    - Install it to a local machine of the Trusted Root Certificate store  
-   - Add access rights for a host server to a private key
+   - Give an access for a host server to a private key
 
 ## Client MVC project
 ### Running
