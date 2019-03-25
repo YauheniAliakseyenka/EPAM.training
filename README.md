@@ -8,13 +8,11 @@
 
 ## User web api project
 ### Running
-
 1. Publish TicketManagement database (if it isn't done)
 2. Set up connection string to the database
 
 ## WCF web project
 ### Running
-
 1. Publish TicketManagement database (if it isn't done)
 2. Set up connection string to the database
 3. Set up special pickup directory in Web.config to keep into it emails
