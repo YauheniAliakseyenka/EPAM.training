@@ -10,7 +10,7 @@
 * [Integration tests](#integration-tests)
   * [Running BusinessLogic.Tests.Unit](#running-businesslogic.tests.unit)
 * [Automated tests](#automated-tests)
-  * [Running AutomatedTests](#running-automated-tests)
+  * [Running AutomatedTests](#running-automatedtests)
 
 ## User RESTful web api project
 ### Running User.WebApi
