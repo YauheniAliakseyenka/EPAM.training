@@ -14,14 +14,14 @@
 
 ## User RESTful web api project
 
-## Running User.WebApi
+### Running User.WebApi
 
 1. Publish TicketManagement database (if it isn't done)
 2. Set up connection string to the database
 
 ## WCF web project
 
-### Running WcfWebHost
+## Running WcfWebHost
 
 1. Publish TicketManagement database (if it isn't done)
 2. Set up connection string to the database
