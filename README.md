@@ -8,7 +8,7 @@
 * [Client WPF project](#client-wpf-project)
   * [Running TicketManagementWPF](#running-ticketmanagementwpf)
 * [Integration tests](#integration-tests)
-  * [Running BusinessLogic.Services.Tests](#running-integration-tests)
+  * [Running BusinessLogic](#running-integration-tests)
 * [Automated tests](#automated-tests)
   * [Running AutomatedTests](#running-automated-tests)
 
@@ -43,7 +43,7 @@
 2. Set up user web api host url in Web.config
 
 ## Integration tests
-### Running BusinessLogic.Services.Tests
+### Running BusinessLogic
 
 1. Build TicketManagement database. *dacpac file is being copied automatically to a needed directory or do it  manually to a directory (ProjectFolder)\src\tests\BusinessLogic.Services.Tests
 2. Set up connection string to a database in App.config
