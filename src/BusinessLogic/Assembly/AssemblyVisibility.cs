@@ -5,3 +5,4 @@
 [assembly: InternalsVisibleTo("BusinessLogic.Services.Tests")]
 [assembly: InternalsVisibleTo("BusinessLogic.Tests.Unit")]
 [assembly: InternalsVisibleTo("WcfBusinessLogic.Core")]
+[assembly: InternalsVisibleTo("TicketManagementWPF")]

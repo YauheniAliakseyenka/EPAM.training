@@ -18,7 +18,7 @@ namespace WcfBusinessLogic.Core.Contracts.Data
         public string Phone { get; set; }
         [DataMember]
         public string Timezone { get; set; }
-        [DataMember]
+		[DataMember]
         public List<Layout> LayoutList { get; set; }
 		[DataMember]
 		public string NameWithOffset { get; set; }

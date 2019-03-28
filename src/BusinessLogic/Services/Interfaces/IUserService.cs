@@ -12,5 +12,7 @@ namespace BusinessLogic.Services
 		Task<UserDto> FindById(int id);
         Task<string> GetRefreshToken(int userId);
         Task SetRefreshToken(int userId, string token);
+		Task AddRole(UserDto user,Role role);
+		Task DeleteRole(UserDto user, Role role);
     }
 }

@@ -16,7 +16,7 @@ namespace WcfBusinessLogic.Core.Contracts.Data
         public int CoordX { get; set; }
         [DataMember]
         public int CoordY { get; set; }
-        [DataMember]
+		[DataMember]
         public List<Seat> SeatList { get; set; }
     }
 }

@@ -1,0 +1,139 @@
+﻿<UserControl x:Class="TicketManagementWPF.Views.UserControls.VenueView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:TicketManagementWPF.Views.UserControls"
+             xmlns:convertors="clr-namespace:TicketManagementWPF.Infrastructure.Convertors"
+             xmlns:attachedProperties="clr-namespace:TicketManagementWPF.Infrastructure.AttachedProperty"
+             xmlns:controls="clr-namespace:TicketManagementWPF.Infrastructure.CustomControls"
+             xmlns:behaviors="clr-namespace:TicketManagementWPF.Infrastructure.Behaviors"
+             xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
+             xmlns:loc="clr-namespace:TicketManagementWPF.Infrastructure.Extensions.Localization"
+             xmlns:extensions="clr-namespace:TicketManagementWPF.Infrastructure.Extensions"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <UserControl.Resources>
+        <convertors:GetTextFromNodeConvertor x:Key="ReadNodeConvertor" />
+        <convertors:ListToStringConvertor x:Key="ErrorConvertor" />
+        
+        <DataTemplate x:Key="VenueTreeAreaLevelTemplate">
+            <TextBlock Text="{Binding Description}"/>
+        </DataTemplate>
+        <HierarchicalDataTemplate x:Key="VenueTreeLayoutLevelTempalte"
+                                  ItemsSource="{Binding List}"
+                                  ItemTemplate="{StaticResource VenueTreeAreaLevelTemplate}"
+                                  >
+            <TextBlock Text="{Binding Description}"/>
+        </HierarchicalDataTemplate>
+    </UserControl.Resources>
+
+    <ScrollViewer  HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+        <DockPanel LastChildFill="True" Margin="10">
+            <!--Error's placeholder-->
+            <Label DockPanel.Dock="Top" 
+               Content="{Binding Errors, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ErrorConvertor}}"
+               Style="{StaticResource ErrorListLabel}"/>
+
+            <!--Textboxes-->
+            <Grid DockPanel.Dock="Top">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <Label Content="{loc:Localization NameLabel,TicketManagementWPF.l10n.VenueView.View}"
+                   Grid.Row="0" Grid.Column="0"
+                   Style="{StaticResource DefaultLabel}"/>
+                <TextBox Text="{Binding Venue.Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                     Grid.Row="0" Grid.Column="1"
+                     Style="{StaticResource DefaultTextBox}"/>
+
+                <Label Content="{loc:Localization AddressLabel,TicketManagementWPF.l10n.VenueView.View}" 
+                   Grid.Row="1" Grid.Column="0"
+                   Style="{StaticResource DefaultLabel}"/>
+                <TextBox Text="{Binding Venue.Address, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                     Grid.Row="1" Grid.Column="1"
+                     Style="{StaticResource DefaultTextBox}"/>
+
+                <Label Content="{loc:Localization PhoneLabel,TicketManagementWPF.l10n.VenueView.View}" 
+                   Grid.Row="2" Grid.Column="0"
+                   Style="{StaticResource DefaultLabel}"/>
+                <TextBox Text="{Binding Venue.Phone, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                     Grid.Row="2" Grid.Column="1"
+                     Style="{StaticResource DefaultTextBox}"/>
+
+                <Label Content="{loc:Localization TimezoneLabel,TicketManagementWPF.l10n.VenueView.View}"
+                   Grid.Row="3" Grid.Column="0"
+                   Style="{StaticResource DefaultLabel}"/>
+                <ComboBox ItemsSource="{Binding Source={extensions:TimezoneCollection}}" 
+                      Grid.Row="3" Grid.Column="1"
+                      DisplayMemberPath="DisplayText"
+                      SelectedValuePath="Id"
+                      SelectedValue="{Binding Venue.Timezone, Mode=TwoWay,  UpdateSourceTrigger=PropertyChanged}" 
+                      Style="{StaticResource DefaultComboBox}" Name="txtB"/>
+
+                <Label Content="{loc:Localization DescriptionLabel,TicketManagementWPF.l10n.VenueView.View}" 
+                   Grid.Row="4" Grid.Column="0" 
+                   Style="{StaticResource DefaultLabel}"/>
+                <TextBox Text="{Binding Venue.Description, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                     Grid.Row="4" Grid.Column="1"
+                     Style="{StaticResource RichTextBox}"/>
+            </Grid>
+
+            <!--Buttons-->
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" DockPanel.Dock="Top" Margin="8,0,0,0">
+                <Button Content="{loc:Localization AddLayoutButton,TicketManagementWPF.l10n.VenueView.View}" 
+                    Command="{Binding AddLayoutCommand}" 
+                    CommandParameter="{Binding SelectedItem, ElementName=VenueTree}" 
+                    Style="{StaticResource FormButton}"/>
+                <Button Content="{loc:Localization EditLayoutButton,TicketManagementWPF.l10n.VenueView.View}" 
+                    Command="{Binding EditLayoutCommand}"
+                    CommandParameter="{Binding SelectedItem, ElementName=VenueTree}"
+                    Style="{StaticResource FormButton}"/>
+                <Button Content="{loc:Localization DeleteLayoutButton,TicketManagementWPF.l10n.VenueView.View}" 
+                    Command="{Binding SaveCommand}"
+                    CommandParameter="{Binding SelectedItem, ElementName=VenueTree}"
+                    Style="{StaticResource FormButton}">
+                </Button>
+                <Button Content="{loc:Localization ShowSeatMapButton,TicketManagementWPF.l10n.VenueView.View}" 
+                    Command="{Binding ShowSeatMapCommand}"
+                    CommandParameter="{Binding SelectedItem, ElementName=VenueTree}"
+                    Style="{StaticResource FormButton}">
+                    <i:Interaction.Behaviors>
+                        <behaviors:CommandBusyAnimationBehavior/>
+                    </i:Interaction.Behaviors>
+                </Button>
+            </StackPanel>
+
+            <!--Area's tree-->
+            <TextBlock Text="{Binding SelectedItem, Converter={StaticResource ReadNodeConvertor}, ElementName=VenueTree, Mode=OneWay}"
+                        DockPanel.Dock="Top"/>
+
+            <Button Content="{loc:Localization SaveButton,TicketManagementWPF.l10n.VenueView.View}" 
+                Command="{Binding SaveCommand}" 
+                DockPanel.Dock="Bottom" 
+                Style="{StaticResource FormButton}"
+                FontSize="19" Margin="3,0,3,0">
+                <i:Interaction.Behaviors>
+                    <behaviors:CommandBusyAnimationBehavior/>
+                </i:Interaction.Behaviors>
+            </Button>
+
+            <TreeView ItemsSource="{Binding Path=Venue.LayoutList}" 
+                      x:Name="VenueTree" 
+                      VerticalAlignment="Stretch" 
+                      Style="{StaticResource DefaultTreeView}"
+                      FontSize="24"
+                      ItemTemplate="{StaticResource VenueTreeLayoutLevelTempalte}"  
+                      Grid.ColumnSpan="2" Grid.Row="5"/>
+        </DockPanel>
+    </ScrollViewer>
+</UserControl>

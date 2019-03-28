@@ -12,6 +12,9 @@ namespace User.WebApi.Infrastructure.AuthManager
 
 		public static HashedPasswordModel ComputeHash(string password)
 		{
+            if (string.IsNullOrEmpty(password))
+                return null;
+
 			//generate random salt
 			byte[] salt;
 			new RNGCryptoServiceProvider().GetBytes(salt = new byte[SaltSize]);

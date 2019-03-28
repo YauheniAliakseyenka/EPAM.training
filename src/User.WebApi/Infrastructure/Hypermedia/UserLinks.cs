@@ -37,10 +37,20 @@ namespace User.WebApi.Infrastructure.Hypermedia
         {
             links.Add(new LinkModel
             {
-                Href = _controller.Url.Link(nameof(_controller.Get), new { id = userId }),
+                Href = _controller.Url.Link(nameof(_controller.Delete), new { id = userId }),
                 Method = "DELETE",
                 Rel = "delete_user (admin only)"
             });
         }
-    }
+
+		public void AddUpdateUserBalanceLink(List<LinkModel> links, int userId)
+		{
+			links.Add(new LinkModel
+			{
+				Href = _controller.Url.Link(nameof(_controller.Get), new { id = userId }),
+				Method = "PUT",
+				Rel = "update_user_balance"
+			});
+		}
+	}
 }

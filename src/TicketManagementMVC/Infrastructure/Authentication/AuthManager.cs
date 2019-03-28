@@ -38,12 +38,6 @@ namespace TicketManagementMVC.Infrastructure.Authentication
 			}, identity);
 		}
 
-		public void SetAccountBalance(string amount)
-		{
-			if (_httpContext.User.Identity.IsAuthenticated)
-				_httpContext.User.AddUpdateClaim(AccountBalanceClaimKey, amount);
-		}
-
 		public decimal GetAccountBalance()
 		{
 			if (!decimal.TryParse(_httpContext.User.GetClaimValue(AccountBalanceClaimKey),

@@ -16,7 +16,7 @@ namespace BusinessLogic.Tests.Unit.DiContainer
         {
             var builder = new ContainerBuilder();
 
-            builder.RegisterInstance(GetUnit().Object).As<IWorkUnit>();
+			builder.RegisterInstance(GetUnit().Object).As<IWorkUnit>();
             builder.RegisterModule(new TestsModule());
 
             return builder.Build();

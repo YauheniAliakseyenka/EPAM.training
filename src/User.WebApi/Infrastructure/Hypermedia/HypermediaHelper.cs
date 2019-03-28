@@ -27,8 +27,9 @@ namespace User.WebApi.Infrastructure.Hypermedia
 
             userHelper.AddDeleteUserLink(links, userId);
             userHelper.AddPutUserLink(links, userId);
+			userHelper.AddUpdateUserBalanceLink(links, userId);
 
-            return links;
+			return links;
         }
 
         public static IEnumerable<LinkModel> PutUserHypermediaLinks(UserController controller, int userId)
@@ -38,8 +39,9 @@ namespace User.WebApi.Infrastructure.Hypermedia
 
             userHelper.AddDeleteUserLink(links, userId);
             userHelper.AddGetUserLink(links, userId);
+			userHelper.AddUpdateUserBalanceLink(links, userId);
 
-            return links;
+			return links;
         }
 
         public static IEnumerable<LinkModel> PostUserHypermediaLinks(UserController controller, int userId)
@@ -50,6 +52,7 @@ namespace User.WebApi.Infrastructure.Hypermedia
             userHelper.AddDeleteUserLink(links, userId);
             userHelper.AddGetUserLink(links, userId);
             userHelper.AddPutUserLink(links, userId);
+			userHelper.AddUpdateUserBalanceLink(links, userId);
 
             return links;
         }

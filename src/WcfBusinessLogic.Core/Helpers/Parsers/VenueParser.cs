@@ -31,7 +31,7 @@ namespace WcfBusinessLogic.Core.Helpers.Parsers
                 Name = from.Name,
                 Phone = from.Phone,
                 Timezone = from.Timezone,
-                LayoutList = from.LayoutList?.Select(x => LayoutParser.ToLayoutDto(x)).ToList()
+				LayoutList = from.LayoutList?.Select(x => LayoutParser.ToLayoutDto(x)).ToList()
             };
         }
     }

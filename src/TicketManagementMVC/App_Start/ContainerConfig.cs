@@ -13,6 +13,8 @@ using TicketManagementMVC.EventAreaService;
 using TicketManagementMVC.VenueService;
 using TicketManagementMVC.LayoutService;
 using System;
+using User.WebApi.Helper;
+using System.Configuration;
 
 namespace TicketManagementMVC.App_Start
 {
@@ -30,6 +32,9 @@ namespace TicketManagementMVC.App_Start
 			if (wcfServicesCredentials == null)
 				throw new NullReferenceException();
 
+            builder.RegisterType<CustomUserManager>().AsSelf().InstancePerLifetimeScope();
+            builder.RegisterType<UserWebApiHelper>().As<IUserWebApiHelper>().WithParameter("defaultUri",
+                      ConfigurationManager.AppSettings["UserWebApiBaseAddress"]).InstancePerLifetimeScope();
 			builder.Register(x => new ChannelFactory<IWcfEventService>("WSHttpBinding_IWcfEventService")).SingleInstance();
 			builder.Register(x =>
 			{

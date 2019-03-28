@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ReferenceGroup xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" ID="66195930-6f7f-4d65-b8ff-a3ddc9848cb1" xmlns="urn:schemas-microsoft-com:xml-wcfservicemap">
+<ReferenceGroup xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" ID="4270bf76-664c-4224-8e05-a338d464ab30" xmlns="urn:schemas-microsoft-com:xml-wcfservicemap">
   <ClientOptions>
     <GenerateAsynchronousMethods>false</GenerateAsynchronousMethods>
     <GenerateTaskBasedAsynchronousMethod>true</GenerateTaskBasedAsynchronousMethod>
@@ -22,13 +22,12 @@
     <MetadataSource Address="http://localhost:59102/PurchaseService.svc" Protocol="http" SourceId="1" />
   </MetadataSources>
   <Metadata>
-    <MetadataFile FileName="PurchaseService.xsd" MetadataType="Schema" ID="5de9ccec-ee21-4699-a651-f55421810f3d" SourceId="1" SourceUrl="http://localhost:59102/PurchaseService.svc?xsd=xsd4" />
-    <MetadataFile FileName="PurchaseService1.xsd" MetadataType="Schema" ID="ded22b4a-1ed0-4ad0-b263-e44fc0784504" SourceId="1" SourceUrl="http://localhost:59102/PurchaseService.svc?xsd=xsd2" />
-    <MetadataFile FileName="PurchaseService2.xsd" MetadataType="Schema" ID="a374e8fa-dc02-46e6-8c11-cf3e7cc3966b" SourceId="1" SourceUrl="http://localhost:59102/PurchaseService.svc?xsd=xsd3" />
-    <MetadataFile FileName="PurchaseService4.xsd" MetadataType="Schema" ID="b246b9d7-f06f-4dca-b66e-a36ebbacc789" SourceId="1" SourceUrl="http://localhost:59102/PurchaseService.svc?xsd=xsd0" />
-    <MetadataFile FileName="PurchaseService.disco" MetadataType="Disco" ID="0635856e-be46-4255-a62d-9a39cecdbb80" SourceId="1" SourceUrl="http://localhost:59102/PurchaseService.svc?disco" />
-    <MetadataFile FileName="PurchaseService5.xsd" MetadataType="Schema" ID="ecf51a5b-57ba-49eb-9807-d47368580a15" SourceId="1" SourceUrl="http://localhost:59102/PurchaseService.svc?xsd=xsd1" />
-    <MetadataFile FileName="WcfPurchaseService.wsdl" MetadataType="Wsdl" ID="7d87a0ef-9ed1-4cd4-af38-c2373c8740ed" SourceId="1" SourceUrl="http://localhost:59102/PurchaseService.svc?wsdl" />
+    <MetadataFile FileName="PurchaseService.xsd" MetadataType="Schema" ID="7e5a5ef3-08f8-4b50-ad47-b07abfc282c4" SourceId="1" SourceUrl="http://localhost:59102/PurchaseService.svc?xsd=xsd2" />
+    <MetadataFile FileName="PurchaseService1.xsd" MetadataType="Schema" ID="8dcb5575-8a3b-4442-91bb-98dc17187127" SourceId="1" SourceUrl="http://localhost:59102/PurchaseService.svc?xsd=xsd3" />
+    <MetadataFile FileName="PurchaseService2.xsd" MetadataType="Schema" ID="e488e1af-5317-4a3c-8aa4-200248943711" SourceId="1" SourceUrl="http://localhost:59102/PurchaseService.svc?xsd=xsd0" />
+    <MetadataFile FileName="PurchaseService.disco" MetadataType="Disco" ID="70b3949a-f919-4bc5-bef3-d992f471e384" SourceId="1" SourceUrl="http://localhost:59102/PurchaseService.svc?disco" />
+    <MetadataFile FileName="PurchaseService3.xsd" MetadataType="Schema" ID="fdf877a3-dae3-4287-950a-639980d2ac8b" SourceId="1" SourceUrl="http://localhost:59102/PurchaseService.svc?xsd=xsd1" />
+    <MetadataFile FileName="WcfPurchaseService.wsdl" MetadataType="Wsdl" ID="1805461a-94a3-4eb1-ac16-894aad77881e" SourceId="1" SourceUrl="http://localhost:59102/PurchaseService.svc?wsdl" />
   </Metadata>
   <Extensions>
     <ExtensionFile FileName="configuration91.svcinfo" Name="configuration91.svcinfo" />

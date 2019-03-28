@@ -1,5 +1,6 @@
 ﻿using BusinessLogic.DTO;
 using BusinessLogic.Exceptions;
+using BusinessLogic.Helpers;
 using DataAccess;
 using DataAccess.Entities;
 using System;
@@ -23,10 +24,10 @@ namespace BusinessLogic.Services.UserServices
             if (entity == null)
                 throw new ArgumentNullException();
 
-			if(IsUserNameTaken(entity.UserName))
+			if(IsUserNameTaken(entity, true))
 				throw new UserException("Username is already taken");
 
-			if (IsEmailTaken(entity.Email))
+			if (IsEmailTaken(entity, true))
 				throw new UserException("Email is already taken");
 
 			var addUser = MapToUser(entity);
@@ -70,7 +71,13 @@ namespace BusinessLogic.Services.UserServices
             if (update == null)
                 throw new UserException("User does not exists");
 
-            update.Surname = entity.Surname;
+			if (IsUserNameTaken(entity, false))
+				throw new UserException("Username is already taken");
+
+			if (IsEmailTaken(entity, false))
+				throw new UserException("Email is already taken");
+
+			update.Surname = entity.Surname;
 			update.Firstname = entity.Firstname;
 			update.Culture = entity.Culture;
 			update.Timezone = entity.Timezone;
@@ -78,6 +85,7 @@ namespace BusinessLogic.Services.UserServices
 			update.Amount = entity.Amount;
 			update.Email =string.IsNullOrEmpty(entity.Email) ? update.Email : entity.Email;
 			update.Salt = string.IsNullOrEmpty(entity.Salt) ? update.Salt : entity.Salt;
+			update.UserName = string.IsNullOrEmpty(entity.UserName) ? update.UserName : entity.UserName;
 			_context.UserRepository.Update(update);
 
 			await _context.SaveAsync();
@@ -158,18 +166,32 @@ namespace BusinessLogic.Services.UserServices
 			return Task.FromResult(roles.AsEnumerable());
 		}
 
-		private bool IsUserNameTaken(string userName)
+		private bool IsUserNameTaken(UserDto user, bool isCreating)
 		{
-			return (from users in _context.UserRepository.GetList()
-					where users.UserName.Equals(userName, StringComparison.Ordinal)
-					select users).Any();
+			var data = from users in _context.UserRepository.GetList()
+					   where users.UserName.Equals(user.UserName, StringComparison.Ordinal)
+					   select users;
+
+			if (!isCreating)
+				data = from users in data
+					   where users.Id != user.Id
+					   select users;
+
+			return data.Any();
 		}
 
-        private bool IsEmailTaken(string email)
+        private bool IsEmailTaken(UserDto user, bool isCreating)
 		{
-			return (from users in _context.UserRepository.GetList()
-					where users.Email.Equals(email, StringComparison.OrdinalIgnoreCase)
-					select users).Any();
+			var data = from users in _context.UserRepository.GetList()
+					   where users.Email.Equals(user.Email, StringComparison.Ordinal)
+					   select users;
+
+			if (!isCreating)
+				data = from users in data
+					   where users.Id != user.Id
+					   select users;
+
+			return data.Any();
 		}
 
 		public Task<UserDto> FindByEmail(string email)
@@ -229,5 +251,47 @@ namespace BusinessLogic.Services.UserServices
             _context.RefreshTokenRepository.Update(row);
             await _context.SaveAsync();
         }
-    }
+
+		public async Task AddRole(UserDto user, Role role)
+		{
+			var roleName = GetEnumItemDescription.GetEnumDescription(role);
+			var findRole = await _context.RoleRepository.FindByAsync(x => x.Name.Equals(roleName, StringComparison.OrdinalIgnoreCase));
+			var roleRow = findRole.SingleOrDefault();
+
+			if(roleRow is null)
+				throw new UserException("Role does not exists");
+
+			_context.UserRoleRepository.Create(new UserRole
+			{
+				RoleId = roleRow.Id,
+				UserId = user.Id
+			});
+			await _context.SaveAsync();
+		}
+
+		public async Task DeleteRole(UserDto user, Role role)
+		{
+			var roles = await GetRoles(user.UserName);
+
+			var deletingRole = GetEnumItemDescription.GetEnumDescription(role);
+
+			if (!roles.Any(x => x.Equals(deletingRole)))
+				throw new UserException("User does not has such role");
+
+			var deletingRoleInfo = await GetRole(role);
+
+			var row = await _context.UserRoleRepository.FindByAsync(x => x.RoleId == deletingRoleInfo.Id && x.UserId == user.Id);
+
+			_context.UserRoleRepository.Delete(row.SingleOrDefault());
+			await _context.SaveAsync();
+		}
+
+		private async Task<DataAccess.Entities.Role> GetRole(Role role)
+		{
+			var roleName = GetEnumItemDescription.GetEnumDescription(role);
+			var findRole = await _context.RoleRepository.FindByAsync(x => x.Name.Equals(roleName, StringComparison.OrdinalIgnoreCase));
+
+			return findRole.SingleOrDefault();
+		}
+	}
 }

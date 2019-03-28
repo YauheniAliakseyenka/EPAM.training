@@ -9,7 +9,6 @@ using System.Security.Permissions;
 using WcfBusinessLogic.Core.Contracts.Services;
 using WcfBusinessLogic.Core.Helpers.Parsers;
 using WcfBusinessLogic.Core.Contracts.Data;
-using WcfBusinessLogic.Core.Contracts.Data.BusinessModels;
 using WcfBusinessLogic.Core.Contracts.Exceptions;
 
 namespace WcfBusinessLogic.Core.Services
@@ -101,7 +100,7 @@ namespace WcfBusinessLogic.Core.Services
         }
 		
         [PrincipalPermission(SecurityAction.Demand, Role = "Manager")]
-        public async Task<IEnumerable<EventModel>> GetPublishedEvents(Contracts.Data.FilterEventOptions filter, string filterText = null, string dateCulture = null)
+        public async Task<IEnumerable<EventBusinessModel>> GetPublishedEvents(Contracts.Data.FilterEventOptions filter, string filterText = null, string dateCulture = null)
         {
             try
             {
@@ -126,9 +125,9 @@ namespace WcfBusinessLogic.Core.Services
             }
         }
 
-        private EventModel EventModelBllToEventModelContract(BusinessLogic.BusinessModels.EventModel from)
+        private EventBusinessModel EventModelBllToEventModelContract(BusinessLogic.BusinessModels.EventModel from)
         {
-			return new EventModel
+			return new EventBusinessModel
 			{
 				Areas = from.Areas?.Select(x => EventAreaParser.ToEventAreaContract(x)).ToList(),
 				Event = from.Event is null ? null : EventParser.ToEventContract(from.Event),
@@ -139,7 +138,7 @@ namespace WcfBusinessLogic.Core.Services
         }
 
         [PrincipalPermission(SecurityAction.Demand, Role = "Manager")]
-        public async Task<EventModel> GetEventInformation(int id)
+        public async Task<EventBusinessModel> GetEventInformation(int id)
         {
             try
             {

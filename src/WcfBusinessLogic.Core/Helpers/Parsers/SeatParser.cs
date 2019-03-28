@@ -13,7 +13,7 @@ namespace WcfBusinessLogic.Core.Helpers.Parsers
                Id = from.Id,
                Number = from.Number,
                Row = from.Row
-            };
+			};
         }
 
         public static SeatDto ToSeatDto(Seat from)
@@ -24,7 +24,7 @@ namespace WcfBusinessLogic.Core.Helpers.Parsers
                 Id = from.Id,
                 Number = from.Number,
                 Row = from.Row
-            };
+			};
         }
     }
 }

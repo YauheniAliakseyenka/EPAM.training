@@ -1,9 +1,8 @@
-﻿using Microsoft.AspNet.Identity;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 
 namespace TicketManagementMVC.Infrastructure.Authentication
 {
-    public class User : IUser<int>
+    public class User
     {
         [JsonProperty("Id")]
         public int Id { get; set; }
@@ -23,7 +22,7 @@ namespace TicketManagementMVC.Infrastructure.Authentication
         public string Culture { get; set; }
         [JsonProperty("Timezone")]
         public string Timezone { get; set; }
-        [JsonProperty("Amount")]
-        public decimal Amount { get; set; }
+		[JsonProperty("Amount")]
+		public decimal Amount { get; set; }
 	}
 }

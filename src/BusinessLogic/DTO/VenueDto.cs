@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BusinessLogic.Services;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -12,7 +13,7 @@ namespace BusinessLogic.DTO
 		public string Address { get; set; }
 		public string Phone { get; set; }
 		public string Timezone { get; set; }
-        public List<LayoutDto> LayoutList { get; set; }
+		public List<LayoutDto> LayoutList { get; set; }
 
 		public string NameWithOffset
 		{

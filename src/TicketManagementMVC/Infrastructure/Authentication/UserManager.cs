@@ -4,35 +4,40 @@ using Newtonsoft.Json.Linq;
 using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
-using System.Net;
 using System.Net.Http;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
-using TicketManagementMVC.Infrastructure.Helpers.UserWepiApi;
 using TicketManagementMVC.Models;
 using TicketManagementMVC.Infrastructure.Extentions;
 using Microsoft.IdentityModel.Tokens;
+using System.Globalization;
+using User.WebApi.Helper;
 
 namespace TicketManagementMVC.Infrastructure.Authentication
 {
-	internal class CustomUserManager
+	public class CustomUserManager
 	{
 		public const string AccountCultureClaimKey = "AccountCulture";
 		private const string BearerTokenClaimKey = "BearerToken";
 		private const string RefreshTokenClaimKey = "RefreshToken";
 
-		private const string TokenExpiredHeaderKey = "Token-Expired";
+        private IUserWebApiHelper _requestHelper;
+
+        public CustomUserManager(IUserWebApiHelper requestHelper)
+        {
+            _requestHelper = requestHelper;
+        }
 
         //identity's creating  after sign in
         public async Task<ResponseModel> CreateIdentity(LoginViewModel userCredentials)
         {
             var content = new StringContent(JsonConvert.SerializeObject(userCredentials), Encoding.UTF8, "application/json");
-            var response = await UserWebApiHelper.SendRequest("api/authenticate/token", RequestVerbs.POST, content);
+            var response = await _requestHelper.SendRequest("api/authenticate/token", RequestVerbs.POST, content);
 
             try
             {
-                var getResult = await GetResultFromResponse<TokenModel>(response, "token");
+                var getResult = await _requestHelper.GetResultFromResponse<TokenModel>(response, "token");
 
                 if (!getResult.IsSuccess)
                     return getResult;
@@ -59,18 +64,18 @@ namespace TicketManagementMVC.Infrastructure.Authentication
 			if (identity is null)
 				throw new ArgumentNullException();
 
-			var response = await UserWebApiHelper.SendRequest("api/user/" + identity.GetUserId<int>(),
+			var response = await _requestHelper.SendRequest("api/user/" + identity.GetUserId<int>(),
 				RequestVerbs.GET, token: identity.GetClaimValue(BearerTokenClaimKey));
 
             try
             {
-                var getResult = await GetResultFromResponse<User>(response, "user");
+                var getResult = await _requestHelper.GetResultFromResponse<User>(response, "user");
 
                 if (getResult.IsSuccess)
                     return getResult;
 
                 // check if an access token expired and repeat request after refreshing of token
-                if (getResult.Message.Equals(TokenExpiredHeaderKey, StringComparison.Ordinal))
+                if (getResult.Message.Equals(UserWebApiHelper.TokenExpiredHeaderKey, StringComparison.Ordinal))
                 {
                     await RefreshToken(identity);
 
@@ -102,11 +107,11 @@ namespace TicketManagementMVC.Infrastructure.Authentication
         public async Task<ResponseModel> CreateIdentity(User user)
         {
             var content = new StringContent(JsonConvert.SerializeObject(user), Encoding.UTF8, "application/json");
-			var response = await UserWebApiHelper.SendRequest("api/authenticate/registration", RequestVerbs.POST, content);
+			var response = await _requestHelper.SendRequest("api/authenticate/registration", RequestVerbs.POST, content);
 
             try
             {
-                var getResult = await GetResultFromResponse<TokenModel>(response, "token");
+                var getResult = await _requestHelper.GetResultFromResponse<TokenModel>(response, "token");
 
                 if (!getResult.IsSuccess)
                     return getResult;
@@ -152,19 +157,19 @@ namespace TicketManagementMVC.Infrastructure.Authentication
         public async Task<ResponseModel> Update(User user, ClaimsIdentity identity)
         {
             var content = new StringContent(JsonConvert.SerializeObject(user), Encoding.UTF8, "application/json");
-            var response = await UserWebApiHelper.SendRequest("api/user/" + identity.GetUserId<int>(),
-                RequestVerbs.PUT, content,
-                identity.GetClaimValue(BearerTokenClaimKey));
+			var response = await _requestHelper.SendRequest("api/user/" + identity.GetUserId<int>() + "/profile",
+				RequestVerbs.PUT, content,
+				identity.GetClaimValue(BearerTokenClaimKey));
 
             try
             {
-                var getResult = await GetResultFromResponse<string>(response, "message");
+                var getResult = await _requestHelper.GetResultFromResponse<string>(response, "message");
 
                 if (getResult.IsSuccess)
                     return getResult;
 
                 // check if an access token expired and repeat request after refreshing of token
-                if (getResult.Message.Equals(TokenExpiredHeaderKey, StringComparison.Ordinal))
+                if (getResult.Message.Equals(UserWebApiHelper.TokenExpiredHeaderKey, StringComparison.Ordinal))
                 {
                     await RefreshToken(identity);
 
@@ -192,7 +197,65 @@ namespace TicketManagementMVC.Infrastructure.Authentication
             }
         }
 
-        private async Task RefreshToken(ClaimsIdentity identity)
+		public async Task<ResponseModel> UpdateAmount(ClaimsIdentity identity, BalanceUpdateVerb verb, decimal amount = default(decimal))
+		{
+			HttpResponseMessage response = null;
+			ResponseModel result = null;
+			User user = null;
+
+			try
+			{
+				switch (verb)
+				{
+					case BalanceUpdateVerb.Replenishment:
+						result = await GetUser(identity);
+						if (result.IsSuccess)
+						{
+							user = result.Object as User;
+							user.Amount += amount;
+							var model = new { user.Amount };
+							var content = new StringContent(JsonConvert.SerializeObject(model), Encoding.UTF8, "application/json");
+							response = await _requestHelper.SendRequest("api/user/" + identity.GetUserId<int>() + "/balance",
+								RequestVerbs.PUT,
+								content,
+								identity.GetClaimValue(BearerTokenClaimKey));
+							result = await _requestHelper.GetResultFromResponse<string>(response, "message");
+
+							if (result.IsSuccess)
+								identity.AddUpdateClaim(AuthManager.AccountBalanceClaimKey, user.Amount.ToString(CultureInfo.InvariantCulture));
+						}
+						break;
+					case BalanceUpdateVerb.UpdateFromServer:
+						result = await GetUser(identity);
+						if (result.IsSuccess)
+						{
+							user = result.Object as User;
+							identity.AddUpdateClaim(AuthManager.AccountBalanceClaimKey, user.Amount.ToString(CultureInfo.InvariantCulture));
+						}
+						break;
+				}
+			}
+			catch (JsonSerializationException exception)
+			{
+				return new ResponseModel
+				{
+					Message = exception.Message,
+					IsSuccess = false
+				};
+			}
+			catch (SecurityTokenException exception)
+			{
+				return new ResponseModel
+				{
+					Message = exception.Message,
+					IsSuccess = false
+				};
+			}
+
+			return result;
+		}
+
+		private async Task RefreshToken(ClaimsIdentity identity)
         {
             var tokens = new TokenModel
             {
@@ -200,9 +263,9 @@ namespace TicketManagementMVC.Infrastructure.Authentication
                 RefreshToken = identity.GetClaimValue(RefreshTokenClaimKey)
             };
             var content = new StringContent(JsonConvert.SerializeObject(tokens), Encoding.UTF8, "application/json");
-            var response = await UserWebApiHelper.SendRequest("api/authenticate/token", RequestVerbs.PUT, content);
+            var response = await _requestHelper.SendRequest("api/authenticate/token", RequestVerbs.PUT, content);
 
-            var getResult = await GetResultFromResponse<TokenModel>(response, "token");
+            var getResult = await _requestHelper.GetResultFromResponse<TokenModel>(response, "token");
 
             if (!getResult.IsSuccess)
                 throw new SecurityTokenException("Token refresh error. Server response:"
@@ -215,52 +278,6 @@ namespace TicketManagementMVC.Infrastructure.Authentication
 
             identity.AddUpdateClaim(BearerTokenClaimKey, newTokens.Token);
             identity.AddUpdateClaim(RefreshTokenClaimKey, newTokens.RefreshToken);
-        }
-
-        private async Task<ResponseModel> GetResultFromResponse<T>(HttpResponseMessage response, string sectionKey)
-            where T : class
-        {
-            var content = await response.Content.ReadAsStringAsync();
-
-            if (response.IsSuccessStatusCode)
-            {
-                var obj = JObject.Parse(content)[sectionKey]?.ToString();
-
-                if (obj is null)
-                    throw new JsonSerializationException("Section was not found");
-
-                if (typeof(T) == typeof(string))
-                    return new ResponseModel
-                    {
-                        Object = obj,
-                        IsSuccess = true
-                    };
-
-                var result = JsonConvert.DeserializeObject<T>(obj);
-
-                if (result is null)
-                    throw new JsonSerializationException();
-
-                return new ResponseModel
-                {
-                    Object = result,
-                    IsSuccess = true
-                };
-            }
-            else
-                 if (response.StatusCode == HttpStatusCode.Unauthorized &&
-                response.Headers.Any(x => x.Key.Equals(TokenExpiredHeaderKey, StringComparison.Ordinal)))
-                return new ResponseModel
-                {
-                    Message = TokenExpiredHeaderKey,
-                    IsSuccess = false
-                };
-
-            var errorMessage = JObject.Parse(content)["message"]?.ToString();
-
-            return new ResponseModel {
-                Message = errorMessage ?? "Response error",
-                IsSuccess = false };
         }
     }
 }

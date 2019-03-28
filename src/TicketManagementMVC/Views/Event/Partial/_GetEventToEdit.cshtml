@@ -82,7 +82,7 @@
     <tbody>
         @foreach (var area in Model.EventAreas)
         {
-            var puchasedSeatCount = area.Seats.Where(x => !x.State.Equals(TicketManagementMVC.EventService.SeatState.Available)).ToList();
+            var puchasedSeatCount = area.Seats.Where(x => !x.State.Equals(SeatState.Available)).ToList();
             <tr id=@area.Id>
                 <th scope="row" class="pt-3">@area.Description</th>
                 <td class="pt-3">@area.CoordX - @area.CoordY</td>

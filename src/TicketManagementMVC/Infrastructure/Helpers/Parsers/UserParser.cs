@@ -1,13 +1,12 @@
 ﻿using TicketManagementMVC.Models;
-using TicketManagementMVC.Infrastructure.Authentication;
 
 namespace TicketManagementMVC.Infrastructure.Helpers.Parsers
 {
 	internal static class UserParser
 	{
-		public static User RegistrationViewModelToUser(RegistrationViewModel from)
+		public static Authentication.User RegistrationViewModelToUser(RegistrationViewModel from)
 		{
-			return new User
+			return new Authentication.User
 			{
 				UserName = from.UserName,
 				Timezone = from.SelectedTimezone,
@@ -19,9 +18,9 @@ namespace TicketManagementMVC.Infrastructure.Helpers.Parsers
 			};
 		}
 
-		public static User UserProfileViewModelToUser(UserProfileViewModel from)
+		public static Authentication.User UserProfileViewModelToUser(UserProfileViewModel from)
 		{
-			return new User
+			return new Authentication.User
 			{
 				Surname = from.Surname,
 				Culture = from.Culture,

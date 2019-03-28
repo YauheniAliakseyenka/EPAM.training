@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using TicketManagementMVC.EventService;
+using WcfBusinessLogic.Core.Contracts.Data;
 
 namespace TicketManagementMVC.Models.Event
 {

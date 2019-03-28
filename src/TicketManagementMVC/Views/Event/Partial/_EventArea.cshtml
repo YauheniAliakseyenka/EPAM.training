@@ -22,7 +22,7 @@
         </div>
         <div class="form-group">
             @Html.LabelFor(x => x.Price, new { @class = "required" })
-            @if (Model.SeatList.Any(x => !x.State.Equals(TicketManagementMVC.EventAreaService.SeatState.Available)))
+            @if (Model.SeatList.Any(x => !x.State.Equals(SeatState.Available)))
             {
                 @Html.TextBoxFor(x => x.Price, new { @class = "form-control", autocomplete = "off", @readonly = "true" })
             }
@@ -56,18 +56,18 @@
                 string cssClasses = string.Empty;
                 switch (Model.SeatList[i].State)
                 {
-                    case TicketManagementMVC.EventAreaService.SeatState.Ordered:
+                    case SeatState.Ordered:
                         cssClasses = "form-control seat-ordered text-center ml-3 mr-3"; break;
-                    case TicketManagementMVC.EventAreaService.SeatState.Purchased:
+                    case SeatState.Purchased:
                         cssClasses = "form-control seat-purchased text-center ml-3 mr-3"; break;
-                    case TicketManagementMVC.EventAreaService.SeatState.Available:
+                    case SeatState.Available:
                         cssClasses = "form-control seat-available text-center ml-3 mr-3"; break;
                 }
 
                 <tr id="seatRow_@i" style="line-height:10px;">
                     @Html.HiddenFor(x => Model.SeatList[i].Id)
                     @Html.HiddenFor(x => Model.SeatList[i].EventAreaId)
-                    @if (!Model.SeatList[i].State.Equals(TicketManagementMVC.EventAreaService.SeatState.Available))
+                    @if (!Model.SeatList[i].State.Equals(SeatState.Available))
                     {
                         <th scope="row" class="pt-1 pb-1" style="vertical-align:middle;">
                             @Html.TextBoxFor(x => Model.SeatList[i].Row, new { @class = "form-control",

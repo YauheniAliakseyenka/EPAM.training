@@ -34,6 +34,7 @@ namespace AutomatedTests.Steps
 		{
 			HomePage.FilterInput.SendKeys(filterText);
 			HomePage.SearchButton.Click();
+			Thread.Sleep(300);
 		}
 
 		[When(@"Selects ""(.*)"" event")]

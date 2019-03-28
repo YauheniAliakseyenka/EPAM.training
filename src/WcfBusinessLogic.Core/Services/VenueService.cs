@@ -1,5 +1,4 @@
-﻿using BusinessLogic.DTO;
-using BusinessLogic.Exceptions.VenueExceptions;
+﻿using BusinessLogic.Exceptions.VenueExceptions;
 using BusinessLogic.Services;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,9 +14,9 @@ namespace WcfBusinessLogic.Core.Services
 {
     internal class WcfVenueService : IWcfVenueService
     {
-		private IStoreService<VenueDto, int> _venueService;
+		private readonly IVenueService _venueService;
 
-		public WcfVenueService(IStoreService<VenueDto, int> venueService)
+		public WcfVenueService(IVenueService venueService)
 		{
 			_venueService = venueService;
 		}
@@ -69,7 +68,24 @@ namespace WcfBusinessLogic.Core.Services
             }
         }
 
-		[PrincipalPermission(SecurityAction.Demand, Role = "Manager")]
+        [PrincipalPermission(SecurityAction.Demand, Role = "Manager")]
+        [PrincipalPermission(SecurityAction.Demand, Role = "Admin")]
+        public async Task<Venue> GetFullModel(int id)
+        {
+            try
+            {
+                var result = await _venueService.GetFullModel(id);
+
+                return VenueParser.ToVenueContract(result);
+            }
+            catch (VenueException exception)
+            {
+                var fault = new ServiceValidationFaultDetails { Message = "Get venue error" };
+                throw new FaultException<ServiceValidationFaultDetails>(fault, exception.Message);
+            }
+        }
+
+        [PrincipalPermission(SecurityAction.Demand, Role = "Manager")]
 		[PrincipalPermission(SecurityAction.Demand, Role = "Admin")]
 		public async Task<IEnumerable<Venue>> ToList()
 		{

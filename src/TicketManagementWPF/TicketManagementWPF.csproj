@@ -1,0 +1,861 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{E37DB9AA-BEBF-4DC1-AF3F-40E68DE58071}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <RootNamespace>TicketManagementWPF</RootNamespace>
+    <AssemblyName>TicketManagementWPF</AssemblyName>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <WarningLevel>4</WarningLevel>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <Deterministic>true</Deterministic>
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Autofac, Version=4.9.1.0, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
+      <HintPath>..\packages\Autofac.4.9.1\lib\net45\Autofac.dll</HintPath>
+    </Reference>
+    <Reference Include="Autofac.Integration.Wcf, Version=4.1.0.0, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
+      <HintPath>..\packages\Autofac.Wcf.4.1.0\lib\net45\Autofac.Integration.Wcf.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.EntityFrameworkCore, Version=2.2.2.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.EntityFrameworkCore.2.2.2\lib\netstandard2.0\Microsoft.EntityFrameworkCore.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.EntityFrameworkCore.Abstractions, Version=2.2.2.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.EntityFrameworkCore.Abstractions.2.2.2\lib\netstandard2.0\Microsoft.EntityFrameworkCore.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.EntityFrameworkCore.Relational, Version=2.2.2.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.EntityFrameworkCore.Relational.2.2.2\lib\netstandard2.0\Microsoft.EntityFrameworkCore.Relational.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.EntityFrameworkCore.SqlServer, Version=2.2.2.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.EntityFrameworkCore.SqlServer.2.2.2\lib\netstandard2.0\Microsoft.EntityFrameworkCore.SqlServer.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.Caching.Abstractions, Version=2.2.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Extensions.Caching.Abstractions.2.2.0\lib\netstandard2.0\Microsoft.Extensions.Caching.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.Caching.Memory, Version=2.2.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Extensions.Caching.Memory.2.2.0\lib\netstandard2.0\Microsoft.Extensions.Caching.Memory.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.Configuration, Version=2.2.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Extensions.Configuration.2.2.0\lib\netstandard2.0\Microsoft.Extensions.Configuration.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.Configuration.Abstractions, Version=2.2.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Extensions.Configuration.Abstractions.2.2.0\lib\netstandard2.0\Microsoft.Extensions.Configuration.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.Configuration.Binder, Version=2.2.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Extensions.Configuration.Binder.2.2.0\lib\netstandard2.0\Microsoft.Extensions.Configuration.Binder.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.DependencyInjection, Version=2.2.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Extensions.DependencyInjection.2.2.0\lib\net461\Microsoft.Extensions.DependencyInjection.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.DependencyInjection.Abstractions, Version=2.2.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Extensions.DependencyInjection.Abstractions.2.2.0\lib\netstandard2.0\Microsoft.Extensions.DependencyInjection.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.Logging, Version=2.2.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Extensions.Logging.2.2.0\lib\netstandard2.0\Microsoft.Extensions.Logging.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.Logging.Abstractions, Version=2.2.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Extensions.Logging.Abstractions.2.2.0\lib\netstandard2.0\Microsoft.Extensions.Logging.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.Options, Version=2.2.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Extensions.Options.2.2.0\lib\netstandard2.0\Microsoft.Extensions.Options.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.Primitives, Version=2.2.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Extensions.Primitives.2.2.0\lib\netstandard2.0\Microsoft.Extensions.Primitives.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.IdentityModel.JsonWebTokens, Version=5.4.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.IdentityModel.JsonWebTokens.5.4.0\lib\net461\Microsoft.IdentityModel.JsonWebTokens.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.IdentityModel.Logging, Version=5.4.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.IdentityModel.Logging.5.4.0\lib\net461\Microsoft.IdentityModel.Logging.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.IdentityModel.Tokens, Version=5.4.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.IdentityModel.Tokens.5.4.0\lib\net461\Microsoft.IdentityModel.Tokens.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.12.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="Remotion.Linq, Version=2.2.0.0, Culture=neutral, PublicKeyToken=fee00910d6e5f53b, processorArchitecture=MSIL">
+      <HintPath>..\packages\Remotion.Linq.2.2.0\lib\net45\Remotion.Linq.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Buffers, Version=4.0.2.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Buffers.4.4.0\lib\netstandard2.0\System.Buffers.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Collections.Immutable, Version=1.2.3.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Collections.Immutable.1.5.0\lib\netstandard2.0\System.Collections.Immutable.dll</HintPath>
+    </Reference>
+    <Reference Include="System.ComponentModel.Annotations, Version=4.2.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.ComponentModel.Annotations.4.5.0\lib\net461\System.ComponentModel.Annotations.dll</HintPath>
+    </Reference>
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Data.SqlClient, Version=4.5.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Data.SqlClient.4.6.0\lib\net461\System.Data.SqlClient.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Diagnostics.DiagnosticSource, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Diagnostics.DiagnosticSource.4.5.0\lib\net46\System.Diagnostics.DiagnosticSource.dll</HintPath>
+    </Reference>
+    <Reference Include="System.IdentityModel.Tokens.Jwt, Version=5.4.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.IdentityModel.Tokens.Jwt.5.4.0\lib\net461\System.IdentityModel.Tokens.Jwt.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Interactive.Async, Version=3.2.0.0, Culture=neutral, PublicKeyToken=94bc3704cddfc263, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Interactive.Async.3.2.0\lib\net46\System.Interactive.Async.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Memory, Version=4.0.1.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Memory.4.5.1\lib\netstandard2.0\System.Memory.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Numerics" />
+    <Reference Include="System.Numerics.Vectors, Version=4.1.3.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Numerics.Vectors.4.4.0\lib\net46\System.Numerics.Vectors.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=4.0.4.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Runtime.CompilerServices.Unsafe.4.5.1\lib\netstandard2.0\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.ServiceModel.Activation" />
+    <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Expression.Blend.Sdk.1.0.2\lib\net45\System.Windows.Interactivity.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Xml" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xaml">
+      <RequiredTargetFramework>4.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="WindowsBase" />
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+  </ItemGroup>
+  <ItemGroup>
+    <ApplicationDefinition Include="App.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </ApplicationDefinition>
+    <Compile Include="Autofac\Container.cs" />
+    <Compile Include="Connected Services\VenueService\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Compile>
+    <Compile Include="Helpers\EnumHelper.cs" />
+    <Compile Include="Helpers\VisualTreeChildrenHelper.cs" />
+    <Compile Include="Helpers\Parsers\AreaParser.cs" />
+    <Compile Include="Helpers\Parsers\LayoutParser.cs" />
+    <Compile Include="Helpers\Parsers\SeatParser.cs" />
+    <Compile Include="Helpers\Parsers\VenueParser.cs" />
+    <Compile Include="Infrastructure\AttachedProperty\CommonProperties.cs" />
+    <Compile Include="Infrastructure\AttachedProperty\PasswordBoxProperties.cs" />
+    <Compile Include="Infrastructure\Behaviors\CommandBusyAnimationBehavior.cs" />
+    <Compile Include="Infrastructure\Behaviors\ConfirmBoxBehavior.cs" />
+    <Compile Include="Infrastructure\Behaviors\DeleteAreaFromMapBehavior.cs" />
+    <Compile Include="Infrastructure\Behaviors\DynamicFontSizeBehavior.cs" />
+    <Compile Include="Infrastructure\Behaviors\LanguageCheckBehavior.cs" />
+    <Compile Include="Infrastructure\Behaviors\PasswordBoxBehavior.cs" />
+    <Compile Include="Infrastructure\Behaviors\RoleListViewBehavior.cs" />
+    <Compile Include="Infrastructure\Behaviors\SaveMapBehavior.cs" />
+    <Compile Include="Infrastructure\Convertors\ListToStringConvertor.cs" />
+    <Compile Include="Infrastructure\Convertors\PasswordBoxLenghtConvertor.cs" />
+    <Compile Include="Infrastructure\Convertors\TextBoxLenghtConvertor.cs" />
+    <Compile Include="Infrastructure\Culture.cs" />
+    <Compile Include="Infrastructure\Extensions\CultureMenuItemEnumerationExtension.cs" />
+    <Compile Include="Infrastructure\Extensions\EnumerationExtension.cs" />
+    <Compile Include="Infrastructure\Extensions\Localization\Localization .cs" />
+    <Compile Include="Infrastructure\Extensions\Localization\TranslateSource.cs" />
+    <Compile Include="Infrastructure\Extensions\SecureStringExtention.cs" />
+    <Compile Include="Infrastructure\Extensions\TimezoneCollection.cs" />
+    <Compile Include="Infrastructure\Role.cs" />
+    <Compile Include="Infrastructure\Convertors\GridMaxColumnConvertor.cs" />
+    <Compile Include="Infrastructure\Convertors\GridMaxRowConverter.cs" />
+    <Compile Include="Infrastructure\CustomControls\Map\IGridMapItem.cs" />
+    <Compile Include="Infrastructure\Extensions\ObjectExtentions.cs" />
+    <Compile Include="Infrastructure\Utils\Identity\IUserIdentity.cs" />
+    <Compile Include="Infrastructure\Utils\Identity\UserIdentity.cs" />
+    <Compile Include="Infrastructure\Utils\UserManagement\AuthModel.cs" />
+    <Compile Include="Infrastructure\Utils\UserManagement\IAuth.cs" />
+    <Compile Include="Infrastructure\Utils\UserManagement\IUserManagement.cs" />
+    <Compile Include="Infrastructure\Utils\UserManagement\IUserProfile.cs" />
+    <Compile Include="Infrastructure\Utils\UserManagement\UserList.cs" />
+    <Compile Include="Infrastructure\Utils\UserManagement\UserSearchEnum.cs" />
+    <Compile Include="Infrastructure\Utils\Validation\CustomRequiredAttribute.cs" />
+    <Compile Include="Infrastructure\Utils\Validation\PasswordCompareAttribute.cs" />
+    <Compile Include="Infrastructure\Utils\Validation\Validator.cs" />
+    <Compile Include="l10n\Login\Errors.be.Designer.cs">
+      <DependentUpon>Errors.be.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="l10n\Login\Errors.ru.Designer.cs">
+      <DependentUpon>Errors.ru.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="l10n\Login\Errors.Designer.cs">
+      <DependentUpon>Errors.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="l10n\Login\View.be.Designer.cs">
+      <DependentUpon>View.be.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="l10n\Login\View.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>View.resx</DependentUpon>
+    </Compile>
+    <Compile Include="l10n\Login\View.ru.Designer.cs">
+      <DependentUpon>View.ru.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="l10n\MainMenu\View.ru.Designer.cs">
+      <DependentUpon>View.ru.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="l10n\MainMenu\View.be.Designer.cs">
+      <DependentUpon>View.be.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="l10n\MainMenu\View.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>View.resx</DependentUpon>
+    </Compile>
+    <Compile Include="l10n\Map\Hints.be.Designer.cs">
+      <DependentUpon>Hints.be.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="l10n\Map\Hints.ru.Designer.cs">
+      <DependentUpon>Hints.ru.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="l10n\Map\Hints.Designer.cs">
+      <DependentUpon>Hints.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="l10n\Map\View.be.Designer.cs">
+      <DependentUpon>View.be.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="l10n\Map\View.ru.Designer.cs">
+      <DependentUpon>View.ru.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="l10n\Map\View.Designer.cs">
+      <DependentUpon>View.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="l10n\Shared\SharedResources.be.Designer.cs">
+      <DependentUpon>SharedResources.be.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="l10n\Shared\SharedResources.ru.Designer.cs">
+      <DependentUpon>SharedResources.ru.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="l10n\Shared\SharedResources.Designer.cs">
+      <DependentUpon>SharedResources.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="l10n\Shared\Errors.be.Designer.cs">
+      <DependentUpon>Errors.be.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="l10n\Shared\Errors.ru.Designer.cs">
+      <DependentUpon>Errors.ru.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="l10n\Shared\Errors.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Errors.resx</DependentUpon>
+    </Compile>
+    <Compile Include="l10n\UserManagement\View.be.Designer.cs">
+      <DependentUpon>View.be.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="l10n\UserManagement\View.ru.Designer.cs">
+      <DependentUpon>View.ru.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="l10n\UserManagement\View.Designer.cs">
+      <DependentUpon>View.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="l10n\UserView\Errors.be.Designer.cs">
+      <DependentUpon>Errors.be.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="l10n\UserView\Errors.ru.Designer.cs">
+      <DependentUpon>Errors.ru.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="l10n\UserView\Errors.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Errors.resx</DependentUpon>
+    </Compile>
+    <Compile Include="l10n\UserView\View.be.Designer.cs">
+      <DependentUpon>View.be.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="l10n\UserView\View.ru.Designer.cs">
+      <DependentUpon>View.ru.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="l10n\UserView\View.Designer.cs">
+      <DependentUpon>View.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="l10n\VenueManagement\View.be.Designer.cs">
+      <DependentUpon>View.be.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="l10n\VenueManagement\View.ru.Designer.cs">
+      <DependentUpon>View.ru.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="l10n\VenueManagement\View.Designer.cs">
+      <DependentUpon>View.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="l10n\VenueView\Errors.be.Designer.cs">
+      <DependentUpon>Errors.be.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="l10n\VenueView\Errors.ru.Designer.cs">
+      <DependentUpon>Errors.ru.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="l10n\VenueView\Errors.Designer.cs">
+      <DependentUpon>Errors.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="l10n\VenueView\View.be.Designer.cs">
+      <DependentUpon>View.be.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="l10n\VenueView\View.ru.Designer.cs">
+      <DependentUpon>View.ru.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="l10n\VenueView\View.Designer.cs">
+      <DependentUpon>View.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="Models\TokenModel.cs" />
+    <Compile Include="Models\User.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <DependentUpon>Resources.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="ViewModels\ProfileViewModel.cs" />
+    <Compile Include="ViewModels\UserViewModel.cs" />
+    <Compile Include="ViewModels\ViewModelAbstract.cs" />
+    <Compile Include="Infrastructure\Utils\WindowManagement\IMediator.cs" />
+    <Compile Include="Infrastructure\Utils\WindowManagement\IDisplayWindow.cs" />
+    <Compile Include="Infrastructure\Utils\WindowManagement\IWindowHelper.cs" />
+    <Compile Include="Infrastructure\AuthSettings.cs" />
+    <Compile Include="Infrastructure\Behaviors\WindowBehavior.cs" />
+    <Compile Include="Infrastructure\Commands\IAsyncCommand.cs" />
+    <Compile Include="Infrastructure\Commands\RelayCommandAsync.cs" />
+    <Compile Include="Infrastructure\Convertors\GetTextFromNodeConvertor.cs" />
+    <Compile Include="Infrastructure\Coordinates.cs" />
+    <Compile Include="Infrastructure\CustomControls\Map\GridMap.cs" />
+    <Compile Include="Infrastructure\Utils\WindowManagement\Mediator.cs" />
+    <Compile Include="Infrastructure\PropertyChangedBase.cs" />
+    <Compile Include="Infrastructure\Commands\RelayCommand.cs" />
+    <Compile Include="Infrastructure\Utils\UserManagement\UserManagement.cs" />
+    <Compile Include="Infrastructure\Utils\WindowManagement\WindowHelper.cs" />
+    <Compile Include="Models\Area.cs" />
+    <Compile Include="Models\Layout.cs" />
+    <Compile Include="Models\Seat.cs" />
+    <Compile Include="Models\TimezoneItemModel.cs" />
+    <Compile Include="Models\Venue.cs" />
+    <Compile Include="ViewModels\Maps\AreaMapViewModel.cs" />
+    <Compile Include="ViewModels\Maps\MapViewModelAbstract.cs" />
+    <Compile Include="ViewModels\Maps\LayoutMapViewModel.cs" />
+    <Compile Include="ViewModels\LoginViewModel.cs" />
+    <Compile Include="ViewModels\MainMenuViewModel.cs" />
+    <Compile Include="ViewModels\MainViewModel.cs" />
+    <Compile Include="ViewModels\Maps\SeatMapViewModel.cs" />
+    <Compile Include="ViewModels\UserManagementViewModel.cs" />
+    <Compile Include="ViewModels\VenueViewModel.cs" />
+    <Compile Include="ViewModels\VenueManagementViewModel.cs" />
+    <Compile Include="Views\UserControls\MapView.xaml.cs">
+      <DependentUpon>MapView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\UserControls\LoginView.xaml.cs">
+      <DependentUpon>LoginView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\UserControls\ProfileView.xaml.cs">
+      <DependentUpon>ProfileView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\UserControls\SeatMapView.xaml.cs">
+      <DependentUpon>SeatMapView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\UserControls\UserManagementView.xaml.cs">
+      <DependentUpon>UserManagementView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\UserControls\UserView.xaml.cs">
+      <DependentUpon>UserView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\UserControls\VenueView.xaml.cs">
+      <DependentUpon>VenueView.xaml</DependentUpon>
+    </Compile>
+    <Page Include="ResourceDictionaries\DataTemplates\Views.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ResourceDictionaries\Styles\BorderStyles.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ResourceDictionaries\Styles\ButtonStyles.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ResourceDictionaries\Styles\ComboBoxStyles.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ResourceDictionaries\Styles\DefaultStyleValues.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ResourceDictionaries\Styles\LabelStyles.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ResourceDictionaries\Styles\ListViewStyles.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ResourceDictionaries\Styles\PasswordBoxStyles.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ResourceDictionaries\Styles\TextBlockStyles.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ResourceDictionaries\Styles\ToggleButtonStyles.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ResourceDictionaries\Styles\TreeViewStyles.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\UserControls\MapView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\UserControls\MainMenuView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\UserControls\ProfileView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\UserControls\SeatMapView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\UserControls\UserManagementView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\UserControls\UserView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\UserControls\VenueView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\UserControls\VenueManagementView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Windows\AnyWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Compile Include="App.xaml.cs">
+      <DependentUpon>App.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Views\UserControls\MainMenuView.xaml.cs">
+      <DependentUpon>MainMenuView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\UserControls\VenueManagementView.xaml.cs">
+      <DependentUpon>VenueManagementView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Windows\AnyWindow.xaml.cs">
+      <DependentUpon>AnyWindow.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Page Include="ResourceDictionaries\Styles\TextBoxStyles.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\UserControls\LoginView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Properties\AssemblyInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+    <EmbeddedResource Include="l10n\Login\Errors.be.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>Errors.be.Designer.cs</LastGenOutput>
+      <CustomToolNamespace>TicketManagementWPF.l10n.Login</CustomToolNamespace>
+    </EmbeddedResource>
+    <EmbeddedResource Include="l10n\Login\Errors.ru.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>Errors.ru.Designer.cs</LastGenOutput>
+      <CustomToolNamespace>TicketManagementWPF.l10n.Login</CustomToolNamespace>
+    </EmbeddedResource>
+    <EmbeddedResource Include="l10n\Login\Errors.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>Errors.Designer.cs</LastGenOutput>
+      <CustomToolNamespace>TicketManagementWPF.l10n.Login</CustomToolNamespace>
+    </EmbeddedResource>
+    <EmbeddedResource Include="l10n\Login\View.be.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>View.be.Designer.cs</LastGenOutput>
+      <CustomToolNamespace>TicketManagementWPF.l10n.Login</CustomToolNamespace>
+    </EmbeddedResource>
+    <EmbeddedResource Include="l10n\Login\View.ru.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>View.ru.Designer.cs</LastGenOutput>
+      <CustomToolNamespace>TicketManagementWPF.l10n.Login</CustomToolNamespace>
+    </EmbeddedResource>
+    <EmbeddedResource Include="l10n\Login\View.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <CustomToolNamespace>TicketManagementWPF.l10n.Login</CustomToolNamespace>
+      <LastGenOutput>View.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="l10n\MainMenu\View.ru.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>View.ru.Designer.cs</LastGenOutput>
+      <CustomToolNamespace>TicketManagementWPF.l10n.MainMenu</CustomToolNamespace>
+    </EmbeddedResource>
+    <EmbeddedResource Include="l10n\MainMenu\View.be.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>View.be.Designer.cs</LastGenOutput>
+      <CustomToolNamespace>TicketManagementWPF.l10n.MainMenu</CustomToolNamespace>
+    </EmbeddedResource>
+    <EmbeddedResource Include="l10n\MainMenu\View.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>View.Designer.cs</LastGenOutput>
+      <CustomToolNamespace>TicketManagementWPF.l10n.MainMenu</CustomToolNamespace>
+    </EmbeddedResource>
+    <EmbeddedResource Include="l10n\Map\Hints.be.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Hints.be.Designer.cs</LastGenOutput>
+      <CustomToolNamespace>TicketManagementWPF.l10n.Map</CustomToolNamespace>
+    </EmbeddedResource>
+    <EmbeddedResource Include="l10n\Map\Hints.ru.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Hints.ru.Designer.cs</LastGenOutput>
+      <CustomToolNamespace>TicketManagementWPF.l10n.Map</CustomToolNamespace>
+    </EmbeddedResource>
+    <EmbeddedResource Include="l10n\Map\Hints.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Hints.Designer.cs</LastGenOutput>
+      <CustomToolNamespace>TicketManagementWPF.l10n.Map</CustomToolNamespace>
+    </EmbeddedResource>
+    <EmbeddedResource Include="l10n\Map\View.be.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>View.be.Designer.cs</LastGenOutput>
+      <CustomToolNamespace>TicketManagementWPF.l10n.Map</CustomToolNamespace>
+    </EmbeddedResource>
+    <EmbeddedResource Include="l10n\Map\View.ru.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>View.ru.Designer.cs</LastGenOutput>
+      <CustomToolNamespace>TicketManagementWPF.l10n.Map</CustomToolNamespace>
+    </EmbeddedResource>
+    <EmbeddedResource Include="l10n\Map\View.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>View.Designer.cs</LastGenOutput>
+      <CustomToolNamespace>TicketManagementWPF.l10n.Map</CustomToolNamespace>
+    </EmbeddedResource>
+    <EmbeddedResource Include="l10n\Shared\SharedResources.be.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>SharedResources.be.Designer.cs</LastGenOutput>
+      <CustomToolNamespace>TicketManagementWPF.l10n.Shared</CustomToolNamespace>
+    </EmbeddedResource>
+    <EmbeddedResource Include="l10n\Shared\SharedResources.ru.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>SharedResources.ru.Designer.cs</LastGenOutput>
+      <CustomToolNamespace>TicketManagementWPF.l10n.Shared</CustomToolNamespace>
+    </EmbeddedResource>
+    <EmbeddedResource Include="l10n\Shared\SharedResources.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>SharedResources.Designer.cs</LastGenOutput>
+      <CustomToolNamespace>TicketManagementWPF.l10n.Shared</CustomToolNamespace>
+    </EmbeddedResource>
+    <EmbeddedResource Include="l10n\Shared\Errors.be.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>Errors.be.Designer.cs</LastGenOutput>
+      <CustomToolNamespace>TicketManagementWPF.l10n.Shared</CustomToolNamespace>
+    </EmbeddedResource>
+    <EmbeddedResource Include="l10n\Shared\Errors.ru.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>Errors.ru.Designer.cs</LastGenOutput>
+      <CustomToolNamespace>TicketManagementWPF.l10n.Shared</CustomToolNamespace>
+    </EmbeddedResource>
+    <EmbeddedResource Include="l10n\Shared\Errors.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>Errors.Designer.cs</LastGenOutput>
+      <CustomToolNamespace>TicketManagementWPF.l10n.Shared</CustomToolNamespace>
+    </EmbeddedResource>
+    <EmbeddedResource Include="l10n\UserManagement\View.be.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>View.be.Designer.cs</LastGenOutput>
+      <CustomToolNamespace>TicketManagementWPF.l10n.UserManagement</CustomToolNamespace>
+    </EmbeddedResource>
+    <EmbeddedResource Include="l10n\UserManagement\View.ru.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>View.ru.Designer.cs</LastGenOutput>
+      <CustomToolNamespace>TicketManagementWPF.l10n.UserManagement</CustomToolNamespace>
+    </EmbeddedResource>
+    <EmbeddedResource Include="l10n\UserManagement\View.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>View.Designer.cs</LastGenOutput>
+      <CustomToolNamespace>TicketManagementWPF.l10n.UserManagement</CustomToolNamespace>
+    </EmbeddedResource>
+    <EmbeddedResource Include="l10n\UserView\Errors.be.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>Errors.be.Designer.cs</LastGenOutput>
+      <CustomToolNamespace>TicketManagementWPF.l10n.UserView</CustomToolNamespace>
+    </EmbeddedResource>
+    <EmbeddedResource Include="l10n\UserView\Errors.ru.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>Errors.ru.Designer.cs</LastGenOutput>
+      <CustomToolNamespace>TicketManagementWPF.l10n.UserView</CustomToolNamespace>
+    </EmbeddedResource>
+    <EmbeddedResource Include="l10n\UserView\Errors.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>Errors.Designer.cs</LastGenOutput>
+      <CustomToolNamespace>TicketManagementWPF.l10n.UserView</CustomToolNamespace>
+    </EmbeddedResource>
+    <EmbeddedResource Include="l10n\UserView\View.be.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>View.be.Designer.cs</LastGenOutput>
+      <CustomToolNamespace>TicketManagementWPF.l10n.UserView</CustomToolNamespace>
+    </EmbeddedResource>
+    <EmbeddedResource Include="l10n\UserView\View.ru.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>View.ru.Designer.cs</LastGenOutput>
+      <CustomToolNamespace>TicketManagementWPF.l10n.UserView</CustomToolNamespace>
+    </EmbeddedResource>
+    <EmbeddedResource Include="l10n\UserView\View.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>View.Designer.cs</LastGenOutput>
+      <CustomToolNamespace>TicketManagementWPF.l10n.UserView</CustomToolNamespace>
+    </EmbeddedResource>
+    <EmbeddedResource Include="l10n\VenueManagement\View.be.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>View.be.Designer.cs</LastGenOutput>
+      <CustomToolNamespace>TicketManagementWPF.l10n.VenueManagement</CustomToolNamespace>
+    </EmbeddedResource>
+    <EmbeddedResource Include="l10n\VenueManagement\View.ru.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>View.ru.Designer.cs</LastGenOutput>
+      <CustomToolNamespace>TicketManagementWPF.l10n.VenueManagement</CustomToolNamespace>
+    </EmbeddedResource>
+    <EmbeddedResource Include="l10n\VenueManagement\View.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>View.Designer.cs</LastGenOutput>
+      <CustomToolNamespace>TicketManagementWPF.l10n.VenueManagement</CustomToolNamespace>
+    </EmbeddedResource>
+    <EmbeddedResource Include="l10n\VenueView\Errors.be.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>Errors.be.Designer.cs</LastGenOutput>
+      <CustomToolNamespace>TicketManagementWPF.l10n.VenueView</CustomToolNamespace>
+    </EmbeddedResource>
+    <EmbeddedResource Include="l10n\VenueView\Errors.ru.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>Errors.ru.Designer.cs</LastGenOutput>
+      <CustomToolNamespace>TicketManagementWPF.l10n.VenueView</CustomToolNamespace>
+    </EmbeddedResource>
+    <EmbeddedResource Include="l10n\VenueView\Errors.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>Errors.Designer.cs</LastGenOutput>
+      <CustomToolNamespace>TicketManagementWPF.l10n.VenueView</CustomToolNamespace>
+    </EmbeddedResource>
+    <EmbeddedResource Include="l10n\VenueView\View.be.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>View.be.Designer.cs</LastGenOutput>
+      <CustomToolNamespace>TicketManagementWPF.l10n.VenueView</CustomToolNamespace>
+    </EmbeddedResource>
+    <EmbeddedResource Include="l10n\VenueView\View.ru.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>View.ru.Designer.cs</LastGenOutput>
+      <CustomToolNamespace>TicketManagementWPF.l10n.VenueView</CustomToolNamespace>
+    </EmbeddedResource>
+    <EmbeddedResource Include="l10n\VenueView\View.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>View.Designer.cs</LastGenOutput>
+      <CustomToolNamespace>TicketManagementWPF.l10n.VenueView</CustomToolNamespace>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <None Include="Connected Services\VenueService\TicketManagementWPF.VenueService.Venue.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\VenueService\VenueService.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Connected Services\VenueService\VenueService1.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Connected Services\VenueService\VenueService2.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Connected Services\VenueService\VenueService3.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Connected Services\VenueService\WcfVenueService.wsdl" />
+    <None Include="packages.config" />
+    <None Include="Properties\DataSources\WcfBusinessLogic.Core.Contracts.Data.Venue.datasource" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\User.WebApi.Helper\User.WebApi.Helper.csproj">
+      <Project>{C2EB14A1-AEC4-41CD-B33B-CAF93C69F65E}</Project>
+      <Name>User.WebApi.Helper</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadataStorage Include="Connected Services\VenueService\" />
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include=".NETFramework,Version=v4.7.2">
+      <Visible>False</Visible>
+      <ProductName>Microsoft .NET Framework 4.7.2 %28x86 and x64%29</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Connected Services\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Connected Services\VenueService\VenueService.disco" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Connected Services\VenueService\configuration91.svcinfo" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Connected Services\VenueService\configuration.svcinfo" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Connected Services\VenueService\Reference.svcmap">
+      <Generator>WCF Proxy Generator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

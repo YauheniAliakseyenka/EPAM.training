@@ -184,10 +184,14 @@
     <None Include="Connected Services\EventAreaService\EventAreaService3.xsd">
       <SubType>Designer</SubType>
     </None>
-    <Content Include="Connected Services\EventAreaService\TicketManagementMVC.EventAreaService.EventArea.datasource">
-      <DependentUpon>Reference.svcmap</DependentUpon>
-    </Content>
     <None Include="Connected Services\EventAreaService\WcfEventAreaService.wsdl" />
+    <None Include="Connected Services\EventService\EventService.disco" />
+    <None Include="Connected Services\EventService\configuration91.svcinfo" />
+    <None Include="Connected Services\EventService\configuration.svcinfo" />
+    <None Include="Connected Services\EventService\Reference.svcmap">
+      <Generator>WCF Proxy Generator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
     <None Include="Connected Services\EventAreaService\EventAreaService.disco" />
     <None Include="Connected Services\EventAreaService\configuration91.svcinfo" />
     <None Include="Connected Services\EventAreaService\configuration.svcinfo" />
@@ -195,28 +199,6 @@
       <Generator>WCF Proxy Generator</Generator>
       <LastGenOutput>Reference.cs</LastGenOutput>
     </None>
-    <None Include="Connected Services\EventService\EventService.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Connected Services\EventService\EventService1.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Connected Services\EventService\EventService2.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Connected Services\EventService\EventService3.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Connected Services\EventService\EventService4.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <Content Include="Connected Services\EventService\TicketManagementMVC.EventService.Event.datasource">
-      <DependentUpon>Reference.svcmap</DependentUpon>
-    </Content>
-    <Content Include="Connected Services\EventService\TicketManagementMVC.EventService.EventModel.datasource">
-      <DependentUpon>Reference.svcmap</DependentUpon>
-    </Content>
-    <None Include="Connected Services\EventService\WcfEventService.wsdl" />
     <None Include="Connected Services\LayoutService\LayoutService.xsd">
       <SubType>Designer</SubType>
     </None>
@@ -229,21 +211,11 @@
     <None Include="Connected Services\LayoutService\LayoutService3.xsd">
       <SubType>Designer</SubType>
     </None>
-    <Content Include="Connected Services\LayoutService\TicketManagementMVC.LayoutService.Layout.datasource">
-      <DependentUpon>Reference.svcmap</DependentUpon>
-    </Content>
     <None Include="Connected Services\LayoutService\WcfLayoutService.wsdl" />
     <None Include="Connected Services\PurchaseService\PurchaseService.disco" />
     <None Include="Connected Services\PurchaseService\configuration91.svcinfo" />
     <None Include="Connected Services\PurchaseService\configuration.svcinfo" />
     <None Include="Connected Services\PurchaseService\Reference.svcmap">
-      <Generator>WCF Proxy Generator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
-    <None Include="Connected Services\EventService\EventService.disco" />
-    <None Include="Connected Services\EventService\configuration91.svcinfo" />
-    <None Include="Connected Services\EventService\configuration.svcinfo" />
-    <None Include="Connected Services\EventService\Reference.svcmap">
       <Generator>WCF Proxy Generator</Generator>
       <LastGenOutput>Reference.cs</LastGenOutput>
     </None>
@@ -254,9 +226,6 @@
       <Generator>WCF Proxy Generator</Generator>
       <LastGenOutput>Reference.cs</LastGenOutput>
     </None>
-    <Content Include="Connected Services\VenueService\TicketManagementMVC.VenueService.Venue.datasource">
-      <DependentUpon>Reference.svcmap</DependentUpon>
-    </Content>
     <None Include="Connected Services\VenueService\VenueService.disco" />
     <None Include="Connected Services\VenueService\configuration91.svcinfo" />
     <None Include="Connected Services\VenueService\configuration.svcinfo" />
@@ -288,8 +257,22 @@
     <Content Include="Scripts\bootstrap.min.js.map" />
     <Content Include="Scripts\bootstrap.js.map" />
     <None Include="bundleconfig.json" />
-    <Content Include="Properties\DataSources\BusinessLogic.BusinessModels.EventModel.datasource" />
-    <Content Include="Properties\DataSources\BusinessLogic.DTO.EventDto.datasource" />
+    <None Include="Connected Services\EventService\EventService.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Connected Services\EventService\EventService1.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Connected Services\EventService\EventService2.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Connected Services\EventService\EventService3.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Connected Services\EventService\WcfEventService.wsdl" />
+    <Content Include="Properties\DataSources\WcfBusinessLogic.Core.Contracts.Data.Event.datasource" />
+    <Content Include="Properties\DataSources\WcfBusinessLogic.Core.Contracts.Data.EventBusinessModel.datasource" />
+    <Content Include="Properties\DataSources\WcfBusinessLogic.Core.Contracts.Data.EventArea.datasource" />
     <None Include="Connected Services\PurchaseService\PurchaseService.xsd">
       <SubType>Designer</SubType>
     </None>
@@ -299,19 +282,13 @@
     <None Include="Connected Services\PurchaseService\PurchaseService2.xsd">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Connected Services\PurchaseService\PurchaseService4.xsd">
+    <None Include="Connected Services\PurchaseService\PurchaseService3.xsd">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Connected Services\PurchaseService\PurchaseService5.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <Content Include="Connected Services\PurchaseService\TicketManagementMVC.PurchaseService.OrderModel.datasource">
-      <DependentUpon>Reference.svcmap</DependentUpon>
-    </Content>
-    <Content Include="Connected Services\PurchaseService\TicketManagementMVC.PurchaseService.SeatModel.datasource">
-      <DependentUpon>Reference.svcmap</DependentUpon>
-    </Content>
     <None Include="Connected Services\PurchaseService\WcfPurchaseService.wsdl" />
+    <Content Include="Properties\DataSources\WcfBusinessLogic.Core.Contracts.Data.OrderBusinessModel.datasource" />
+    <Content Include="Properties\DataSources\WcfBusinessLogic.Core.Contracts.Data.SeatBusinessModel.datasource" />
+    <Content Include="Properties\DataSources\WcfBusinessLogic.Core.Contracts.Data.Layout.datasource" />
     <None Include="Connected Services\VenueService\VenueService.xsd">
       <SubType>Designer</SubType>
     </None>
@@ -325,6 +302,7 @@
       <SubType>Designer</SubType>
     </None>
     <None Include="Connected Services\VenueService\WcfVenueService.wsdl" />
+    <Content Include="Properties\DataSources\WcfBusinessLogic.Core.Contracts.Data.Venue.datasource" />
     <None Include="Properties\PublishProfiles\CustomProfile.pubxml" />
     <None Include="Scripts\jquery-3.3.1.intellisense.js" />
     <Content Include="Scripts\eventmanager.workflow.min.js">
@@ -433,14 +411,14 @@
     </Compile>
     <Compile Include="Infrastructure\Authentication\AuthManager.cs" />
     <Compile Include="Infrastructure\Authentication\AuthSettings.cs" />
+    <Compile Include="Infrastructure\Authentication\BalanceUpdateVerb.cs" />
+    <Compile Include="Infrastructure\Authentication\IUserManager.cs" />
     <Compile Include="Infrastructure\Authentication\TokenModel.cs" />
     <Compile Include="Infrastructure\Authentication\UserManager.cs" />
     <Compile Include="Infrastructure\Extentions\ClaimExtentions.cs" />
     <Compile Include="Infrastructure\Helpers\CustomHtmlExtensions.cs" />
     <Compile Include="Infrastructure\Helpers\CultureSetter.cs" />
     <Compile Include="Infrastructure\Helpers\Parsers\UserParser.cs" />
-    <Compile Include="Infrastructure\Helpers\UserWepiApi\RequestVerbs.cs" />
-    <Compile Include="Infrastructure\Helpers\UserWepiApi\UserWebApiHelper.cs" />
     <Compile Include="Models\Account\BalanceReplenishmentViewModel.cs" />
     <Compile Include="App_Start\ContainerConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
@@ -463,7 +441,6 @@
     <Compile Include="Models\Account\LoginViewModel.cs" />
     <Compile Include="Models\Account\RegistrationViewModel.cs" />
     <Compile Include="Models\Account\UserProfileViewModel.cs" />
-    <Compile Include="Models\ResponseModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="App_GlobalResources\common\ResourceErrors.be.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -598,6 +575,16 @@
     <WCFMetadataStorage Include="Connected Services\LayoutService\" />
     <WCFMetadataStorage Include="Connected Services\PurchaseService\" />
     <WCFMetadataStorage Include="Connected Services\VenueService\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\User.WebApi.Helper\User.WebApi.Helper.csproj">
+      <Project>{c2eb14a1-aec4-41cd-b33b-caf93c69f65e}</Project>
+      <Name>User.WebApi.Helper</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\WcfDataContractsConsumerLibrary\WcfDataContractsConsumerLibrary.csproj">
+      <Project>{b95efc95-aebe-4ab1-a1cb-b1e3d7d50460}</Project>
+      <Name>WcfDataContractsConsumerLibrary</Name>
+    </ProjectReference>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

@@ -1,0 +1,13 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:local="clr-namespace:TicketManagementWPF.ResourceDictionaries.Styles"
+                    xmlns:sys="clr-namespace:System;assembly=mscorlib"
+                    xmlns:pres="http://schemas.microsoft.com/netfx/2009/xaml/presentation">
+    
+    <sys:Double x:Key="DefaultFontSize">15</sys:Double>
+    <pres:Brush x:Key="DefaultControlBackgroundBrush">#FFFFFFFF</pres:Brush>
+    <pres:Brush x:Key="DefaultControlInnerBorderBrush">#33000000</pres:Brush>
+    <pres:Brush x:Key="DefaultControlOuterBorderBrush">#5AFFFFFF</pres:Brush>
+    <pres:CornerRadius x:Key="DefaultCornerRadius">4</pres:CornerRadius>
+    <pres:Thickness x:Key="DefaultBorderThickness">1</pres:Thickness>
+</ResourceDictionary>

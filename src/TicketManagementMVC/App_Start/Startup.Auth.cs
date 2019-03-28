@@ -14,7 +14,7 @@ namespace TicketManagementMVC
 			{
 				AuthenticationType = DefaultAuthenticationTypes.ApplicationCookie,
 				LoginPath = new PathString("/"),
-				ExpireTimeSpan = TimeSpan.FromMinutes(60)
+				ExpireTimeSpan = TimeSpan.FromMinutes(30)
 			});
 		}
     }

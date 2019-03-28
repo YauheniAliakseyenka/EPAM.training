@@ -25,7 +25,11 @@ namespace WcfBusinessLogic.Core.Contracts.Services
         [FaultContract(typeof(ServiceValidationFaultDetails))]
 		Task<Venue> Get(int id);
 
-		[OperationContract]
+        [OperationContract]
+        [FaultContract(typeof(ServiceValidationFaultDetails))]
+        Task<Venue> GetFullModel(int id);
+
+        [OperationContract]
 		[FaultContract(typeof(ServiceValidationFaultDetails))]
 		Task<IEnumerable<Venue>> ToList();
 	}

@@ -27,7 +27,7 @@ namespace BusinessLogic.Services.Tests
 			dateBase = new DeployDb();
 			dateBase.Deploy();
 
-			venueService = Container.GetContainer().Resolve<IStoreService<VenueDto, int>>();
+			venueService = Container.GetContainer().Resolve<IVenueService>();
 
 			//venue
 			venue = new VenueDto

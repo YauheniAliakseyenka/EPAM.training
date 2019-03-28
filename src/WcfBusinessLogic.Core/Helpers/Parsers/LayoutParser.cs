@@ -24,7 +24,7 @@ namespace WcfBusinessLogic.Core.Helpers.Parsers
                 Description = from.Description,
                 Id = from.Id,
                 VenueId = from.VenueId,
-                AreaList = from.AreaList?.Select(x => AreaParser.ToAreaDto(x)).ToList()
+				AreaList = from.AreaList?.Select(x => AreaParser.ToAreaDto(x)).ToList()
             };
         }
     }

@@ -34,7 +34,7 @@ namespace BusinessLogic.Services.EventServices
 				case FilterEventOptions.Title:
 					if (!string.IsNullOrEmpty(filterText))
 						data = from events in data
-							   where events.currentEvent.Title.IndexOf(filterText,0, StringComparison.OrdinalIgnoreCase) != -1
+							   where events.currentEvent.Title.IndexOf(filterText, 0, StringComparison.OrdinalIgnoreCase) != -1
 							   select events;
 					break;
 				case FilterEventOptions.Date:

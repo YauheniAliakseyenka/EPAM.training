@@ -13,5 +13,5 @@ namespace WcfBusinessLogic.Core.Contracts.Data
         public int Row { get; set; }
         [DataMember]
         public int Number { get; set; }
-    }
+	}
 }

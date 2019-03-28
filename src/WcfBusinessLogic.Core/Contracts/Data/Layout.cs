@@ -12,7 +12,7 @@ namespace WcfBusinessLogic.Core.Contracts.Data
         public int VenueId { get; set; }
         [DataMember]
         public string Description { get; set; }
-        [DataMember]
+		[DataMember]
         public List<Area> AreaList { get; set; }
     }
 }

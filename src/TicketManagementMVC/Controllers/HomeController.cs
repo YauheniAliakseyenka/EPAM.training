@@ -6,6 +6,7 @@ using TicketManagementMVC.Helpers;
 using TicketManagementMVC.Infrastructure.Authentication;
 using TicketManagementMVC.EventService;
 using System.Threading;
+using WcfBusinessLogic.Core.Contracts.Data;
 
 namespace TicketManagementMVC.Controllers
 {

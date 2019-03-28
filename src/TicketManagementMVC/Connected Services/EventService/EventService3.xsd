@@ -1,20 +1,148 @@
 <?xml version="1.0" encoding="utf-8"?>
-<xs:schema xmlns:tns="http://schemas.datacontract.org/2004/07/WcfBusinessLogic.Core.Contracts.Data.BusinessModels" elementFormDefault="qualified" targetNamespace="http://schemas.datacontract.org/2004/07/WcfBusinessLogic.Core.Contracts.Data.BusinessModels" xmlns:xs="http://www.w3.org/2001/XMLSchema">
-  <xs:import schemaLocation="http://localhost:59102/EventService.svc?xsd=xsd2" namespace="http://schemas.datacontract.org/2004/07/WcfBusinessLogic.Core.Contracts.Data" />
-  <xs:complexType name="ArrayOfEventModel">
+<xs:schema xmlns:tns="http://schemas.datacontract.org/2004/07/WcfBusinessLogic.Core.Contracts.Data" elementFormDefault="qualified" targetNamespace="http://schemas.datacontract.org/2004/07/WcfBusinessLogic.Core.Contracts.Data" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:complexType name="Event">
     <xs:sequence>
-      <xs:element minOccurs="0" maxOccurs="unbounded" name="EventModel" nillable="true" type="tns:EventModel" />
+      <xs:element minOccurs="0" name="CreatedBy" type="xs:int" />
+      <xs:element minOccurs="0" name="Date" type="xs:dateTime" />
+      <xs:element minOccurs="0" name="Description" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Id" type="xs:int" />
+      <xs:element minOccurs="0" name="ImageURL" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="LayoutId" type="xs:int" />
+      <xs:element minOccurs="0" name="Title" nillable="true" type="xs:string" />
     </xs:sequence>
   </xs:complexType>
-  <xs:element name="ArrayOfEventModel" nillable="true" type="tns:ArrayOfEventModel" />
-  <xs:complexType name="EventModel">
+  <xs:element name="Event" nillable="true" type="tns:Event" />
+  <xs:complexType name="ArrayOfEvent">
     <xs:sequence>
-      <xs:element xmlns:q1="http://schemas.datacontract.org/2004/07/WcfBusinessLogic.Core.Contracts.Data" minOccurs="0" name="Areas" nillable="true" type="q1:ArrayOfEventArea" />
-      <xs:element xmlns:q2="http://schemas.datacontract.org/2004/07/WcfBusinessLogic.Core.Contracts.Data" minOccurs="0" name="Event" nillable="true" type="q2:Event" />
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="Event" nillable="true" type="tns:Event" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfEvent" nillable="true" type="tns:ArrayOfEvent" />
+  <xs:simpleType name="FilterEventOptions">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="None" />
+      <xs:enumeration value="Title" />
+      <xs:enumeration value="Date" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:element name="FilterEventOptions" nillable="true" type="tns:FilterEventOptions" />
+  <xs:complexType name="ArrayOfEventBusinessModel">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="EventBusinessModel" nillable="true" type="tns:EventBusinessModel" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfEventBusinessModel" nillable="true" type="tns:ArrayOfEventBusinessModel" />
+  <xs:complexType name="EventBusinessModel">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="Areas" nillable="true" type="tns:ArrayOfEventArea" />
+      <xs:element minOccurs="0" name="Event" nillable="true" type="tns:Event" />
       <xs:element minOccurs="0" name="IsPublished" type="xs:boolean" />
       <xs:element minOccurs="0" name="LayoutName" nillable="true" type="xs:string" />
-      <xs:element xmlns:q3="http://schemas.datacontract.org/2004/07/WcfBusinessLogic.Core.Contracts.Data" minOccurs="0" name="Venue" nillable="true" type="q3:Venue" />
+      <xs:element minOccurs="0" name="Venue" nillable="true" type="tns:Venue" />
     </xs:sequence>
   </xs:complexType>
-  <xs:element name="EventModel" nillable="true" type="tns:EventModel" />
+  <xs:element name="EventBusinessModel" nillable="true" type="tns:EventBusinessModel" />
+  <xs:complexType name="ArrayOfEventArea">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="EventArea" nillable="true" type="tns:EventArea" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfEventArea" nillable="true" type="tns:ArrayOfEventArea" />
+  <xs:complexType name="EventArea">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="AreaDefaultId" type="xs:int" />
+      <xs:element minOccurs="0" name="CoordX" type="xs:int" />
+      <xs:element minOccurs="0" name="CoordY" type="xs:int" />
+      <xs:element minOccurs="0" name="Description" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="EventId" type="xs:int" />
+      <xs:element minOccurs="0" name="Id" type="xs:int" />
+      <xs:element minOccurs="0" name="Price" type="xs:decimal" />
+      <xs:element minOccurs="0" name="Seats" nillable="true" type="tns:ArrayOfEventSeat" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="EventArea" nillable="true" type="tns:EventArea" />
+  <xs:complexType name="ArrayOfEventSeat">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="EventSeat" nillable="true" type="tns:EventSeat" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfEventSeat" nillable="true" type="tns:ArrayOfEventSeat" />
+  <xs:complexType name="EventSeat">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="EventAreaId" type="xs:int" />
+      <xs:element minOccurs="0" name="Id" type="xs:int" />
+      <xs:element minOccurs="0" name="Number" type="xs:int" />
+      <xs:element minOccurs="0" name="Row" type="xs:int" />
+      <xs:element minOccurs="0" name="State" type="tns:SeatState" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="EventSeat" nillable="true" type="tns:EventSeat" />
+  <xs:simpleType name="SeatState">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Available" />
+      <xs:enumeration value="Ordered" />
+      <xs:enumeration value="Purchased" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:element name="SeatState" nillable="true" type="tns:SeatState" />
+  <xs:complexType name="Venue">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="Address" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Description" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Id" type="xs:int" />
+      <xs:element minOccurs="0" name="LayoutList" nillable="true" type="tns:ArrayOfLayout" />
+      <xs:element minOccurs="0" name="Name" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="NameWithOffset" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Phone" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Timezone" nillable="true" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="Venue" nillable="true" type="tns:Venue" />
+  <xs:complexType name="ArrayOfLayout">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="Layout" nillable="true" type="tns:Layout" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfLayout" nillable="true" type="tns:ArrayOfLayout" />
+  <xs:complexType name="Layout">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="AreaList" nillable="true" type="tns:ArrayOfArea" />
+      <xs:element minOccurs="0" name="Description" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Id" type="xs:int" />
+      <xs:element minOccurs="0" name="VenueId" type="xs:int" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="Layout" nillable="true" type="tns:Layout" />
+  <xs:complexType name="ArrayOfArea">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="Area" nillable="true" type="tns:Area" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfArea" nillable="true" type="tns:ArrayOfArea" />
+  <xs:complexType name="Area">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="CoordX" type="xs:int" />
+      <xs:element minOccurs="0" name="CoordY" type="xs:int" />
+      <xs:element minOccurs="0" name="Description" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Id" type="xs:int" />
+      <xs:element minOccurs="0" name="LayoutId" type="xs:int" />
+      <xs:element minOccurs="0" name="SeatList" nillable="true" type="tns:ArrayOfSeat" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="Area" nillable="true" type="tns:Area" />
+  <xs:complexType name="ArrayOfSeat">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="Seat" nillable="true" type="tns:Seat" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfSeat" nillable="true" type="tns:ArrayOfSeat" />
+  <xs:complexType name="Seat">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="AreaId" type="xs:int" />
+      <xs:element minOccurs="0" name="Id" type="xs:int" />
+      <xs:element minOccurs="0" name="Number" type="xs:int" />
+      <xs:element minOccurs="0" name="Row" type="xs:int" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="Seat" nillable="true" type="tns:Seat" />
 </xs:schema>

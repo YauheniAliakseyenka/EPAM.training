@@ -1,12 +1,15 @@
 ﻿using Autofac;
 using BusinessLogic.DTO;
 using BusinessLogic.Exceptions.VenueExceptions;
+using BusinessLogic.Parsers;
 using BusinessLogic.Services;
 using BusinessLogic.Tests.Unit.DiContainer;
+using DataAccess;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace BusinessLogin.Unit.Tests
 {
@@ -28,7 +31,7 @@ namespace BusinessLogin.Unit.Tests
 		{
 			//Arrange
 			var venue = new VenueDto { Name = venueName };
-            var venueService = _container.Resolve<IStoreService<VenueDto, int>>();
+            var venueService = _container.Resolve<IVenueService>();
 
             //Act
             var exception = Assert.CatchAsync(async () => await venueService.Create(venue));
@@ -41,7 +44,7 @@ namespace BusinessLogin.Unit.Tests
 		public void Venue_is_valid()
 		{
 			//Arrange
-            var venueService = _container.Resolve<IStoreService<VenueDto, int>>();
+            var venueService = _container.Resolve<IVenueService>();
             var venue = new VenueDto { Name = "Colston Hall", LayoutList = new List<LayoutDto>(), Id = 2 };
 			venue.LayoutList.Add(new LayoutDto { AreaList = new List<AreaDto>(), Description = "any layout description", Id = 4 });
 			venue.LayoutList.First().AreaList.Add(new AreaDto { Description = "any area description", SeatList = new List<SeatDto>(), Id = 4 });
@@ -56,7 +59,7 @@ namespace BusinessLogin.Unit.Tests
 		{
 			//Arrange
 			var venue = new VenueDto { Name = "Club Koko", LayoutList = new List<LayoutDto>() };
-            var venueService = _container.Resolve<IStoreService<VenueDto, int>>();
+            var venueService = _container.Resolve<IVenueService>();
 
             //Assert
             Assert.ThrowsAsync<VenueException>(async () => await venueService.Create(venue));
@@ -69,7 +72,7 @@ namespace BusinessLogin.Unit.Tests
 		{
 			//Arrange
 			var venue = new VenueDto { Name = venueName };
-            var venueService = _container.Resolve<IStoreService<VenueDto, int>>();
+            var venueService = _container.Resolve<IVenueService>();
 
             //Act
             var exception = Assert.CatchAsync<VenueException>(async () => await venueService.Create(venue));
@@ -82,7 +85,7 @@ namespace BusinessLogin.Unit.Tests
 		public void Venue_is_null_retun_exception()
 		{
             //Arrange
-            var venueService = _container.Resolve<IStoreService<VenueDto, int>>();
+            var venueService = _container.Resolve<IVenueService>();
 
             //Assert
             Assert.ThrowsAsync<ArgumentNullException>(async () => await venueService.Create(null));
@@ -248,14 +251,19 @@ namespace BusinessLogin.Unit.Tests
 		[TestCase(2, 1, 4)]
 		[TestCase(1, 2, 6)]
 		[TestCase(1, 2, 6)]
-		public void Seat_is_unique(int row, int number, int areaId)
+		public async Task Seat_is_unique(int row, int number, int areaId)
 		{
-            //Arrange
-            var seatService = _container.Resolve<IStoreService<SeatDto, int>>();
-            var seat = new SeatDto { Row = row, Number = number, AreaId = areaId };
+			//Arrange
+			var areaService = _container.Resolve<IStoreService<AreaDto, int>>();
+			var context = _container.Resolve<IWorkUnit>();
+			var area = await areaService.Get(areaId);
+			var seats = await context.SeatRepository.FindByAsync(x => x.AreaId == areaId);
+			var seat = new SeatDto { Row = row, Number = number, AreaId = areaId };
+			area.SeatList.AddRange(seats.Select(x => SeatParser.MapToSeatDto(x)).ToList());
+			area.SeatList.Add(seat);
 
 			//Assert
-			Assert.DoesNotThrowAsync(async () => await seatService.Create(seat));
+			Assert.DoesNotThrowAsync(async () => await areaService.Update(area));
 		}
 
 		[TestCase(1, 1, 1)]
@@ -268,14 +276,19 @@ namespace BusinessLogin.Unit.Tests
 		[TestCase(1, 2, 7)]
 		[TestCase(2, 1, 7)]
 		[TestCase(2, 2, 7)]
-		public void Seat_is_unique_excpected_exception(int row, int number, int areaId)
+		public async Task Seat_is_unique_excpected_exception(int row, int number, int areaId)
 		{
             //Arrange
-            var seatService = _container.Resolve<IStoreService<SeatDto, int>>();
-            var seat = new SeatDto { Row = row, Number = number, AreaId = areaId };
+            var areaService = _container.Resolve<IStoreService<AreaDto, int>>();
+			var context = _container.Resolve<IWorkUnit>();
+			var area = await areaService.Get(areaId);
+			var seats = await context.SeatRepository.FindByAsync(x => x.AreaId == areaId);
+			var seat = new SeatDto { Row = row, Number = number, AreaId = areaId };
+			area.SeatList.AddRange(seats.Select(x => SeatParser.MapToSeatDto(x)).ToList());
+			area.SeatList.Add(seat);
 
 			//Act
-			var exception = Assert.CatchAsync<SeatException>(async () => await seatService.Create(seat));
+			var exception = Assert.CatchAsync<SeatException>(async () => await areaService.Update(area));
 
 			//Assert
 			StringAssert.AreEqualIgnoringCase(exception.Message, "Seat already exists");

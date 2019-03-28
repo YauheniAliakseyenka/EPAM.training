@@ -28,7 +28,7 @@ namespace User.WebApi.Controllers
         /// <summary>
         /// Get a token by user credentials
         /// </summary>
-        /// <param name="credentials"></param>
+        /// <param name="credentials">LoginModel</param>
         /// <returns>A pair of tokens: access jwt token and refresh token (TokenModel)</returns>
         /// <response code="200">Returns a pair of tokens</response>
         /// <response code="400">Invalid client request</response>
@@ -77,19 +77,19 @@ namespace User.WebApi.Controllers
 			}
 		}
 
-        /// <summary>
-        /// Regsitration of a user
-        /// </summary>
-        /// <param name="model"></param>
-        /// <returns>A pair of tokens: access jwt token and refresh token (TokenModel)</returns>
-        /// <response code="200">Returns a pair of tokens</response>
-        /// <response code="400">Invalid client request</response>
-        /// <response code="500">Internal server error</response>
-        // POST api/authenticate/registration
-        [AllowAnonymous]
+		/// <summary>
+		/// Regsitration of a user
+		/// </summary>
+		/// <param name="model">CreateUserModel</param>
+		/// <returns>A pair of tokens: access jwt token and refresh token (TokenModel)</returns>
+		/// <response code="200">Returns a pair of tokens</response>
+		/// <response code="400">Invalid client request</response>
+		/// <response code="500">Internal server error</response>
+		// POST api/authenticate/registration
+		[AllowAnonymous]
 		[HttpPost]
 		[Route("registration")]
-		public async Task<IActionResult> Register([FromBody]RegistratationUserModel model)
+		public async Task<IActionResult> Register([FromBody]CreateUserModel model)
 		{
 			if (model is null)
 				return BadRequest(new { Message = "Invalid client request" });
@@ -99,7 +99,7 @@ namespace User.WebApi.Controllers
 
 			try
 			{
-				var user = UserParser.RegistratationUserModelToUserDto(model);
+				var user = UserParser.CreateUserModelToUserDto(model);
 
 				await _userService.Create(user);
 
@@ -121,16 +121,16 @@ namespace User.WebApi.Controllers
 			}
 		}
 
-        /// <summary>
-        /// Refresh a token
-        /// </summary>
-        /// <param name="model"></param>
-        /// <returns>A pair of tokens: access jwt token and refresh token (TokenModel)</returns>
-        /// <response code="200">Returns a pair of tokens</response>
-        /// <response code="400">Invalid client request</response>
-        /// <response code="500">Internal server error</response>
-        // POST api/authenticate/refresh-token
-        [AllowAnonymous]
+		/// <summary>
+		/// Refresh a token
+		/// </summary>
+		/// <param name="model">TokenModel</param>
+		/// <returns>A pair of tokens: access jwt token and refresh token (TokenModel)</returns>
+		/// <response code="200">Returns a pair of tokens</response>
+		/// <response code="400">Invalid client request</response>
+		/// <response code="500">Internal server error</response>
+		// POST api/authenticate/refresh-token
+		[AllowAnonymous]
         [HttpPut]
         [Route("token", Name = nameof(RefreshToken))]
         public async Task<IActionResult> RefreshToken([FromBody]TokenModel model)

@@ -1,12 +1,11 @@
 ﻿using BusinessLogic.Exceptions;
 using BusinessLogic.Services;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 using System.Security.Permissions;
 using System.ServiceModel;
 using System.Threading.Tasks;
-using WcfBusinessLogic.Core.Contracts.Data.BusinessModels;
+using WcfBusinessLogic.Core.Contracts.Data;
 using WcfBusinessLogic.Core.Contracts.Exceptions;
 using WcfBusinessLogic.Core.Contracts.Services;
 using WcfBusinessLogic.Core.Helpers.Parsers;
@@ -32,6 +31,9 @@ namespace WcfWebHost.Services
 			_seatLocker = seatLocker;
 			_cartService = cartService;
 			_emailService = emailService;
+
+			_orderService.Ordered += _seatLocker.OrderCompleted;
+			_orderService.Ordered += _emailService.Send;
 		}
 
         [PrincipalPermission(SecurityAction.Demand, Role = "Manager")]
@@ -49,13 +51,11 @@ namespace WcfWebHost.Services
 		}
 		
         [PrincipalPermission(SecurityAction.Demand, Role = "Manager")]
-        public async Task<string> CancelOrderAndRefund(int orderId)
+        public async Task CancelOrderAndRefund(int orderId)
 		{
 			try
 			{
-				var amount = await _orderService.CancelOrderAndRefund(orderId);
-
-				return amount.ToString(CultureInfo.InvariantCulture);
+				 await _orderService.CancelOrderAndRefund(orderId);
 			}
 			catch (OrderException exception)
 			{
@@ -65,16 +65,11 @@ namespace WcfWebHost.Services
 		}
 		
         [PrincipalPermission(SecurityAction.Demand, Role = "Manager")]
-        public async Task<string> CreateOrder(int userId)
+        public async Task CreateOrder(int userId)
 		{
 			try
 			{
-				_orderService.Ordered += _seatLocker.OrderCompleted;
-				_orderService.Ordered += _emailService.Send;
-
-				var amount = await _orderService.Create(userId);
-
-				return amount.ToString(CultureInfo.InvariantCulture);
+				await _orderService.Create(userId);
 			}
 			catch (OrderException exception)
 			{
@@ -98,7 +93,7 @@ namespace WcfWebHost.Services
 		}
 		
         [PrincipalPermission(SecurityAction.Demand, Role = "Manager")]
-        public async Task<IEnumerable<SeatModel>> GetOrderedSeats(int userId)
+        public async Task<IEnumerable<SeatBusinessModel>> GetOrderedSeats(int userId)
 		{
 			try
 			{
@@ -114,7 +109,7 @@ namespace WcfWebHost.Services
 		}
 		
         [PrincipalPermission(SecurityAction.Demand, Role = "Manager")]
-        public async Task<IEnumerable<OrderModel>> GetPurchaseHistory(int userId)
+        public async Task<IEnumerable<OrderBusinessModel>> GetPurchaseHistory(int userId)
 		{
 			try
 			{
@@ -129,18 +124,18 @@ namespace WcfWebHost.Services
 			}
 		}
 
-        private OrderModel OrderModelBllToOrderModelContract(BusinessLogic.BusinessModels.OrderModel from)
+        private OrderBusinessModel OrderModelBllToOrderModelContract(BusinessLogic.BusinessModels.OrderModel from)
 		{
-			return new OrderModel
+			return new OrderBusinessModel
 			{
 				PurchasedSeats = from.PurchasedSeats?.Select(x=>SeatModelBllToSeatModelContract(x)).ToList(),
 				Order = OrderParser.ToOrderContract(from.Order)
 			};
 		}
 
-		private SeatModel SeatModelBllToSeatModelContract(BusinessLogic.BusinessModels.SeatModel from)
+		private SeatBusinessModel SeatModelBllToSeatModelContract(BusinessLogic.BusinessModels.SeatModel from)
 		{
-			return new SeatModel
+			return new SeatBusinessModel
 			{
 				Seat = EventSeatParser.ToEventSeatContract(from.Seat),
 				Area = EventAreaParser.ToEventAreaContract(from.Area),

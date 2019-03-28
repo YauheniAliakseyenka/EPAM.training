@@ -2,7 +2,6 @@
 using System.ServiceModel;
 using System.Threading.Tasks;
 using WcfBusinessLogic.Core.Contracts.Data;
-using WcfBusinessLogic.Core.Contracts.Data.BusinessModels;
 using WcfBusinessLogic.Core.Contracts.Exceptions;
 
 namespace WcfBusinessLogic.Core.Contracts.Services
@@ -32,11 +31,11 @@ namespace WcfBusinessLogic.Core.Contracts.Services
 
         [OperationContract]
         [FaultContract(typeof(ServiceValidationFaultDetails))]
-		Task<IEnumerable<EventModel>> GetPublishedEvents(FilterEventOptions filter, string filterText, string dateCulture);
+		Task<IEnumerable<EventBusinessModel>> GetPublishedEvents(FilterEventOptions filter, string filterText, string dateCulture);
 
         [OperationContract]
         [FaultContract(typeof(ServiceValidationFaultDetails))]
-		Task<EventModel> GetEventInformation(int id);
+		Task<EventBusinessModel> GetEventInformation(int id);
 
         [OperationContract]
         [FaultContract(typeof(ServiceValidationFaultDetails))]

@@ -91,7 +91,7 @@ namespace BusinessLogic.Tests.Unit.FakeRepositories
 
 		private void IncrementId(T entity)
 		{
-			var property = typeof(T).GetProperties().FirstOrDefault(x =>
+			var properties = typeof(T).GetProperties().Where(x =>
 			{
 				var attribute = x.GetCustomAttributes(false).SingleOrDefault(y => y.GetType() == typeof(KeyAttribute));
 
@@ -108,8 +108,12 @@ namespace BusinessLogic.Tests.Unit.FakeRepositories
 					return true;
 
 				return false;
-			});
-			property?.SetValue(entity, _store.Count + 1);
+			}).ToList();
+
+			if (properties is null || properties.Count > 1)
+				return;
+
+			properties.SingleOrDefault()?.SetValue(entity, _store.Count + 1);
 		}
 	}
 }

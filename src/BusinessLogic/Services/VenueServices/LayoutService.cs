@@ -1,11 +1,11 @@
 ﻿using BusinessLogic.DTO;
 using BusinessLogic.Exceptions.VenueExceptions;
 using DataAccess;
-using DataAccess.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using BusinessLogic.Parsers;
 
 namespace BusinessLogic.Services
 {
@@ -41,7 +41,7 @@ namespace BusinessLogic.Services
 			if (entity.AreaList == null || !entity.AreaList.Any())
 				throw new LayoutException("Incorrect state of the layout. The layout must have at least one area");
 
-			var layoutAdd = MapToLayout(entity);
+			var layoutAdd = LayoutParser.MapToLayout(entity);
 			using (var transaction = CustomTransactionScope.GetTransactionScope())
 			{
 				_context.LayoutRepository.Create(layoutAdd);
@@ -72,14 +72,14 @@ namespace BusinessLogic.Services
 		{
 			var layout = await _context.LayoutRepository.GetAsync(id);
             
-			return layout == null? null: MapToLayoutDto(layout);
+			return layout == null? null: LayoutParser.MapToLayoutDto(layout);
 		}
 
 		public  async Task<IEnumerable<LayoutDto>> GetList()
 		{
 			var list = await _context.LayoutRepository.GetListAsync();
 
-			return list.Select(x => MapToLayoutDto(x));
+			return list.Select(x => LayoutParser.MapToLayoutDto(x));
 		}
 
 		public async Task Update(LayoutDto entity)
@@ -93,31 +93,39 @@ namespace BusinessLogic.Services
 			if (!IsDescriptionUnique(entity, false))
 				throw new LayoutException("Area description isn't unique");
 
-			var update = await _context.LayoutRepository.GetAsync(entity.Id);
-			update.VenueId = entity.VenueId;
-			update.Description = entity.Description;
-			_context.LayoutRepository.Update(update);
-			await _context.SaveAsync();
-		}
+			if (entity.AreaList == null || !entity.AreaList.Any())
+				throw new LayoutException("Incorrect state of the layout. The layout must have at least one area");
 
-		private LayoutDto MapToLayoutDto(Layout from)
-		{
-			return new LayoutDto
+			using (var transaction = CustomTransactionScope.GetTransactionScope())
 			{
-				AreaList = new List<AreaDto>(),
-				Description = from.Description,
-				Id = from.Id,
-				VenueId = from.VenueId
-			};
-		}
+				var update = await _context.LayoutRepository.GetAsync(entity.Id);
+				update.VenueId = entity.VenueId;
+				update.Description = entity.Description;
+				_context.LayoutRepository.Update(update);
+				await _context.SaveAsync();
 
-		private Layout MapToLayout(LayoutDto from)
-		{
-			return new Layout
-			{
-				Description = from.Description,
-				VenueId = from.VenueId
-			};
+				var existingAreas = await _context.AreaRepository.FindByAsync(x => x.LayoutId == entity.Id);
+
+				//find and remove layouts which were deleted
+				existingAreas.Where(list2 => entity.AreaList.All(list1 => list1.Id != list2.Id)).ToList()
+					.ForEach(x =>
+					{
+						_context.AreaRepository.Delete(x);
+					});
+
+				foreach (var area in entity.AreaList)
+				{
+					if (area.Id == 0)
+					{
+						area.LayoutId = update.Id;
+						await _areaService.Create(area);
+					}
+					else
+						await _areaService.Update(area);
+				}
+
+				transaction.Complete();
+			}
 		}
 
 		private bool IsDescriptionUnique(LayoutDto entity, bool isCreating)
@@ -139,7 +147,7 @@ namespace BusinessLogic.Services
 						where layouts.VenueId == venueId
 						select layouts).ToList();
 
-			return Task.FromResult(data.Select(x=>MapToLayoutDto(x)));
+			return Task.FromResult(data.Select(x=> LayoutParser.MapToLayoutDto(x)));
 		}
 	}
 }

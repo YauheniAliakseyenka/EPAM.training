@@ -605,7 +605,6 @@
       <xsd:import schemaLocation="http://localhost:59102/EventService.svc?xsd=xsd3" namespace="http://schemas.datacontract.org/2004/07/WcfBusinessLogic.Core.Contracts.Exceptions" />
       <xsd:import schemaLocation="http://localhost:59102/EventService.svc?xsd=xsd1" namespace="http://schemas.microsoft.com/2003/10/Serialization/" />
       <xsd:import schemaLocation="http://localhost:59102/EventService.svc?xsd=xsd2" namespace="http://schemas.datacontract.org/2004/07/WcfBusinessLogic.Core.Contracts.Data" />
-      <xsd:import schemaLocation="http://localhost:59102/EventService.svc?xsd=xsd4" namespace="http://schemas.datacontract.org/2004/07/WcfBusinessLogic.Core.Contracts.Data.BusinessModels" />
     </xsd:schema>
   </wsdl:types>
   <wsdl:message name="IWcfEventService_Create_InputMessage">

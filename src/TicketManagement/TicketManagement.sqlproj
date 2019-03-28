@@ -107,4 +107,7 @@
   <ItemGroup>
     <RefactorLog Include="TicketManagement.refactorlog" />
   </ItemGroup>
+  <PropertyGroup>
+    <PostBuildEvent>start xcopy "$(ProjectDir)bin\Debug\TicketManagement.dacpac" "$(SolutionDir)tests\BusinessLogic.Services.Tests" /Q /Y</PostBuildEvent>
+  </PropertyGroup>
 </Project>

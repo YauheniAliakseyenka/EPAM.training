@@ -1,24 +1,27 @@
 ﻿namespace BusinessLogic.Services.Tests
 {
 	using Microsoft.SqlServer.Dac;
-	using System.Configuration;
+    using System;
+    using System.Configuration;
 	using System.Data.SqlClient;
+    using System.IO;
 
-	internal class DeployDb
+    internal class DeployDb
 	{
 		private string _connectionString;
-		private string _dacPacPath;
+		private string _dacPacFileName;
 
 		public DeployDb()
 		{
 			_connectionString = ConfigurationManager.ConnectionStrings["testConnectionString"].ConnectionString;
-			_dacPacPath = ConfigurationManager.AppSettings["DacPacPath"];
+            _dacPacFileName = ConfigurationManager.AppSettings["DacPacFileName"];
 		}
 
 		public void Deploy()
 		{
-			DacServices ds = new DacServices(_connectionString);
-			using (DacPackage dp = DacPackage.Load(_dacPacPath))
+            string path = Path.GetFullPath(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..\\..\\", _dacPacFileName));
+            DacServices ds = new DacServices(_connectionString);
+			using (DacPackage dp = DacPackage.Load(path))
 			{
 				ds.Deploy(dp, @"TicketManagementTest", upgradeExisting: false, options: null, cancellationToken: null);
 			}

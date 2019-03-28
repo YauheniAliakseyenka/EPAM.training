@@ -1,4 +1,6 @@
-﻿namespace BusinessLogic.DTO
+﻿using BusinessLogic.Services;
+
+namespace BusinessLogic.DTO
 {
 	public class SeatDto
 	{

@@ -1,6 +1,7 @@
 ﻿using Autofac;
 using BusinessLogic.DTO;
 using BusinessLogic.Exceptions;
+using BusinessLogic.Helpers;
 using BusinessLogic.Services;
 using BusinessLogic.Tests.Unit.DiContainer;
 using NUnit.Framework;
@@ -191,6 +192,40 @@ namespace BusinessLogin.Unit.Tests
 
 			//Assert
 			Assert.DoesNotThrowAsync(async () => await orderService.CancelOrderAndRefund(order.Order.Id));
+		}
+
+		[Test]
+		public async Task Add_Role()
+		{
+			//Arrange
+			var userService = _container.Resolve<IUserService>();
+			var user = await userService.Get(2);
+
+			//Assert
+			Assert.Multiple(async () =>
+			{
+				Assert.DoesNotThrowAsync(async () => await userService.AddRole(user, Role.VenueManager));
+				var roles = await userService.GetRoles(user.UserName);
+
+				Assert.IsTrue(roles.Any(x => x.Equals(GetEnumItemDescription.GetEnumDescription(Role.VenueManager), StringComparison.OrdinalIgnoreCase)));
+			});
+		}
+
+		[Test]
+		public async Task Delete_Role()
+		{
+			//Arrange
+			var userService = _container.Resolve<IUserService>();
+			var user = await userService.Get(1);
+
+			//Assert
+			Assert.Multiple(async () =>
+			{
+				Assert.DoesNotThrowAsync(async () => await userService.DeleteRole(user, Role.VenueManager));
+				var roles = await userService.GetRoles(user.UserName);
+
+				Assert.IsFalse(roles.Any(x => x.Equals(GetEnumItemDescription.GetEnumDescription(Role.VenueManager), StringComparison.OrdinalIgnoreCase)));
+			});
 		}
 	}
 }

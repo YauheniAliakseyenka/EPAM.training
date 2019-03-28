@@ -1,0 +1,70 @@
+﻿<UserControl x:Class="TicketManagementWPF.Views.UserControls.LoginView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:TicketManagementWPF.Views"
+             xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
+             xmlns:attachedProperties="clr-namespace:TicketManagementWPF.Infrastructure.AttachedProperty"
+             xmlns:behaviors="clr-namespace:TicketManagementWPF.Infrastructure.Behaviors"
+             xmlns:loc="clr-namespace:TicketManagementWPF.Infrastructure.Extensions.Localization"
+             xmlns:convertors="clr-namespace:TicketManagementWPF.Infrastructure.Convertors"
+             mc:Ignorable="d"
+             MinHeight="250" MinWidth="350">
+
+    <UserControl.Resources>
+        <convertors:ListToStringConvertor x:Key="ErrorConvertor" />
+    </UserControl.Resources>
+    
+    <Grid Margin="25,25,25,5">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition />
+            <ColumnDefinition Width="2*"/>
+            <ColumnDefinition />
+        </Grid.ColumnDefinitions>
+        <Label Grid.Row="4" Grid.ColumnSpan="3"
+               Style="{StaticResource ErrorListLabel}" 
+               Content="{Binding Errors, Converter={StaticResource ErrorConvertor}}"
+               attachedProperties:CommonProperties.FontScale="0.06">
+            <i:Interaction.Behaviors>
+                <behaviors:DynamicFontSizeBehavior />
+            </i:Interaction.Behaviors>
+        </Label>
+        <TextBox  Grid.Row="1" Grid.ColumnSpan="3"
+                 Style="{StaticResource TextBoxWatermark}" 
+                 Tag="{loc:Localization UsernameLabel,TicketManagementWPF.l10n.Login.View}"
+                 Text="{Binding UserName, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}">
+            <i:Interaction.Behaviors>
+                <behaviors:DynamicFontSizeBehavior />
+            </i:Interaction.Behaviors>
+        </TextBox>
+        <PasswordBox Grid.Row="2" Grid.ColumnSpan="3"
+                     Style="{StaticResource PasswordBoxWatermark}" 
+                     Tag="{loc:Localization PasswordLabel,TicketManagementWPF.l10n.Login.View}"
+                     attachedProperties:PasswordBoxProperties.EncryptedPassword="{Binding Password, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+            <i:Interaction.Behaviors>
+                <behaviors:PasswordBoxBehavior />
+                <behaviors:DynamicFontSizeBehavior />
+            </i:Interaction.Behaviors>
+        </PasswordBox>
+
+        <Button Content="{loc:Localization ButtonContent,TicketManagementWPF.l10n.Login.View}" 
+                Grid.Row="3" Grid.Column="1"
+                Command="{Binding SingInCommand}"
+                Style="{StaticResource FlatButton}" 
+                Padding="0" 
+                Margin="0,4,0,0">
+            <i:Interaction.Behaviors>
+                <behaviors:DynamicFontSizeBehavior />
+                <behaviors:CommandBusyAnimationBehavior/>
+            </i:Interaction.Behaviors>
+        </Button>
+    </Grid>
+</UserControl>

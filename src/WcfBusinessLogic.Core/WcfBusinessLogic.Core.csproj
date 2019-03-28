@@ -47,11 +47,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Contracts\Data\Area.cs" />
-    <Compile Include="Contracts\Data\BusinessModels\EventModel.cs" />
-    <Compile Include="Contracts\Data\BusinessModels\OrderModel.cs" />
-    <Compile Include="Contracts\Data\BusinessModels\SeatModel.cs" />
+    <Compile Include="Contracts\Data\OrderBusinessModel.cs" />
+    <Compile Include="Contracts\Data\SeatBusinessModel.cs" />
     <Compile Include="Contracts\Data\Event.cs" />
     <Compile Include="Contracts\Data\EventArea.cs" />
+    <Compile Include="Contracts\Data\EventBusinessModel.cs" />
     <Compile Include="Contracts\Data\EventSeat.cs" />
     <Compile Include="Contracts\Data\Layout.cs" />
     <Compile Include="Contracts\Data\Order.cs" />

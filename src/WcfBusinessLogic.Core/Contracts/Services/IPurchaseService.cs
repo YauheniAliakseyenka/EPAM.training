@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.ServiceModel;
 using System.Threading.Tasks;
-using WcfBusinessLogic.Core.Contracts.Data.BusinessModels;
+using WcfBusinessLogic.Core.Contracts.Data;
 using WcfBusinessLogic.Core.Contracts.Exceptions;
 
 namespace WcfBusinessLogic.Core.Contracts.Services
@@ -15,7 +15,7 @@ namespace WcfBusinessLogic.Core.Contracts.Services
 
 		[OperationContract]
 		[FaultContract(typeof(ServiceValidationFaultDetails))]
-		Task<IEnumerable<SeatModel>> GetOrderedSeats(int userId);
+		Task<IEnumerable<SeatBusinessModel>> GetOrderedSeats(int userId);
 
 		[OperationContract]
 		[FaultContract(typeof(ServiceValidationFaultDetails))]
@@ -28,11 +28,11 @@ namespace WcfBusinessLogic.Core.Contracts.Services
 		/// <returns>An amount of order in a string format</returns>
 		[OperationContract]
 		[FaultContract(typeof(ServiceValidationFaultDetails))]
-		Task<string> CreateOrder(int userId);
+		Task CreateOrder(int userId);
 
 		[OperationContract]
 		[FaultContract(typeof(ServiceValidationFaultDetails))]
-		Task<IEnumerable<OrderModel>> GetPurchaseHistory(int userId);
+		Task<IEnumerable<OrderBusinessModel>> GetPurchaseHistory(int userId);
 
 		/// <summary>
 		/// Cancel an order
@@ -41,6 +41,6 @@ namespace WcfBusinessLogic.Core.Contracts.Services
 		/// <returns>An amount of refund in a string format</returns>
 		[OperationContract]
 		[FaultContract(typeof(ServiceValidationFaultDetails))]
-		Task<string> CancelOrderAndRefund(int orderId);
+		Task CancelOrderAndRefund(int orderId);
 	}
 }

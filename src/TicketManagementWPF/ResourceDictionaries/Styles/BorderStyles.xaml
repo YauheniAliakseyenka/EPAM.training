@@ -1,0 +1,9 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:local="clr-namespace:TicketManagementWPF.ResourceDictionaries.Styles">
+    <Style  TargetType="{x:Type Border}" x:Key="SeatMapIverviewItemBorder">
+        <Setter Property="CornerRadius" Value="25" />
+        <Setter Property="BorderThickness" Value="0.5" />
+        <Setter Property="BorderBrush" Value="Black" />
+    </Style>
+</ResourceDictionary>

@@ -16,6 +16,8 @@ using TicketManagementMVC.EventAreaService;
 using System.ServiceModel;
 using TicketManagementMVC.LayoutService;
 using TicketManagementMVC.VenueService;
+using WcfBusinessLogic.Core.Contracts.Exceptions;
+using WcfBusinessLogic.Core.Contracts.Data;
 
 namespace TicketManagementMVC.Controllers
 {
@@ -89,7 +91,7 @@ namespace TicketManagementMVC.Controllers
 				if (!string.IsNullOrEmpty(path))
 					image.SaveAs(path);
             }
-            catch (FaultException<EventService.ServiceValidationFaultDetails> exception)
+            catch (FaultException<ServiceValidationFaultDetails> exception)
             {
 				string error = exception.Message;
 
@@ -156,9 +158,9 @@ namespace TicketManagementMVC.Controllers
 
 			var model = new EventAreaViewModel
 			{
-				SeatList = area.Seats.Select(x => new EventAreaService.EventSeat
+				SeatList = area.Seats.Select(x => new EventSeat
 				{
-					State = (EventAreaService.SeatState)x.State,
+					State = x.State,
 					EventAreaId = x.EventAreaId,
 					Id = x.Id,
 					Number = x.Number,
@@ -208,7 +210,7 @@ namespace TicketManagementMVC.Controllers
 				area.Seats = model.SeatList.ToArray();
 				await _eventAreaService.UpdateAsync(area);
 			}
-			catch (FaultException<EventAreaService.ServiceValidationFaultDetails> exception)
+			catch (FaultException<ServiceValidationFaultDetails> exception)
 			{
 				string error = string.Empty;
 
@@ -263,7 +265,7 @@ namespace TicketManagementMVC.Controllers
 			
             try
             {
-                var area = new EventAreaService.EventArea
+                var area = new EventArea
                 {
                     CoordX = model.CoordX,
                     CoordY = model.CoordY,
@@ -274,7 +276,7 @@ namespace TicketManagementMVC.Controllers
                 };
                 await _eventAreaService.CreateAsync(area);
             }
-			catch(FaultException<EventAreaService.ServiceValidationFaultDetails> exception)
+			catch(FaultException<ServiceValidationFaultDetails> exception)
 			{
 				string error = string.Empty;
 
@@ -313,7 +315,7 @@ namespace TicketManagementMVC.Controllers
 			ViewBag.Action = "CreateArea";
 			return PartialView("~/Views/Event/Partial/_EventArea.cshtml", new EventAreaViewModel
             {
-                SeatList = new List<EventAreaService.EventSeat>(),
+                SeatList = new List<EventSeat>(),
                 EventId = eventId
             });
         }
@@ -365,7 +367,7 @@ namespace TicketManagementMVC.Controllers
                 if (!string.IsNullOrEmpty(newImageUrl))
                     image.SaveAs(newImagePath);
 			}
-			catch (FaultException<EventService.ServiceValidationFaultDetails> exception)
+			catch (FaultException<ServiceValidationFaultDetails> exception)
 			{
 				string error = string.Empty;
 
@@ -435,7 +437,7 @@ namespace TicketManagementMVC.Controllers
 					success = true
 				});
             }
-            catch (FaultException<EventAreaService.ServiceValidationFaultDetails> exception)
+            catch (FaultException<ServiceValidationFaultDetails> exception)
             {
                 string error = string.Empty;
                 if (exception.Message.Equals("Not allowed to delete. Area has locked seat", StringComparison.OrdinalIgnoreCase))
@@ -464,7 +466,7 @@ namespace TicketManagementMVC.Controllers
 			{
 				await _eventService.DeleteAsync(eventId);
 			}
-			catch (FaultException<EventService.ServiceValidationFaultDetails> exception)
+			catch (FaultException<ServiceValidationFaultDetails> exception)
 			{
 				string error = string.Empty;
 

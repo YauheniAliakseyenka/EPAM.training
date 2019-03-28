@@ -1,4 +1,4 @@
-﻿@model EventModel
+﻿@model EventBusinessModel
 @{
     var currentAreaRow = Model.Areas.Any() ? Model.Areas.First().CoordY : 0;
     int i = 0;
@@ -21,7 +21,7 @@
         {
             if (Model.Areas[i].Seats[j].Row == seatRow)
             {
-                if (Model.Areas[i].Seats[j].State.Equals(TicketManagementMVC.EventService.SeatState.Available))
+                if (Model.Areas[i].Seats[j].State.Equals(SeatState.Available))
                 {
                     if (User.Identity.IsAuthenticated)
                     {
@@ -45,9 +45,9 @@
                     string cssClasses = string.Empty;
                     switch(Model.Areas[i].Seats[j].State)
                     {
-                        case TicketManagementMVC.EventService.SeatState.Ordered:
+                        case SeatState.Ordered:
                             cssClasses = "seat-seatmap seat-unavailable seat-ordered"; break;
-                        case TicketManagementMVC.EventService.SeatState.Purchased:
+                        case SeatState.Purchased:
                             cssClasses = "seat-seatmap seat-unavailable seat-purchased"; break;
                     }
 

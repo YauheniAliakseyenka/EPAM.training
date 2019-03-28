@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <xs:schema xmlns:tns="http://tempuri.org/" elementFormDefault="qualified" targetNamespace="http://tempuri.org/" xmlns:xs="http://www.w3.org/2001/XMLSchema">
   <xs:import schemaLocation="http://localhost:59102/EventService.svc?xsd=xsd2" namespace="http://schemas.datacontract.org/2004/07/WcfBusinessLogic.Core.Contracts.Data" />
-  <xs:import schemaLocation="http://localhost:59102/EventService.svc?xsd=xsd4" namespace="http://schemas.datacontract.org/2004/07/WcfBusinessLogic.Core.Contracts.Data.BusinessModels" />
   <xs:element name="Create">
     <xs:complexType>
       <xs:sequence>
@@ -78,7 +77,7 @@
   <xs:element name="GetPublishedEventsResponse">
     <xs:complexType>
       <xs:sequence>
-        <xs:element xmlns:q6="http://schemas.datacontract.org/2004/07/WcfBusinessLogic.Core.Contracts.Data.BusinessModels" minOccurs="0" name="GetPublishedEventsResult" nillable="true" type="q6:ArrayOfEventModel" />
+        <xs:element xmlns:q6="http://schemas.datacontract.org/2004/07/WcfBusinessLogic.Core.Contracts.Data" minOccurs="0" name="GetPublishedEventsResult" nillable="true" type="q6:ArrayOfEventBusinessModel" />
       </xs:sequence>
     </xs:complexType>
   </xs:element>
@@ -92,7 +91,7 @@
   <xs:element name="GetEventInformationResponse">
     <xs:complexType>
       <xs:sequence>
-        <xs:element xmlns:q7="http://schemas.datacontract.org/2004/07/WcfBusinessLogic.Core.Contracts.Data.BusinessModels" minOccurs="0" name="GetEventInformationResult" nillable="true" type="q7:EventModel" />
+        <xs:element xmlns:q7="http://schemas.datacontract.org/2004/07/WcfBusinessLogic.Core.Contracts.Data" minOccurs="0" name="GetEventInformationResult" nillable="true" type="q7:EventBusinessModel" />
       </xs:sequence>
     </xs:complexType>
   </xs:element>

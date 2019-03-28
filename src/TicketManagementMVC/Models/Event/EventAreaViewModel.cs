@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using TicketManagementMVC.EventAreaService;
 using TicketManagementMVC.Infrastructure.Attributes;
+using WcfBusinessLogic.Core.Contracts.Data;
 
 namespace TicketManagementMVC.Models.Event
 {

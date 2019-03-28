@@ -1,0 +1,37 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                     xmlns:userControls="clr-namespace:TicketManagementWPF.Views.UserControls"
+                     xmlns:local="clr-namespace:TicketManagementWPF"
+             xmlns:viewModels="clr-namespace:TicketManagementWPF.ViewModels">
+
+    <DataTemplate DataType="{x:Type viewModels:LoginViewModel}">
+        <userControls:LoginView />
+    </DataTemplate>
+    <DataTemplate DataType="{x:Type viewModels:MainMenuViewModel}">
+        <userControls:MainMenuView />
+    </DataTemplate>
+    <DataTemplate DataType="{x:Type viewModels:VenueManagementViewModel}">
+        <userControls:VenueManagementView />
+    </DataTemplate>
+    <DataTemplate DataType="{x:Type viewModels:VenueViewModel}">
+        <userControls:VenueView />
+    </DataTemplate>
+    <DataTemplate DataType="{x:Type viewModels:AreaMapViewModel}">
+        <userControls:MapView />
+    </DataTemplate>
+    <DataTemplate DataType="{x:Type viewModels:LayoutMapViewModel}">
+        <userControls:MapView />
+    </DataTemplate>
+    <DataTemplate DataType="{x:Type viewModels:SeatMapViewModel}">
+        <userControls:SeatMapView />
+    </DataTemplate>
+    <DataTemplate DataType="{x:Type viewModels:ProfileViewModel}">
+        <userControls:ProfileView />
+    </DataTemplate>
+    <DataTemplate DataType="{x:Type viewModels:UserManagementViewModel}">
+        <userControls:UserManagementView />
+    </DataTemplate>
+    <DataTemplate DataType="{x:Type viewModels:UserViewModel}">
+        <userControls:UserView />
+    </DataTemplate>
+</ResourceDictionary>

@@ -39,7 +39,7 @@ namespace AutomatedTests.Utils
 			SelectFromDropDown(By.XPath("//select[@id='eventListOnEdit']"), "test event");
 
 			//wait for loaded event on a form
-			new WebDriverWait(Driver, TimeSpan.FromSeconds(4)).Until<bool>((d) =>
+			new WebDriverWait(Driver, TimeSpan.FromSeconds(5)).Until<bool>((d) =>
 			{
 				var editAreaButton = FindByXPath("//*[contains(@onclick,'GetAreaToEdit')]");
 				if (editAreaButton.Displayed)
@@ -103,7 +103,7 @@ namespace AutomatedTests.Utils
 			SelectFromDropDown(By.XPath("//select[@id='eventListOnEdit']"), "test event");
 
 			//wait for loaded event on a form
-			new WebDriverWait(Driver, TimeSpan.FromSeconds(4)).Until<bool>((d) =>
+			new WebDriverWait(Driver, TimeSpan.FromSeconds(3)).Until<bool>((d) =>
 			{
 				var editAreaButton = FindByXPath("//*[contains(@onclick,'GetAreaToEdit')]"); 
 				if (editAreaButton.Displayed)

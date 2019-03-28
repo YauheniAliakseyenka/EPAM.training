@@ -9,1091 +9,30 @@
 //------------------------------------------------------------------------------
 
 namespace TicketManagementMVC.EventService {
-    using System.Runtime.Serialization;
-    using System;
     
-    
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
-    [System.Runtime.Serialization.DataContractAttribute(Name="Event", Namespace="http://schemas.datacontract.org/2004/07/WcfBusinessLogic.Core.Contracts.Data")]
-    [System.SerializableAttribute()]
-    public partial class Event : object, System.Runtime.Serialization.IExtensibleDataObject, System.ComponentModel.INotifyPropertyChanged {
-        
-        [System.NonSerializedAttribute()]
-        private System.Runtime.Serialization.ExtensionDataObject extensionDataField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private int CreatedByField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private System.DateTime DateField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private string DescriptionField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private int IdField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private string ImageURLField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private int LayoutIdField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private string TitleField;
-        
-        [global::System.ComponentModel.BrowsableAttribute(false)]
-        public System.Runtime.Serialization.ExtensionDataObject ExtensionData {
-            get {
-                return this.extensionDataField;
-            }
-            set {
-                this.extensionDataField = value;
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public int CreatedBy {
-            get {
-                return this.CreatedByField;
-            }
-            set {
-                if ((this.CreatedByField.Equals(value) != true)) {
-                    this.CreatedByField = value;
-                    this.RaisePropertyChanged("CreatedBy");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public System.DateTime Date {
-            get {
-                return this.DateField;
-            }
-            set {
-                if ((this.DateField.Equals(value) != true)) {
-                    this.DateField = value;
-                    this.RaisePropertyChanged("Date");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string Description {
-            get {
-                return this.DescriptionField;
-            }
-            set {
-                if ((object.ReferenceEquals(this.DescriptionField, value) != true)) {
-                    this.DescriptionField = value;
-                    this.RaisePropertyChanged("Description");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public int Id {
-            get {
-                return this.IdField;
-            }
-            set {
-                if ((this.IdField.Equals(value) != true)) {
-                    this.IdField = value;
-                    this.RaisePropertyChanged("Id");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string ImageURL {
-            get {
-                return this.ImageURLField;
-            }
-            set {
-                if ((object.ReferenceEquals(this.ImageURLField, value) != true)) {
-                    this.ImageURLField = value;
-                    this.RaisePropertyChanged("ImageURL");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public int LayoutId {
-            get {
-                return this.LayoutIdField;
-            }
-            set {
-                if ((this.LayoutIdField.Equals(value) != true)) {
-                    this.LayoutIdField = value;
-                    this.RaisePropertyChanged("LayoutId");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string Title {
-            get {
-                return this.TitleField;
-            }
-            set {
-                if ((object.ReferenceEquals(this.TitleField, value) != true)) {
-                    this.TitleField = value;
-                    this.RaisePropertyChanged("Title");
-                }
-            }
-        }
-        
-        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
-        
-        protected void RaisePropertyChanged(string propertyName) {
-            System.ComponentModel.PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
-            if ((propertyChanged != null)) {
-                propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
-            }
-        }
-    }
-    
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
-    [System.Runtime.Serialization.DataContractAttribute(Name="ServiceValidationFaultDetails", Namespace="http://schemas.datacontract.org/2004/07/WcfBusinessLogic.Core.Contracts.Exception" +
-        "s")]
-    [System.SerializableAttribute()]
-    public partial class ServiceValidationFaultDetails : object, System.Runtime.Serialization.IExtensibleDataObject, System.ComponentModel.INotifyPropertyChanged {
-        
-        [System.NonSerializedAttribute()]
-        private System.Runtime.Serialization.ExtensionDataObject extensionDataField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private string MessageField;
-        
-        [global::System.ComponentModel.BrowsableAttribute(false)]
-        public System.Runtime.Serialization.ExtensionDataObject ExtensionData {
-            get {
-                return this.extensionDataField;
-            }
-            set {
-                this.extensionDataField = value;
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string Message {
-            get {
-                return this.MessageField;
-            }
-            set {
-                if ((object.ReferenceEquals(this.MessageField, value) != true)) {
-                    this.MessageField = value;
-                    this.RaisePropertyChanged("Message");
-                }
-            }
-        }
-        
-        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
-        
-        protected void RaisePropertyChanged(string propertyName) {
-            System.ComponentModel.PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
-            if ((propertyChanged != null)) {
-                propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
-            }
-        }
-    }
-    
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
-    [System.Runtime.Serialization.DataContractAttribute(Name="FilterEventOptions", Namespace="http://schemas.datacontract.org/2004/07/WcfBusinessLogic.Core.Contracts.Data")]
-    public enum FilterEventOptions : int {
-        
-        [System.Runtime.Serialization.EnumMemberAttribute()]
-        None = 0,
-        
-        [System.Runtime.Serialization.EnumMemberAttribute()]
-        Title = 1,
-        
-        [System.Runtime.Serialization.EnumMemberAttribute()]
-        Date = 2,
-    }
-    
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
-    [System.Runtime.Serialization.DataContractAttribute(Name="EventModel", Namespace="http://schemas.datacontract.org/2004/07/WcfBusinessLogic.Core.Contracts.Data.Busi" +
-        "nessModels")]
-    [System.SerializableAttribute()]
-    public partial class EventModel : object, System.Runtime.Serialization.IExtensibleDataObject, System.ComponentModel.INotifyPropertyChanged {
-        
-        [System.NonSerializedAttribute()]
-        private System.Runtime.Serialization.ExtensionDataObject extensionDataField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private TicketManagementMVC.EventService.EventArea[] AreasField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private TicketManagementMVC.EventService.Event EventField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private bool IsPublishedField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private string LayoutNameField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private TicketManagementMVC.EventService.Venue VenueField;
-        
-        [global::System.ComponentModel.BrowsableAttribute(false)]
-        public System.Runtime.Serialization.ExtensionDataObject ExtensionData {
-            get {
-                return this.extensionDataField;
-            }
-            set {
-                this.extensionDataField = value;
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public TicketManagementMVC.EventService.EventArea[] Areas {
-            get {
-                return this.AreasField;
-            }
-            set {
-                if ((object.ReferenceEquals(this.AreasField, value) != true)) {
-                    this.AreasField = value;
-                    this.RaisePropertyChanged("Areas");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public TicketManagementMVC.EventService.Event Event {
-            get {
-                return this.EventField;
-            }
-            set {
-                if ((object.ReferenceEquals(this.EventField, value) != true)) {
-                    this.EventField = value;
-                    this.RaisePropertyChanged("Event");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public bool IsPublished {
-            get {
-                return this.IsPublishedField;
-            }
-            set {
-                if ((this.IsPublishedField.Equals(value) != true)) {
-                    this.IsPublishedField = value;
-                    this.RaisePropertyChanged("IsPublished");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string LayoutName {
-            get {
-                return this.LayoutNameField;
-            }
-            set {
-                if ((object.ReferenceEquals(this.LayoutNameField, value) != true)) {
-                    this.LayoutNameField = value;
-                    this.RaisePropertyChanged("LayoutName");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public TicketManagementMVC.EventService.Venue Venue {
-            get {
-                return this.VenueField;
-            }
-            set {
-                if ((object.ReferenceEquals(this.VenueField, value) != true)) {
-                    this.VenueField = value;
-                    this.RaisePropertyChanged("Venue");
-                }
-            }
-        }
-        
-        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
-        
-        protected void RaisePropertyChanged(string propertyName) {
-            System.ComponentModel.PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
-            if ((propertyChanged != null)) {
-                propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
-            }
-        }
-    }
-    
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
-    [System.Runtime.Serialization.DataContractAttribute(Name="Venue", Namespace="http://schemas.datacontract.org/2004/07/WcfBusinessLogic.Core.Contracts.Data")]
-    [System.SerializableAttribute()]
-    public partial class Venue : object, System.Runtime.Serialization.IExtensibleDataObject, System.ComponentModel.INotifyPropertyChanged {
-        
-        [System.NonSerializedAttribute()]
-        private System.Runtime.Serialization.ExtensionDataObject extensionDataField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private string AddressField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private string DescriptionField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private int IdField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private TicketManagementMVC.EventService.Layout[] LayoutListField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private string NameField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private string NameWithOffsetField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private string PhoneField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private string TimezoneField;
-        
-        [global::System.ComponentModel.BrowsableAttribute(false)]
-        public System.Runtime.Serialization.ExtensionDataObject ExtensionData {
-            get {
-                return this.extensionDataField;
-            }
-            set {
-                this.extensionDataField = value;
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string Address {
-            get {
-                return this.AddressField;
-            }
-            set {
-                if ((object.ReferenceEquals(this.AddressField, value) != true)) {
-                    this.AddressField = value;
-                    this.RaisePropertyChanged("Address");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string Description {
-            get {
-                return this.DescriptionField;
-            }
-            set {
-                if ((object.ReferenceEquals(this.DescriptionField, value) != true)) {
-                    this.DescriptionField = value;
-                    this.RaisePropertyChanged("Description");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public int Id {
-            get {
-                return this.IdField;
-            }
-            set {
-                if ((this.IdField.Equals(value) != true)) {
-                    this.IdField = value;
-                    this.RaisePropertyChanged("Id");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public TicketManagementMVC.EventService.Layout[] LayoutList {
-            get {
-                return this.LayoutListField;
-            }
-            set {
-                if ((object.ReferenceEquals(this.LayoutListField, value) != true)) {
-                    this.LayoutListField = value;
-                    this.RaisePropertyChanged("LayoutList");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string Name {
-            get {
-                return this.NameField;
-            }
-            set {
-                if ((object.ReferenceEquals(this.NameField, value) != true)) {
-                    this.NameField = value;
-                    this.RaisePropertyChanged("Name");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string NameWithOffset {
-            get {
-                return this.NameWithOffsetField;
-            }
-            set {
-                if ((object.ReferenceEquals(this.NameWithOffsetField, value) != true)) {
-                    this.NameWithOffsetField = value;
-                    this.RaisePropertyChanged("NameWithOffset");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string Phone {
-            get {
-                return this.PhoneField;
-            }
-            set {
-                if ((object.ReferenceEquals(this.PhoneField, value) != true)) {
-                    this.PhoneField = value;
-                    this.RaisePropertyChanged("Phone");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string Timezone {
-            get {
-                return this.TimezoneField;
-            }
-            set {
-                if ((object.ReferenceEquals(this.TimezoneField, value) != true)) {
-                    this.TimezoneField = value;
-                    this.RaisePropertyChanged("Timezone");
-                }
-            }
-        }
-        
-        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
-        
-        protected void RaisePropertyChanged(string propertyName) {
-            System.ComponentModel.PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
-            if ((propertyChanged != null)) {
-                propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
-            }
-        }
-    }
-    
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
-    [System.Runtime.Serialization.DataContractAttribute(Name="EventArea", Namespace="http://schemas.datacontract.org/2004/07/WcfBusinessLogic.Core.Contracts.Data")]
-    [System.SerializableAttribute()]
-    public partial class EventArea : object, System.Runtime.Serialization.IExtensibleDataObject, System.ComponentModel.INotifyPropertyChanged {
-        
-        [System.NonSerializedAttribute()]
-        private System.Runtime.Serialization.ExtensionDataObject extensionDataField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private int AreaDefaultIdField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private int CoordXField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private int CoordYField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private string DescriptionField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private int EventIdField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private int IdField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private decimal PriceField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private TicketManagementMVC.EventService.EventSeat[] SeatsField;
-        
-        [global::System.ComponentModel.BrowsableAttribute(false)]
-        public System.Runtime.Serialization.ExtensionDataObject ExtensionData {
-            get {
-                return this.extensionDataField;
-            }
-            set {
-                this.extensionDataField = value;
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public int AreaDefaultId {
-            get {
-                return this.AreaDefaultIdField;
-            }
-            set {
-                if ((this.AreaDefaultIdField.Equals(value) != true)) {
-                    this.AreaDefaultIdField = value;
-                    this.RaisePropertyChanged("AreaDefaultId");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public int CoordX {
-            get {
-                return this.CoordXField;
-            }
-            set {
-                if ((this.CoordXField.Equals(value) != true)) {
-                    this.CoordXField = value;
-                    this.RaisePropertyChanged("CoordX");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public int CoordY {
-            get {
-                return this.CoordYField;
-            }
-            set {
-                if ((this.CoordYField.Equals(value) != true)) {
-                    this.CoordYField = value;
-                    this.RaisePropertyChanged("CoordY");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string Description {
-            get {
-                return this.DescriptionField;
-            }
-            set {
-                if ((object.ReferenceEquals(this.DescriptionField, value) != true)) {
-                    this.DescriptionField = value;
-                    this.RaisePropertyChanged("Description");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public int EventId {
-            get {
-                return this.EventIdField;
-            }
-            set {
-                if ((this.EventIdField.Equals(value) != true)) {
-                    this.EventIdField = value;
-                    this.RaisePropertyChanged("EventId");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public int Id {
-            get {
-                return this.IdField;
-            }
-            set {
-                if ((this.IdField.Equals(value) != true)) {
-                    this.IdField = value;
-                    this.RaisePropertyChanged("Id");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public decimal Price {
-            get {
-                return this.PriceField;
-            }
-            set {
-                if ((this.PriceField.Equals(value) != true)) {
-                    this.PriceField = value;
-                    this.RaisePropertyChanged("Price");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public TicketManagementMVC.EventService.EventSeat[] Seats {
-            get {
-                return this.SeatsField;
-            }
-            set {
-                if ((object.ReferenceEquals(this.SeatsField, value) != true)) {
-                    this.SeatsField = value;
-                    this.RaisePropertyChanged("Seats");
-                }
-            }
-        }
-        
-        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
-        
-        protected void RaisePropertyChanged(string propertyName) {
-            System.ComponentModel.PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
-            if ((propertyChanged != null)) {
-                propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
-            }
-        }
-    }
-    
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
-    [System.Runtime.Serialization.DataContractAttribute(Name="EventSeat", Namespace="http://schemas.datacontract.org/2004/07/WcfBusinessLogic.Core.Contracts.Data")]
-    [System.SerializableAttribute()]
-    public partial class EventSeat : object, System.Runtime.Serialization.IExtensibleDataObject, System.ComponentModel.INotifyPropertyChanged {
-        
-        [System.NonSerializedAttribute()]
-        private System.Runtime.Serialization.ExtensionDataObject extensionDataField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private int EventAreaIdField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private int IdField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private int NumberField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private int RowField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private TicketManagementMVC.EventService.SeatState StateField;
-        
-        [global::System.ComponentModel.BrowsableAttribute(false)]
-        public System.Runtime.Serialization.ExtensionDataObject ExtensionData {
-            get {
-                return this.extensionDataField;
-            }
-            set {
-                this.extensionDataField = value;
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public int EventAreaId {
-            get {
-                return this.EventAreaIdField;
-            }
-            set {
-                if ((this.EventAreaIdField.Equals(value) != true)) {
-                    this.EventAreaIdField = value;
-                    this.RaisePropertyChanged("EventAreaId");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public int Id {
-            get {
-                return this.IdField;
-            }
-            set {
-                if ((this.IdField.Equals(value) != true)) {
-                    this.IdField = value;
-                    this.RaisePropertyChanged("Id");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public int Number {
-            get {
-                return this.NumberField;
-            }
-            set {
-                if ((this.NumberField.Equals(value) != true)) {
-                    this.NumberField = value;
-                    this.RaisePropertyChanged("Number");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public int Row {
-            get {
-                return this.RowField;
-            }
-            set {
-                if ((this.RowField.Equals(value) != true)) {
-                    this.RowField = value;
-                    this.RaisePropertyChanged("Row");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public TicketManagementMVC.EventService.SeatState State {
-            get {
-                return this.StateField;
-            }
-            set {
-                if ((this.StateField.Equals(value) != true)) {
-                    this.StateField = value;
-                    this.RaisePropertyChanged("State");
-                }
-            }
-        }
-        
-        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
-        
-        protected void RaisePropertyChanged(string propertyName) {
-            System.ComponentModel.PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
-            if ((propertyChanged != null)) {
-                propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
-            }
-        }
-    }
-    
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
-    [System.Runtime.Serialization.DataContractAttribute(Name="SeatState", Namespace="http://schemas.datacontract.org/2004/07/WcfBusinessLogic.Core.Contracts.Data")]
-    public enum SeatState : int {
-        
-        [System.Runtime.Serialization.EnumMemberAttribute()]
-        Available = 0,
-        
-        [System.Runtime.Serialization.EnumMemberAttribute()]
-        Ordered = 1,
-        
-        [System.Runtime.Serialization.EnumMemberAttribute()]
-        Purchased = 2,
-    }
-    
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
-    [System.Runtime.Serialization.DataContractAttribute(Name="Layout", Namespace="http://schemas.datacontract.org/2004/07/WcfBusinessLogic.Core.Contracts.Data")]
-    [System.SerializableAttribute()]
-    public partial class Layout : object, System.Runtime.Serialization.IExtensibleDataObject, System.ComponentModel.INotifyPropertyChanged {
-        
-        [System.NonSerializedAttribute()]
-        private System.Runtime.Serialization.ExtensionDataObject extensionDataField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private TicketManagementMVC.EventService.Area[] AreaListField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private string DescriptionField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private int IdField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private int VenueIdField;
-        
-        [global::System.ComponentModel.BrowsableAttribute(false)]
-        public System.Runtime.Serialization.ExtensionDataObject ExtensionData {
-            get {
-                return this.extensionDataField;
-            }
-            set {
-                this.extensionDataField = value;
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public TicketManagementMVC.EventService.Area[] AreaList {
-            get {
-                return this.AreaListField;
-            }
-            set {
-                if ((object.ReferenceEquals(this.AreaListField, value) != true)) {
-                    this.AreaListField = value;
-                    this.RaisePropertyChanged("AreaList");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string Description {
-            get {
-                return this.DescriptionField;
-            }
-            set {
-                if ((object.ReferenceEquals(this.DescriptionField, value) != true)) {
-                    this.DescriptionField = value;
-                    this.RaisePropertyChanged("Description");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public int Id {
-            get {
-                return this.IdField;
-            }
-            set {
-                if ((this.IdField.Equals(value) != true)) {
-                    this.IdField = value;
-                    this.RaisePropertyChanged("Id");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public int VenueId {
-            get {
-                return this.VenueIdField;
-            }
-            set {
-                if ((this.VenueIdField.Equals(value) != true)) {
-                    this.VenueIdField = value;
-                    this.RaisePropertyChanged("VenueId");
-                }
-            }
-        }
-        
-        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
-        
-        protected void RaisePropertyChanged(string propertyName) {
-            System.ComponentModel.PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
-            if ((propertyChanged != null)) {
-                propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
-            }
-        }
-    }
-    
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
-    [System.Runtime.Serialization.DataContractAttribute(Name="Area", Namespace="http://schemas.datacontract.org/2004/07/WcfBusinessLogic.Core.Contracts.Data")]
-    [System.SerializableAttribute()]
-    public partial class Area : object, System.Runtime.Serialization.IExtensibleDataObject, System.ComponentModel.INotifyPropertyChanged {
-        
-        [System.NonSerializedAttribute()]
-        private System.Runtime.Serialization.ExtensionDataObject extensionDataField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private int CoordXField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private int CoordYField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private string DescriptionField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private int IdField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private int LayoutIdField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private TicketManagementMVC.EventService.Seat[] SeatListField;
-        
-        [global::System.ComponentModel.BrowsableAttribute(false)]
-        public System.Runtime.Serialization.ExtensionDataObject ExtensionData {
-            get {
-                return this.extensionDataField;
-            }
-            set {
-                this.extensionDataField = value;
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public int CoordX {
-            get {
-                return this.CoordXField;
-            }
-            set {
-                if ((this.CoordXField.Equals(value) != true)) {
-                    this.CoordXField = value;
-                    this.RaisePropertyChanged("CoordX");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public int CoordY {
-            get {
-                return this.CoordYField;
-            }
-            set {
-                if ((this.CoordYField.Equals(value) != true)) {
-                    this.CoordYField = value;
-                    this.RaisePropertyChanged("CoordY");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string Description {
-            get {
-                return this.DescriptionField;
-            }
-            set {
-                if ((object.ReferenceEquals(this.DescriptionField, value) != true)) {
-                    this.DescriptionField = value;
-                    this.RaisePropertyChanged("Description");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public int Id {
-            get {
-                return this.IdField;
-            }
-            set {
-                if ((this.IdField.Equals(value) != true)) {
-                    this.IdField = value;
-                    this.RaisePropertyChanged("Id");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public int LayoutId {
-            get {
-                return this.LayoutIdField;
-            }
-            set {
-                if ((this.LayoutIdField.Equals(value) != true)) {
-                    this.LayoutIdField = value;
-                    this.RaisePropertyChanged("LayoutId");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public TicketManagementMVC.EventService.Seat[] SeatList {
-            get {
-                return this.SeatListField;
-            }
-            set {
-                if ((object.ReferenceEquals(this.SeatListField, value) != true)) {
-                    this.SeatListField = value;
-                    this.RaisePropertyChanged("SeatList");
-                }
-            }
-        }
-        
-        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
-        
-        protected void RaisePropertyChanged(string propertyName) {
-            System.ComponentModel.PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
-            if ((propertyChanged != null)) {
-                propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
-            }
-        }
-    }
-    
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
-    [System.Runtime.Serialization.DataContractAttribute(Name="Seat", Namespace="http://schemas.datacontract.org/2004/07/WcfBusinessLogic.Core.Contracts.Data")]
-    [System.SerializableAttribute()]
-    public partial class Seat : object, System.Runtime.Serialization.IExtensibleDataObject, System.ComponentModel.INotifyPropertyChanged {
-        
-        [System.NonSerializedAttribute()]
-        private System.Runtime.Serialization.ExtensionDataObject extensionDataField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private int AreaIdField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private int IdField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private int NumberField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private int RowField;
-        
-        [global::System.ComponentModel.BrowsableAttribute(false)]
-        public System.Runtime.Serialization.ExtensionDataObject ExtensionData {
-            get {
-                return this.extensionDataField;
-            }
-            set {
-                this.extensionDataField = value;
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public int AreaId {
-            get {
-                return this.AreaIdField;
-            }
-            set {
-                if ((this.AreaIdField.Equals(value) != true)) {
-                    this.AreaIdField = value;
-                    this.RaisePropertyChanged("AreaId");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public int Id {
-            get {
-                return this.IdField;
-            }
-            set {
-                if ((this.IdField.Equals(value) != true)) {
-                    this.IdField = value;
-                    this.RaisePropertyChanged("Id");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public int Number {
-            get {
-                return this.NumberField;
-            }
-            set {
-                if ((this.NumberField.Equals(value) != true)) {
-                    this.NumberField = value;
-                    this.RaisePropertyChanged("Number");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public int Row {
-            get {
-                return this.RowField;
-            }
-            set {
-                if ((this.RowField.Equals(value) != true)) {
-                    this.RowField = value;
-                    this.RaisePropertyChanged("Row");
-                }
-            }
-        }
-        
-        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
-        
-        protected void RaisePropertyChanged(string propertyName) {
-            System.ComponentModel.PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
-            if ((propertyChanged != null)) {
-                propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
-            }
-        }
-    }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
     [System.ServiceModel.ServiceContractAttribute(ConfigurationName="EventService.IWcfEventService")]
     public interface IWcfEventService {
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IWcfEventService/Create", ReplyAction="http://tempuri.org/IWcfEventService/CreateResponse")]
-        [System.ServiceModel.FaultContractAttribute(typeof(TicketManagementMVC.EventService.ServiceValidationFaultDetails), Action="http://tempuri.org/IWcfEventService/CreateServiceValidationFaultDetailsFault", Name="ServiceValidationFaultDetails", Namespace="http://schemas.datacontract.org/2004/07/WcfBusinessLogic.Core.Contracts.Exception" +
+        [System.ServiceModel.FaultContractAttribute(typeof(WcfBusinessLogic.Core.Contracts.Exceptions.ServiceValidationFaultDetails), Action="http://tempuri.org/IWcfEventService/CreateServiceValidationFaultDetailsFault", Name="ServiceValidationFaultDetails", Namespace="http://schemas.datacontract.org/2004/07/WcfBusinessLogic.Core.Contracts.Exception" +
             "s")]
-        int Create(TicketManagementMVC.EventService.Event entity);
+        int Create(WcfBusinessLogic.Core.Contracts.Data.Event entity);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IWcfEventService/Create", ReplyAction="http://tempuri.org/IWcfEventService/CreateResponse")]
-        System.Threading.Tasks.Task<int> CreateAsync(TicketManagementMVC.EventService.Event entity);
+        System.Threading.Tasks.Task<int> CreateAsync(WcfBusinessLogic.Core.Contracts.Data.Event entity);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IWcfEventService/Update", ReplyAction="http://tempuri.org/IWcfEventService/UpdateResponse")]
-        [System.ServiceModel.FaultContractAttribute(typeof(TicketManagementMVC.EventService.ServiceValidationFaultDetails), Action="http://tempuri.org/IWcfEventService/UpdateServiceValidationFaultDetailsFault", Name="ServiceValidationFaultDetails", Namespace="http://schemas.datacontract.org/2004/07/WcfBusinessLogic.Core.Contracts.Exception" +
+        [System.ServiceModel.FaultContractAttribute(typeof(WcfBusinessLogic.Core.Contracts.Exceptions.ServiceValidationFaultDetails), Action="http://tempuri.org/IWcfEventService/UpdateServiceValidationFaultDetailsFault", Name="ServiceValidationFaultDetails", Namespace="http://schemas.datacontract.org/2004/07/WcfBusinessLogic.Core.Contracts.Exception" +
             "s")]
-        void Update(TicketManagementMVC.EventService.Event entity);
+        void Update(WcfBusinessLogic.Core.Contracts.Data.Event entity);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IWcfEventService/Update", ReplyAction="http://tempuri.org/IWcfEventService/UpdateResponse")]
-        System.Threading.Tasks.Task UpdateAsync(TicketManagementMVC.EventService.Event entity);
+        System.Threading.Tasks.Task UpdateAsync(WcfBusinessLogic.Core.Contracts.Data.Event entity);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IWcfEventService/Delete", ReplyAction="http://tempuri.org/IWcfEventService/DeleteResponse")]
-        [System.ServiceModel.FaultContractAttribute(typeof(TicketManagementMVC.EventService.ServiceValidationFaultDetails), Action="http://tempuri.org/IWcfEventService/DeleteServiceValidationFaultDetailsFault", Name="ServiceValidationFaultDetails", Namespace="http://schemas.datacontract.org/2004/07/WcfBusinessLogic.Core.Contracts.Exception" +
+        [System.ServiceModel.FaultContractAttribute(typeof(WcfBusinessLogic.Core.Contracts.Exceptions.ServiceValidationFaultDetails), Action="http://tempuri.org/IWcfEventService/DeleteServiceValidationFaultDetailsFault", Name="ServiceValidationFaultDetails", Namespace="http://schemas.datacontract.org/2004/07/WcfBusinessLogic.Core.Contracts.Exception" +
             "s")]
         void Delete(int id);
         
@@ -1101,47 +40,47 @@ namespace TicketManagementMVC.EventService {
         System.Threading.Tasks.Task DeleteAsync(int id);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IWcfEventService/Get", ReplyAction="http://tempuri.org/IWcfEventService/GetResponse")]
-        [System.ServiceModel.FaultContractAttribute(typeof(TicketManagementMVC.EventService.ServiceValidationFaultDetails), Action="http://tempuri.org/IWcfEventService/GetServiceValidationFaultDetailsFault", Name="ServiceValidationFaultDetails", Namespace="http://schemas.datacontract.org/2004/07/WcfBusinessLogic.Core.Contracts.Exception" +
+        [System.ServiceModel.FaultContractAttribute(typeof(WcfBusinessLogic.Core.Contracts.Exceptions.ServiceValidationFaultDetails), Action="http://tempuri.org/IWcfEventService/GetServiceValidationFaultDetailsFault", Name="ServiceValidationFaultDetails", Namespace="http://schemas.datacontract.org/2004/07/WcfBusinessLogic.Core.Contracts.Exception" +
             "s")]
-        TicketManagementMVC.EventService.Event Get(int id);
+        WcfBusinessLogic.Core.Contracts.Data.Event Get(int id);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IWcfEventService/Get", ReplyAction="http://tempuri.org/IWcfEventService/GetResponse")]
-        System.Threading.Tasks.Task<TicketManagementMVC.EventService.Event> GetAsync(int id);
+        System.Threading.Tasks.Task<WcfBusinessLogic.Core.Contracts.Data.Event> GetAsync(int id);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IWcfEventService/ToList", ReplyAction="http://tempuri.org/IWcfEventService/ToListResponse")]
-        [System.ServiceModel.FaultContractAttribute(typeof(TicketManagementMVC.EventService.ServiceValidationFaultDetails), Action="http://tempuri.org/IWcfEventService/ToListServiceValidationFaultDetailsFault", Name="ServiceValidationFaultDetails", Namespace="http://schemas.datacontract.org/2004/07/WcfBusinessLogic.Core.Contracts.Exception" +
+        [System.ServiceModel.FaultContractAttribute(typeof(WcfBusinessLogic.Core.Contracts.Exceptions.ServiceValidationFaultDetails), Action="http://tempuri.org/IWcfEventService/ToListServiceValidationFaultDetailsFault", Name="ServiceValidationFaultDetails", Namespace="http://schemas.datacontract.org/2004/07/WcfBusinessLogic.Core.Contracts.Exception" +
             "s")]
-        TicketManagementMVC.EventService.Event[] ToList();
+        WcfBusinessLogic.Core.Contracts.Data.Event[] ToList();
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IWcfEventService/ToList", ReplyAction="http://tempuri.org/IWcfEventService/ToListResponse")]
-        System.Threading.Tasks.Task<TicketManagementMVC.EventService.Event[]> ToListAsync();
+        System.Threading.Tasks.Task<WcfBusinessLogic.Core.Contracts.Data.Event[]> ToListAsync();
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IWcfEventService/GetPublishedEvents", ReplyAction="http://tempuri.org/IWcfEventService/GetPublishedEventsResponse")]
-        [System.ServiceModel.FaultContractAttribute(typeof(TicketManagementMVC.EventService.ServiceValidationFaultDetails), Action="http://tempuri.org/IWcfEventService/GetPublishedEventsServiceValidationFaultDetai" +
+        [System.ServiceModel.FaultContractAttribute(typeof(WcfBusinessLogic.Core.Contracts.Exceptions.ServiceValidationFaultDetails), Action="http://tempuri.org/IWcfEventService/GetPublishedEventsServiceValidationFaultDetai" +
             "lsFault", Name="ServiceValidationFaultDetails", Namespace="http://schemas.datacontract.org/2004/07/WcfBusinessLogic.Core.Contracts.Exception" +
             "s")]
-        TicketManagementMVC.EventService.EventModel[] GetPublishedEvents(TicketManagementMVC.EventService.FilterEventOptions filter, string filterText, string dateCulture);
+        WcfBusinessLogic.Core.Contracts.Data.EventBusinessModel[] GetPublishedEvents(WcfBusinessLogic.Core.Contracts.Data.FilterEventOptions filter, string filterText, string dateCulture);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IWcfEventService/GetPublishedEvents", ReplyAction="http://tempuri.org/IWcfEventService/GetPublishedEventsResponse")]
-        System.Threading.Tasks.Task<TicketManagementMVC.EventService.EventModel[]> GetPublishedEventsAsync(TicketManagementMVC.EventService.FilterEventOptions filter, string filterText, string dateCulture);
+        System.Threading.Tasks.Task<WcfBusinessLogic.Core.Contracts.Data.EventBusinessModel[]> GetPublishedEventsAsync(WcfBusinessLogic.Core.Contracts.Data.FilterEventOptions filter, string filterText, string dateCulture);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IWcfEventService/GetEventInformation", ReplyAction="http://tempuri.org/IWcfEventService/GetEventInformationResponse")]
-        [System.ServiceModel.FaultContractAttribute(typeof(TicketManagementMVC.EventService.ServiceValidationFaultDetails), Action="http://tempuri.org/IWcfEventService/GetEventInformationServiceValidationFaultDeta" +
+        [System.ServiceModel.FaultContractAttribute(typeof(WcfBusinessLogic.Core.Contracts.Exceptions.ServiceValidationFaultDetails), Action="http://tempuri.org/IWcfEventService/GetEventInformationServiceValidationFaultDeta" +
             "ilsFault", Name="ServiceValidationFaultDetails", Namespace="http://schemas.datacontract.org/2004/07/WcfBusinessLogic.Core.Contracts.Exception" +
             "s")]
-        TicketManagementMVC.EventService.EventModel GetEventInformation(int id);
+        WcfBusinessLogic.Core.Contracts.Data.EventBusinessModel GetEventInformation(int id);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IWcfEventService/GetEventInformation", ReplyAction="http://tempuri.org/IWcfEventService/GetEventInformationResponse")]
-        System.Threading.Tasks.Task<TicketManagementMVC.EventService.EventModel> GetEventInformationAsync(int id);
+        System.Threading.Tasks.Task<WcfBusinessLogic.Core.Contracts.Data.EventBusinessModel> GetEventInformationAsync(int id);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IWcfEventService/GetEventManagerEvents", ReplyAction="http://tempuri.org/IWcfEventService/GetEventManagerEventsResponse")]
-        [System.ServiceModel.FaultContractAttribute(typeof(TicketManagementMVC.EventService.ServiceValidationFaultDetails), Action="http://tempuri.org/IWcfEventService/GetEventManagerEventsServiceValidationFaultDe" +
+        [System.ServiceModel.FaultContractAttribute(typeof(WcfBusinessLogic.Core.Contracts.Exceptions.ServiceValidationFaultDetails), Action="http://tempuri.org/IWcfEventService/GetEventManagerEventsServiceValidationFaultDe" +
             "tailsFault", Name="ServiceValidationFaultDetails", Namespace="http://schemas.datacontract.org/2004/07/WcfBusinessLogic.Core.Contracts.Exception" +
             "s")]
-        TicketManagementMVC.EventService.Event[] GetEventManagerEvents(int venueId, int userId);
+        WcfBusinessLogic.Core.Contracts.Data.Event[] GetEventManagerEvents(int venueId, int userId);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IWcfEventService/GetEventManagerEvents", ReplyAction="http://tempuri.org/IWcfEventService/GetEventManagerEventsResponse")]
-        System.Threading.Tasks.Task<TicketManagementMVC.EventService.Event[]> GetEventManagerEventsAsync(int venueId, int userId);
+        System.Threading.Tasks.Task<WcfBusinessLogic.Core.Contracts.Data.Event[]> GetEventManagerEventsAsync(int venueId, int userId);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IWcfEventService/HasLockedSeats", ReplyAction="http://tempuri.org/IWcfEventService/HasLockedSeatsResponse")]
         bool HasLockedSeats(int id);
@@ -1177,19 +116,19 @@ namespace TicketManagementMVC.EventService {
                 base(binding, remoteAddress) {
         }
         
-        public int Create(TicketManagementMVC.EventService.Event entity) {
+        public int Create(WcfBusinessLogic.Core.Contracts.Data.Event entity) {
             return base.Channel.Create(entity);
         }
         
-        public System.Threading.Tasks.Task<int> CreateAsync(TicketManagementMVC.EventService.Event entity) {
+        public System.Threading.Tasks.Task<int> CreateAsync(WcfBusinessLogic.Core.Contracts.Data.Event entity) {
             return base.Channel.CreateAsync(entity);
         }
         
-        public void Update(TicketManagementMVC.EventService.Event entity) {
+        public void Update(WcfBusinessLogic.Core.Contracts.Data.Event entity) {
             base.Channel.Update(entity);
         }
         
-        public System.Threading.Tasks.Task UpdateAsync(TicketManagementMVC.EventService.Event entity) {
+        public System.Threading.Tasks.Task UpdateAsync(WcfBusinessLogic.Core.Contracts.Data.Event entity) {
             return base.Channel.UpdateAsync(entity);
         }
         
@@ -1201,43 +140,43 @@ namespace TicketManagementMVC.EventService {
             return base.Channel.DeleteAsync(id);
         }
         
-        public TicketManagementMVC.EventService.Event Get(int id) {
+        public WcfBusinessLogic.Core.Contracts.Data.Event Get(int id) {
             return base.Channel.Get(id);
         }
         
-        public System.Threading.Tasks.Task<TicketManagementMVC.EventService.Event> GetAsync(int id) {
+        public System.Threading.Tasks.Task<WcfBusinessLogic.Core.Contracts.Data.Event> GetAsync(int id) {
             return base.Channel.GetAsync(id);
         }
         
-        public TicketManagementMVC.EventService.Event[] ToList() {
+        public WcfBusinessLogic.Core.Contracts.Data.Event[] ToList() {
             return base.Channel.ToList();
         }
         
-        public System.Threading.Tasks.Task<TicketManagementMVC.EventService.Event[]> ToListAsync() {
+        public System.Threading.Tasks.Task<WcfBusinessLogic.Core.Contracts.Data.Event[]> ToListAsync() {
             return base.Channel.ToListAsync();
         }
         
-        public TicketManagementMVC.EventService.EventModel[] GetPublishedEvents(TicketManagementMVC.EventService.FilterEventOptions filter, string filterText, string dateCulture) {
+        public WcfBusinessLogic.Core.Contracts.Data.EventBusinessModel[] GetPublishedEvents(WcfBusinessLogic.Core.Contracts.Data.FilterEventOptions filter, string filterText, string dateCulture) {
             return base.Channel.GetPublishedEvents(filter, filterText, dateCulture);
         }
         
-        public System.Threading.Tasks.Task<TicketManagementMVC.EventService.EventModel[]> GetPublishedEventsAsync(TicketManagementMVC.EventService.FilterEventOptions filter, string filterText, string dateCulture) {
+        public System.Threading.Tasks.Task<WcfBusinessLogic.Core.Contracts.Data.EventBusinessModel[]> GetPublishedEventsAsync(WcfBusinessLogic.Core.Contracts.Data.FilterEventOptions filter, string filterText, string dateCulture) {
             return base.Channel.GetPublishedEventsAsync(filter, filterText, dateCulture);
         }
         
-        public TicketManagementMVC.EventService.EventModel GetEventInformation(int id) {
+        public WcfBusinessLogic.Core.Contracts.Data.EventBusinessModel GetEventInformation(int id) {
             return base.Channel.GetEventInformation(id);
         }
         
-        public System.Threading.Tasks.Task<TicketManagementMVC.EventService.EventModel> GetEventInformationAsync(int id) {
+        public System.Threading.Tasks.Task<WcfBusinessLogic.Core.Contracts.Data.EventBusinessModel> GetEventInformationAsync(int id) {
             return base.Channel.GetEventInformationAsync(id);
         }
         
-        public TicketManagementMVC.EventService.Event[] GetEventManagerEvents(int venueId, int userId) {
+        public WcfBusinessLogic.Core.Contracts.Data.Event[] GetEventManagerEvents(int venueId, int userId) {
             return base.Channel.GetEventManagerEvents(venueId, userId);
         }
         
-        public System.Threading.Tasks.Task<TicketManagementMVC.EventService.Event[]> GetEventManagerEventsAsync(int venueId, int userId) {
+        public System.Threading.Tasks.Task<WcfBusinessLogic.Core.Contracts.Data.Event[]> GetEventManagerEventsAsync(int venueId, int userId) {
             return base.Channel.GetEventManagerEventsAsync(venueId, userId);
         }
         

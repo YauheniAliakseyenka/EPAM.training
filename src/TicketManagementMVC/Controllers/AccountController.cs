@@ -12,7 +12,7 @@ using TicketManagementMVC.Models;
 using TicketManagementMVC.PurchaseService;
 using TicketManagementMVC.Infrastructure.Helpers.Parsers;
 using System.ServiceModel;
-using System.Globalization;
+using WcfBusinessLogic.Core.Contracts.Exceptions;
 
 namespace TicketManagementMVC.Controllers
 {
@@ -20,7 +20,7 @@ namespace TicketManagementMVC.Controllers
     {
 		private AuthManager _authManager => new AuthManager(this.HttpContext);
 		private IWcfPurchaseService _purchaseService;
-		private CustomUserManager _userManager => new CustomUserManager();
+        private CustomUserManager _userManager;
 
 		private readonly int _purchaseHistoryPageSize;
 
@@ -32,8 +32,9 @@ namespace TicketManagementMVC.Controllers
 				ViewData["Balance"] = _authManager.GetAccountBalance();		
 		}
 
-		public AccountController(IWcfPurchaseService purchaseService)
+		public AccountController(IWcfPurchaseService purchaseService, CustomUserManager userManager)
 		{
+            _userManager = userManager;
 			_purchaseService = purchaseService;
 			_purchaseHistoryPageSize = 5;
 		}
@@ -198,14 +199,15 @@ namespace TicketManagementMVC.Controllers
 		{
 			try
 			{
-				var amountString = await _purchaseService.CreateOrderAsync(User.Identity.GetUserId<int>());
-				var currentBalance = _authManager.GetAccountBalance();
+				await _purchaseService.CreateOrderAsync(User.Identity.GetUserId<int>());
+				var response = await _userManager.UpdateAmount(this.User.Identity as ClaimsIdentity, BalanceUpdateVerb.UpdateFromServer);
 
-				if (!decimal.TryParse(amountString, NumberStyles.Currency, CultureInfo.InvariantCulture, out var amount))
-					throw new InvalidCastException();
-
-				currentBalance -= amount;
-				_authManager.SetAccountBalance(currentBalance.ToString(CultureInfo.InvariantCulture));
+				if (!response.IsSuccess)
+					return Json(new
+					{
+						success = false,
+						error = response.Message
+					});
 			}
 			catch (FaultException<ServiceValidationFaultDetails> exception)
 			{
@@ -259,7 +261,7 @@ namespace TicketManagementMVC.Controllers
 				return RedirectToAction("Registration", "Account");
 
             var response = await _userManager.GetUser(this.User.Identity as ClaimsIdentity);
-            var user = (User)response.Object;
+            var user = (Infrastructure.Authentication.User)response.Object;
 
             return View(new UserProfileViewModel
 			{
@@ -278,7 +280,6 @@ namespace TicketManagementMVC.Controllers
 		public async Task<ActionResult> UserProfile(UserProfileViewModel model)
 		{
 			var user = UserParser.UserProfileViewModelToUser(model);
-			user.Amount = _authManager.GetAccountBalance();
 
 			if (!string.IsNullOrEmpty(model.Password))
 			{
@@ -339,63 +340,42 @@ namespace TicketManagementMVC.Controllers
 			return View(new BalanceReplenishmentViewModel());
 		}
 
-        //GET: replenishment of balance
-        [HttpPost]
+		//GET: replenishment of balance
+		[HttpPost]
 		[Authorize]
 		[ValidateAntiForgeryToken]
 		public async Task<ActionResult> BalanceReplenishment(BalanceReplenishmentViewModel model)
 		{
-            if (!ModelState.IsValid)
-                return Json(new
-                {
-                    success = false,
-                    errors = ModelState.Keys.SelectMany(k => ModelState[k].Errors)
-                                  .Select(m => m.ErrorMessage).ToArray()
-                });
+			if (!ModelState.IsValid)
+				return Json(new
+				{
+					success = false,
+					errors = ModelState.Keys.SelectMany(k => ModelState[k].Errors)
+								  .Select(m => m.ErrorMessage).ToArray()
+				});
 
-            var response = await _userManager.GetUser(this.User.Identity as ClaimsIdentity);
+			var response = await _userManager.UpdateAmount(this.User.Identity as ClaimsIdentity, BalanceUpdateVerb.Replenishment, model.Amount);
 
-            if(response.IsSuccess)
-            {
-                var user = response.Object as User;
+			if (response.IsSuccess)
+				return Json(new
+				{
+					success = true
+				});
 
-				if(user is null)
-					return Json(new
-					{
-						success = false,
-						errors = new string[] { "Response error" }
-					});
-
-				user.Amount += model.Amount;
-                var update = await _userManager.Update(user, (ClaimsIdentity)this.User.Identity);
-                _authManager.SetAccountBalance(user.Amount.ToString());
-
-                return Json(new
-                {
-                    success = true
-                });
-            }
-
-            return Json(new
-            {
-                success = false,
-                errors = new string[] { response.Message }
-            });
-        }
+			return Json(new
+			{
+				success = false,
+				errors = new string[] { response.Message }
+			});
+		}
 
 		//cancel order and refund money
 		[Authorize]
 		[NoDirectAccess]
 		public async Task Refund(int orderId)
 		{
-			var amountString = await _purchaseService.CancelOrderAndRefundAsync(orderId);
-			var currentBalance = _authManager.GetAccountBalance();
-
-			if(!decimal.TryParse(amountString, NumberStyles.Currency, CultureInfo.InvariantCulture, out var amount))
-				throw new InvalidCastException();
-
-			currentBalance += amount;
-			_authManager.SetAccountBalance(currentBalance.ToString(CultureInfo.InvariantCulture));
+			await _purchaseService.CancelOrderAndRefundAsync(orderId);
+			await _userManager.UpdateAmount(this.User.Identity as ClaimsIdentity, BalanceUpdateVerb.UpdateFromServer);
 		}
 	}
 }

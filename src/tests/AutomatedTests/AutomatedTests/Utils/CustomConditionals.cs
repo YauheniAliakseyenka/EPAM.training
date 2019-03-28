@@ -8,7 +8,7 @@ namespace AutomatedTests.Utils
     {
 		public static void SendedToField(IWebDriver driver, By to, string inputText)
 		{
-			var inputElement = new WebDriverWait(driver, TimeSpan.FromSeconds(3)).
+			var inputElement = new WebDriverWait(driver, TimeSpan.FromSeconds(4)).
 				Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(to));
 
 			new WebDriverWait(driver, TimeSpan.FromSeconds(5))

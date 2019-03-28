@@ -1,0 +1,184 @@
+﻿<UserControl x:Class="TicketManagementWPF.Views.UserControls.UserView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:TicketManagementWPF.Views.UserControls"
+             xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
+             xmlns:behaviors="clr-namespace:TicketManagementWPF.Infrastructure.Behaviors"
+             xmlns:attachedProperties="clr-namespace:TicketManagementWPF.Infrastructure.AttachedProperty"
+             xmlns:extensions="clr-namespace:TicketManagementWPF.Infrastructure.Extensions"
+             xmlns:convertors="clr-namespace:TicketManagementWPF.Infrastructure.Convertors"
+             xmlns:inf="clr-namespace:TicketManagementWPF.Infrastructure"
+             xmlns:loc="clr-namespace:TicketManagementWPF.Infrastructure.Extensions.Localization"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+
+    <UserControl.Resources>
+        <convertors:ListToStringConvertor x:Key="ErrorConvertor" />
+    </UserControl.Resources>
+
+    <!--Form-->
+    <ScrollViewer  HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+        <Grid Margin="15">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition  Height="Auto"/>
+                <RowDefinition  Height="Auto"/>
+                <RowDefinition  Height="Auto"/>
+                <RowDefinition  Height="Auto"/>
+                <RowDefinition  Height="*"/>
+                <RowDefinition  Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <!--Error's placeholder-->
+            <Label Grid.Row="0" Grid.ColumnSpan="2" 
+                   Content="{Binding Errors, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ErrorConvertor}}"
+                   HorizontalAlignment="Center" 
+                   VerticalAlignment="Top"
+                   Style="{StaticResource ErrorListLabel}"/>
+
+            <!--Textboxes-->
+            <Grid Grid.ColumnSpan="2" Grid.Row="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <Label Grid.Row="0" Grid.Column="0" 
+                   Content="{loc:Localization UsernameLabel,TicketManagementWPF.l10n.UserView.View}"
+                   Style="{StaticResource DefaultLabel}"/>
+                <TextBox Text="{Binding User.UserName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                     Grid.Row="0" Grid.Column="1"
+                     Style="{StaticResource DefaultTextBox}"/>
+
+                <Label Grid.Row="1" Grid.Column="0"
+                   Content="{loc:Localization EmailLabel,TicketManagementWPF.l10n.UserView.View}"
+                   Style="{StaticResource DefaultLabel}"/>
+                <TextBox Text="{Binding User.Email, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                     Grid.Row="1" Grid.Column="1"
+                      Style="{StaticResource DefaultTextBox}"/>
+
+                <Label Grid.Row="2" Grid.Column="0" 
+                   Content="{loc:Localization FirstnameLabel,TicketManagementWPF.l10n.UserView.View}"
+                   Style="{StaticResource DefaultLabel}"/>
+                <TextBox Text="{Binding User.Firstname, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                     Grid.Row="2" Grid.Column="1"
+                     Style="{StaticResource DefaultTextBox}"/>
+
+                <Label Grid.Row="3" Grid.Column="0" 
+                   Content="{loc:Localization SurnameLabel,TicketManagementWPF.l10n.UserView.View}"
+                   Style="{StaticResource DefaultLabel}"/>
+                <TextBox Text="{Binding User.Surname, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                     Grid.Row="3" Grid.Column="1"
+                     Style="{StaticResource DefaultTextBox}"/>
+
+                <Label Grid.Row="4" Grid.Column="0" 
+                   Content="{loc:Localization CultureLabel,TicketManagementWPF.l10n.UserView.View}"
+                   Style="{StaticResource DefaultLabel}"/>
+                <ComboBox ItemsSource="{Binding Source={extensions:Enumeration {x:Type inf:Culture}}}"
+                      DisplayMemberPath="Description" Grid.Row="4" Grid.Column="1"
+                      SelectedValuePath="Value"
+                      SelectedValue="{Binding User.Culture, Mode=TwoWay,  UpdateSourceTrigger=PropertyChanged}"
+                      Style="{StaticResource DefaultComboBox}"/>
+
+                <Label Grid.Row="5" Grid.Column="0" 
+                   Content="{loc:Localization TimezoneLabel,TicketManagementWPF.l10n.UserView.View}"
+                   Style="{StaticResource DefaultLabel}"/>
+                <ComboBox ItemsSource="{Binding Source={extensions:TimezoneCollection}}"
+                      DisplayMemberPath="DisplayText" Grid.Row="5" Grid.Column="1"
+                      SelectedValuePath="Id"
+                      SelectedValue="{Binding User.Timezone, Mode=TwoWay,  UpdateSourceTrigger=PropertyChanged}" 
+                      Style="{StaticResource DefaultComboBox}"/>
+
+                <Label Content="{loc:Localization PasswordLabel,TicketManagementWPF.l10n.UserView.View}" 
+                   Grid.Row="6" Grid.Column="0"
+                   Style="{StaticResource DefaultLabel}"/>
+                <PasswordBox Grid.Row="6" Grid.Column="1"  
+                         attachedProperties:PasswordBoxProperties.EncryptedPassword="{Binding Password, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                         Style="{StaticResource DefaultPasswordBox}">
+                    <i:Interaction.Behaviors>
+                        <behaviors:PasswordBoxBehavior />
+                    </i:Interaction.Behaviors>
+                </PasswordBox>
+
+                <Label Content="{loc:Localization ConfirmPasswordLabel,TicketManagementWPF.l10n.UserView.View}" 
+                   Grid.Row="7" Grid.Column="0"
+                   Style="{StaticResource DefaultLabel}"/>
+                <PasswordBox Grid.Row="7" Grid.Column="1"  
+                         attachedProperties:PasswordBoxProperties.EncryptedPassword="{Binding ConfirmedPassword, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                         Style="{StaticResource DefaultPasswordBox}">
+                    <i:Interaction.Behaviors>
+                        <behaviors:PasswordBoxBehavior />
+                    </i:Interaction.Behaviors>
+                </PasswordBox>
+            </Grid>
+
+            <!--Lists of roles-->
+            <Label Content="{loc:Localization UserRolesLabel,TicketManagementWPF.l10n.UserView.View}" 
+               HorizontalAlignment="Left" 
+               Grid.Column="0" Grid.Row="3" 
+               VerticalAlignment="Bottom" 
+               Style="{StaticResource DefaultLabel}"
+               Margin="10,10,10,-5" />
+            <ListView ItemsSource="{Binding User.Roles}" 
+                  SelectionMode="Single" 
+                  AllowDrop="True"
+                  Grid.Column="0" Grid.Row="4"
+                  Style="{StaticResource DefaultListView}">
+                <i:Interaction.Behaviors>
+                    <behaviors:RoleListViewBehavior />
+                </i:Interaction.Behaviors>
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding}" AllowDrop="True"/>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+
+            <Label Content="{loc:Localization AvailableRolesLabel,TicketManagementWPF.l10n.UserView.View}" 
+               HorizontalAlignment="Right" 
+               Grid.Column="1" Grid.Row="3" 
+               VerticalAlignment="Bottom"
+               Style="{StaticResource DefaultLabel}"
+               Margin="10,10,10,-5"/>
+            <ListView ItemsSource="{Binding RoleList}" 
+                  SelectionMode="Single" 
+                  Grid.Column="1" Grid.Row="4"
+                  AllowDrop="True"
+                  Style="{StaticResource DefaultListView}">
+                <i:Interaction.Behaviors>
+                    <behaviors:RoleListViewBehavior />
+                </i:Interaction.Behaviors>
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding}" AllowDrop="True"/>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+
+            <!--Buttons-->
+            <Button Content="{loc:Localization SaveButton,TicketManagementWPF.l10n.UserView.View}" 
+                Command="{Binding SaveCommand}" 
+                Grid.Row="5" Grid.ColumnSpan="2"
+                Style="{StaticResource FormButton}">
+                <i:Interaction.Behaviors>
+                    <behaviors:CommandBusyAnimationBehavior/>
+                </i:Interaction.Behaviors>
+            </Button>
+        </Grid>
+    </ScrollViewer>
+</UserControl>

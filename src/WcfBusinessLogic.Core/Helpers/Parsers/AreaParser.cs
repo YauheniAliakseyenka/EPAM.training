@@ -16,7 +16,7 @@ namespace WcfBusinessLogic.Core.Helpers.Parsers
                 Description = from.Description,
                 Id = from.Id,
                 LayoutId =from.LayoutId
-            };
+			};
         }
 
         public static AreaDto ToAreaDto(Area from)
@@ -28,7 +28,7 @@ namespace WcfBusinessLogic.Core.Helpers.Parsers
                 CoordY = from.CoordY,
                 Description = from.Description,
                 Id = from.Id,
-                LayoutId = from.LayoutId
+				LayoutId = from.LayoutId
             };
         }
 	}
